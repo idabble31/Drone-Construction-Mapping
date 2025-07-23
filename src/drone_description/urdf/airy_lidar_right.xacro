@@ -28,6 +28,45 @@
       <child link="${name}_link"/>
       <origin xyz="${xyz}" rpy="${rpy}"/> <!-- Relative to base_link -->
     </joint>
+
+    <!-- Gazebo Reference -->
+    <gazebo reference="${name}_link">
+      <sensor type="gpu_lidar" name="${name}_sensor">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>50</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>90</samples>
+              <resolution>1</resolution>
+              <min_angle>-1.57</min_angle> <!-- -90° -->
+              <max_angle>1.57</max_angle> <!-- +90° -->
+            </vertical>
+          </scan>
+          <range>
+            <min>0.2</min>
+            <max>150</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="${name}_controller" filename="libgazebo_ros_gpu_laser.so">
+          <topicName>/${name}/points</topicName>
+          <frameName>${name}_link</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
   </xacro:macro>
 
   <!-- Instantiate forward LiDAR -->
