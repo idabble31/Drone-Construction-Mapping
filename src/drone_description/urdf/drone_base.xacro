@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="drone_base" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Dummy root link to satisfy KDL (no inertia) -->
+  <link name="world_link"/>
+
+  <!-- Base link (drone chassis) -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.1" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://drone_description/meshes/drone_base.dae" scale="1 1 1"/> <!-- DAE mesh, assuming mm units -->
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/> <!-- Fallback color if DAE lacks textures -->
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- <mesh filename="package://drone_description/meshes/drone_base.dae" scale="0.001 0.001 0.001"/> Same mesh for collision -->
+        <box size="0.3 0.3 0.25"/> <!-- Placeholder box for collision, adjust size as needed -->
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/> <!-- Placeholder: 1kg, adjust from CAD -->
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> <!-- Placeholder, adjust from CAD -->
+    </inertial>
+  </link>
+
+  <!-- Fixed joint connecting world_link to base_link -->
+  <joint name="world_to_base" type="fixed">
+    <parent link="world_link"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+</robot>

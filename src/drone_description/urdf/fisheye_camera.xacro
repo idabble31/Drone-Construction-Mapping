@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot name="fisheye_camera" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Macro for camera -->
+  <xacro:macro name="fisheye_camera" params="name parent xyz rpy">
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/> <!-- Placeholder, adjust filepath -->
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/> <!-- Fallback if DAE lacks textures -->
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/> <!-- Same mesh -->
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/> <!-- Placeholder: 50g, adjust from CAD -->
+        <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/> <!-- Placeholder -->
+      </inertial>
+    </link>
+    <joint name="${name}_to_${parent}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/> <!-- Relative to base_link -->
+    </joint>
+  </xacro:macro>
+
+  <!-- Instantiate camera -->
+  <!-- <xacro:camera name="camera" parent="base_link" xyz="0.1 0.0 0.4" rpy="0 0 0"/> -->
+</robot>

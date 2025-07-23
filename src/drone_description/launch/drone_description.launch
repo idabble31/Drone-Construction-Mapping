@@ -1,0 +1,9 @@
+<launch>
+  <!-- Load XACRO and convert to URDF -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find drone_description)/urdf/construction_drone.xacro"/>
+
+  <!-- Publish robot state and transforms -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find drone_description)/rviz/drone_view.rviz" output="screen" /> -->
+</launch>

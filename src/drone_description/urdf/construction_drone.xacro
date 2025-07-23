@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="construction_drone" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Include base and LiDAR XACROs -->
+  <xacro:include filename="$(find drone_description)/urdf/drone_base.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/airy_lidar_right.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/airy_lidar_left.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/fisheye_camera.xacro"/>
+
+  <!-- Instantiate base (already includes world_link and base_link) -->
+  <!-- No additional instantiation needed for drone_base.xacro -->
+
+  <!-- Instantiate LiDARs -->
+  <xacro:robosense_airy_lidar1 name="lidar_right" parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 0"/>
+  <xacro:robosense_airy_lidar2 name="lidar_left" parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
+
+  <!-- Instatiate Fisheye Cameras -->
+  <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159"/>
+  <xacro:fisheye_camera name="fisheye_camera_rear" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0"/>
+  <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0"/>
+</robot>
