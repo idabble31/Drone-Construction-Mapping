@@ -1,87 +1,61 @@
 <?xml version="1.0"?>
 <robot name="fisheye_camera" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!-- Macro for camera -->
-  <xacro:macro name="fisheye_camera" params="name parent xyz rpy">
+  <!-- Macro for wide-angle (fisheye) camera -->
+  <xacro:macro name="fisheye_camera" params="name parent xyz rpy hfov">
     <link name="${name}_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/> <!-- Placeholder, adjust filepath -->
+          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/>
         </geometry>
         <material name="black">
-          <color rgba="0 0 0 1"/> <!-- Fallback if DAE lacks textures -->
+          <color rgba="0 0 0 1"/>
         </material>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/> <!-- Same mesh -->
+          <mesh filename="package://drone_description/meshes/fisheye_camera.dae" scale="1 1 1"/>
         </geometry>
       </collision>
       <inertial>
-        <mass value="0.05"/> <!-- Placeholder: 50g, adjust from CAD -->
-        <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/> <!-- Placeholder -->
+        <mass value="0.05"/>
+        <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
       </inertial>
     </link>
+
     <joint name="${name}_to_${parent}" type="fixed">
       <parent link="${parent}"/>
       <child link="${name}_link"/>
-      <origin xyz="${xyz}" rpy="${rpy}"/> <!-- Relative to base_link -->
+      <origin xyz="${xyz}" rpy="${rpy}"/>
     </joint>
 
-    <!-- Gazebo reference -->
+    <!-- Gazebo plugin for regular camera (not fisheye) -->
     <gazebo reference="${name}_link">
-      <sensor type="camera" name="${name}_sensor">
-        <pose>0 0 0 0 0 0</pose>
-        <visualize>true</visualize>
-        <update_rate>30</update_rate> <!-- 30Hz for camera -->
+      <sensor type="camera" name="${name}_regular_cam">
+        <pose>0 -0.5 0 0 0 -1.5708</pose>
+        <always_on>true</always_on>
+        <update_rate>30</update_rate>
         <camera>
-          <horizontal_fov>3.14159</horizontal_fov> <!-- 180° -->
+          <horizontal_fov>${hfov}</horizontal_fov>
           <image>
-            <width>1280</width>
-            <height>720</height>
+            <width>640</width>
+            <height>480</height>
             <format>R8G8B8</format>
           </image>
           <clip>
-            <near>0.01</near> <!-- 1cm -->
-            <far>100</far> <!-- 100m -->
+            <near>0.05</near>
+            <far>100</far>
           </clip>
-          <distortion>
-            <k1>0.1</k1> <!-- Placeholder fisheye distortion -->
-            <k2>0.01</k2>
-            <k3>0.0</k3>
-            <p1>0.0</p1>
-            <p2>0.0</p2>
-            <center>0.5 0.5</center>
-          </distortion>
-          <lens>
-            <type>fisheye</type>
-            <scale_to_hfov>true</scale_to_hfov>
-            <cutoff_angle>3.14159</cutoff_angle> <!-- 180° -->
-            <env_texture_size>512</env_texture_size>
-          </lens>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
         </camera>
-        <plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
-          <cameraName>camera</cameraName>
+        <plugin name="${name}_camera_controller" filename="libgazebo_ros_camera.so">
+          <cameraName>${name}</cameraName>
+          <imageTopicName>${name}/image_raw</imageTopicName>
+          <cameraInfoTopicName>${name}/camera_info</cameraInfoTopicName>
           <frameName>${name}_link</frameName>
-          <imageTopicName>/${name}/image_raw</imageTopicName>
-          <cameraInfoTopicName>/${name}/camera_info</cameraInfoTopicName>
-          <hackBaseline>0.0</hackBaseline>
-          <distortionK1>0.1</distortionK1>
-          <distortionK2>0.01</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2>
+          <updateRate>30.0</updateRate>
         </plugin>
       </sensor>
     </gazebo>
   </xacro:macro>
-
-  <!-- Instantiate camera -->
-  <!-- <xacro:camera name="camera" parent="base_link" xyz="0.1 0.0 0.4" rpy="0 0 0"/> -->
 </robot>
