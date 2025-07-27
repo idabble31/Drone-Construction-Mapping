@@ -8,17 +8,17 @@
     <visual>
       <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://drone_description/meshes/drone_base.dae" scale="1 1 1"/> <!-- DAE mesh, assuming mm units -->
+        <mesh filename="package://drone_description/meshes/drone_base_with_motors.dae" scale="1 1 1"/> <!-- DAE mesh, assuming mm units -->
       </geometry>
       <material name="blue">
         <color rgba="0 0 1 1"/> <!-- Fallback color if DAE lacks textures -->
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <!-- <mesh filename="package://drone_description/meshes/drone_base.dae" scale="0.001 0.001 0.001"/> Same mesh for collision -->
-        <box size="0.3 0.3 0.25"/> <!-- Placeholder box for collision, adjust size as needed -->
+        <mesh filename="package://drone_description/meshes/drone_base_with_motors.dae" scale="1 1 1"/> 
+        <!-- <box size="0.3 0.3 0.25"/>  -->
       </geometry>
     </collision>
     <inertial>

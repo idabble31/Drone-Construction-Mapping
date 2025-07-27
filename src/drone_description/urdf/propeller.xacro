@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot name="propeller" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="propeller" params="name parent xyz rpy">
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://drone_description/meshes/propeller.dae" scale="1 1 1"/>
+        </geometry>
+        <material name="gray">
+          <color rgba="0.4 0.4 0.4 1"/>
+        </material>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://drone_description/meshes/propeller.dae" scale="1 1 1"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.02"/>
+        <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <axis xyz="0 0 1"/> <!-- Spinning around Z -->
+      <!-- <limit effort="1.0" velocity="10.0" lower="0" upper="6.28319"/> dummy limits -->
+      <limit effort="1.0" velocity="100.0" />
+    </joint>
+  </xacro:macro>
+
+</robot>

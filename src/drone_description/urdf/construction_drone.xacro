@@ -3,9 +3,8 @@
   <!-- Include base and LiDAR XACROs -->
   <xacro:include filename="$(find drone_description)/urdf/drone_base.xacro"/>
   <xacro:include filename="$(find drone_description)/urdf/airy_lidar.xacro"/>
-  <!-- <xacro:include filename="$(find drone_description)/urdf/airy_lidar_left.xacro"/> -->
   <xacro:include filename="$(find drone_description)/urdf/fisheye_camera.xacro"/>
-  <!-- <xacro:include filename="$(find drone_description)/urdf/fisheye_camera_rear.xacro"/> -->
+  <xacro:include filename="$(find drone_description)/urdf/propeller.xacro" />
 
   <!-- Instantiate base (already includes world_link and base_link) -->
   <!-- No additional instantiation needed for drone_base.xacro -->
@@ -18,4 +17,59 @@
   <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" hfov="2.094"/> <!-- 3.14159 -->
   <xacro:fisheye_camera name="fisheye_camera_rear" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="2.094" />
   <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" hfov="2.094" />
+
+  <!-- Instantiate Propellers -->
+  <xacro:propeller name="front_right_prop" parent="base_link" xyz="0.1050 0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="front_left_prop" parent="base_link" xyz="-0.105 0.105 0.24122" rpy="0 0 0"/> 
+  <xacro:propeller name="rear_left_prop" parent="base_link" xyz="-0.105 -0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_right_prop" parent="base_link" xyz="0.105 -0.105 0.24122" rpy="0 0 0"/>
+
+  <!-- Front Right Propeller Transmission -->
+  <transmission name="front_right_prop_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="front_right_prop_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="front_right_prop_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- Front Left Propeller Transmission -->
+  <transmission name="front_left_prop_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="front_left_prop_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="front_left_prop_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- Rear Left Propeller Transmission -->
+  <transmission name="rear_left_prop_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rear_left_prop_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="rear_left_prop_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- Rear Right Propeller Transmission -->
+  <transmission name="rear_right_prop_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="rear_right_prop_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="rear_right_prop_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
 </robot>
