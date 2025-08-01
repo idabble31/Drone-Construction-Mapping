@@ -1,7 +1,7 @@
 <launch>
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <!-- <arg name="world_name" value="$(find drone_description)/worlds/collapsed_house.world"/> -->
-        <arg name="world_name" value="$(find drone_description)/worlds/empty.world" />
+        <arg name="world_name" value="$(find drone_description)/worlds/collapsed_house.world"/>
+        <!-- <arg name="world_name" value="$(find drone_description)/worlds/empty.world" /> -->
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
@@ -9,15 +9,28 @@
 
     <param name="robot_description" command="$(find xacro)/xacro $(find drone_description)/urdf/construction_drone.xacro"/>
 
+    <!-- After loading robot_description -->
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>
+
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
 
     <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0 -param robot_description" output="screen"/>
 
-    <rosparam file="$(find drone_description)/config/propeller_controller.yaml" command="load"/>
+    <!-- <rosparam file="$(find drone_description)/config/propeller_controller.yaml" command="load"/>
 
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
           output="screen"
-          args="front_left_prop_controller front_right_prop_controller rear_left_prop_controller rear_right_prop_controller"/>
+          args="front_left_prop_controller front_right_prop_controller rear_left_prop_controller rear_right_prop_controller"/> -->
+
+    <!-- Load controller configs -->
+    <rosparam file="$(find drone_description)/config/prop_controllers.yaml" command="load"/>
+
+    <rosparam file="$(find drone_description)/config/gazebo_ros_control_gains.yaml" command="load"/>
+
+    <!-- Start controller manager (ros_control) -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+          respawn="false" output="screen"
+          args="joint_state_controller prop_vel_controller"/>
 
 
     <node name="rviz" pkg="rviz" type="rviz"

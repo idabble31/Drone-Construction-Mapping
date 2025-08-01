@@ -1,0 +1,20 @@
+# config/prop_controllers.yaml
+
+# Publish joint states at 50 Hz so LiftDragPlugin can read velocities
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+# One controller for all four props
+prop_vel_controller:
+  type: velocity_controllers/JointGroupVelocityController
+  joints:
+    - front_right_prop_joint
+    - front_left_prop_joint
+    - rear_left_prop_joint
+    - rear_right_prop_joint
+  command_topic: motor_speed    # topic to send a Float64MultiArray of 4 speeds (rad/s)
+  state_publish_rate: 50
+  constraints:
+    max_velocity: 2000          # adjust to your motors’ limits
+    max_acceleration: 10000

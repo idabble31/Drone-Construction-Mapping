@@ -24,14 +24,22 @@
   <xacro:propeller name="rear_left_prop" parent="base_link" xyz="-0.105 -0.105 0.24122" rpy="0 0 0"/>
   <xacro:propeller name="rear_right_prop" parent="base_link" xyz="0.105 -0.105 0.24122" rpy="0 0 0"/>
 
+  <!-- Gazebo plugin to enable ROS control -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
+
+
   <!-- Front Right Propeller Transmission -->
   <transmission name="front_right_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="front_right_prop_joint">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="front_right_prop_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -40,10 +48,10 @@
   <transmission name="front_left_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="front_left_prop_joint">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="front_left_prop_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -52,10 +60,10 @@
   <transmission name="rear_left_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="rear_left_prop_joint">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="rear_left_prop_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -64,10 +72,10 @@
   <transmission name="rear_right_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="rear_right_prop_joint">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="rear_right_prop_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>

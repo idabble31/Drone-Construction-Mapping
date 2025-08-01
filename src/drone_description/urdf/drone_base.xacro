@@ -8,7 +8,7 @@
     <visual>
       <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://drone_description/meshes/drone_base_with_motors.dae" scale="1 1 1"/> <!-- DAE mesh, assuming mm units -->
+        <mesh filename="package://drone_description/meshes/drone_base_w_motors.stl" scale="1 1 1"/> <!-- DAE mesh, assuming mm units -->
       </geometry>
       <material name="blue">
         <color rgba="0 0 1 1"/> <!-- Fallback color if DAE lacks textures -->
@@ -17,12 +17,12 @@
     <collision>
       <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://drone_description/meshes/drone_base_with_motors.dae" scale="1 1 1"/> 
+        <mesh filename="package://drone_description/meshes/drone_base_w_motors.stl" scale="1 1 1"/> 
         <!-- <box size="0.3 0.3 0.25"/>  -->
       </geometry>
     </collision>
     <inertial>
-      <mass value="1.0"/> <!-- Placeholder: 1kg, adjust from CAD -->
+      <mass value="0.5"/> <!-- Placeholder: 1kg, adjust from CAD -->
       <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> <!-- Placeholder, adjust from CAD -->
     </inertial>
   </link>
