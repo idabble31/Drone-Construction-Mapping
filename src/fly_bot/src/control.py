@@ -3,10 +3,36 @@
 from pid import PID
 import rospy
 from gazebo_msgs.msg import ModelStates
-from std_msgs.msg import Float64MultiArray, Float32
+from std_msgs.msg import Float64MultiArray, Float32, Float32MultiArray
 from geometry_msgs.msg import Pose
 from tf.transformations import euler_from_quaternion
 #---------------------------------------------------
+
+target_roll = 0.0
+target_pitch = 0.0
+target_yaw = 0.0
+
+setpoint_roll = 0.0
+setpoint_pitch = 0.0
+setpoint_yaw = 0.0
+setpoint_throttle = 0.0
+
+# def update_targets(msg):
+#     global target_roll, target_pitch, target_yaw
+#     target_roll = msg.data[0]
+#     target_pitch = msg.data[1]
+#     target_yaw = msg.data[2]
+
+def update_targets(msg):
+    global setpoint_roll, setpoint_pitch, setpoint_yaw, setpoint_throttle
+    data = msg.data
+    if len(data) >= 4:
+        setpoint_roll = data[0]
+        setpoint_pitch = data[1]
+        setpoint_yaw = data[2]
+        setpoint_throttle = data[3]
+
+
 def control_kwad(msg, args):
 	#Declare global variables as you dont want these to die, reset to zero and then re-initiate when the function is called again.
 	global roll, pitch, yaw, err_roll, err_pitch, err_yaw
@@ -23,7 +49,14 @@ def control_kwad(msg, args):
 	
 	#send roll, pitch, yaw data to PID() for attitude-stabilisation, along with 'f', to obtain 'fUpdated'
 	#Alternatively, you can add your 'control-file' with other algorithms such as Reinforcement learning, and import the main function here instead of PID().
-	(fUpdated, err_roll, err_pitch, err_yaw) = PID(roll, pitch, yaw, f)
+	# (fUpdated, err_roll, err_pitch, err_yaw) = PID(roll, pitch, yaw, f)
+	# (fUpdated, err_roll, err_pitch, err_yaw) = PID(roll, pitch, yaw, target_roll, target_pitch, target_yaw, f)
+	(fUpdated, err_roll, err_pitch, err_yaw) = PID(
+    roll, pitch, yaw, f,
+    setpoint_roll, setpoint_pitch, setpoint_yaw, setpoint_throttle
+)
+
+
 	
 	#The object args contains the tuple of objects (velPub, err_rollPub, err_pitchPub, err_yawPub. publish the information to namespace.
 	args[0].publish(fUpdated)
@@ -48,5 +81,10 @@ velPub = rospy.Publisher('/Kwad/joint_motor_controller/command', Float64MultiArr
 #Subscribe to /gazebo/model_states to obtain the pose in quaternion form
 #Upon receiveing the messages, the objects msg, velPub, err_rollPub, err_pitchPub and err_yawPub are sent to "control_kwad" function.
 PoseSub = rospy.Subscriber('/gazebo/model_states',ModelStates,control_kwad,(velPub, err_rollPub, err_pitchPub, err_yawPub))
+rospy.Subscriber('/cmd_attitude', Float32MultiArray, update_targets)
+
+
+# rospy.Subscriber('/cmd_attitude', Float32MultiArray, update_targets)
+
 
 rospy.spin()

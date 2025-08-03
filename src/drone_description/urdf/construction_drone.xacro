@@ -6,23 +6,20 @@
   <xacro:include filename="$(find drone_description)/urdf/fisheye_camera.xacro"/>
   <xacro:include filename="$(find drone_description)/urdf/propeller.xacro" />
 
-  <!-- Instantiate base (already includes world_link and base_link) -->
-  <!-- No additional instantiation needed for drone_base.xacro -->
-
   <!-- Instantiate LiDARs -->
-  <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 0"/>
-  <xacro:robosense_airy_lidar name="lidar_left" parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
+  <xacro:robosense_airy_lidar name="lidar_right" parent="chassis_link" xyz="0.122 0.0 0.18" rpy="0 0 0"/>
+  <xacro:robosense_airy_lidar name="lidar_left"  parent="chassis_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
 
-  <!-- Instatiate Fisheye Cameras -->
-  <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" hfov="2.094"/> <!-- 3.14159 -->
-  <xacro:fisheye_camera name="fisheye_camera_rear" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="2.094" />
-  <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" hfov="2.094" />
+  <!-- Instantiate Fisheye Cameras -->
+  <xacro:fisheye_camera name="fisheye_camera_front" parent="chassis_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" hfov="2.094"/>
+  <xacro:fisheye_camera name="fisheye_camera_rear"  parent="chassis_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="2.094"/>
+  <xacro:fisheye_camera name="fisheye_camera_below" parent="chassis_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" hfov="2.094"/>
 
   <!-- Instantiate Propellers -->
-  <xacro:propeller name="front_right_prop" parent="base_link" xyz="0.1050 0.105 0.24122" rpy="0 0 0"/>
-  <xacro:propeller name="front_left_prop" parent="base_link" xyz="-0.105 0.105 0.24122" rpy="0 0 0"/> 
-  <xacro:propeller name="rear_left_prop" parent="base_link" xyz="-0.105 -0.105 0.24122" rpy="0 0 0"/>
-  <xacro:propeller name="rear_right_prop" parent="base_link" xyz="0.105 -0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="front_right_prop" parent="chassis_link" xyz="0.1050 0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="front_left_prop"  parent="chassis_link" xyz="-0.105 0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_left_prop"   parent="chassis_link" xyz="-0.105 -0.105 0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_right_prop"  parent="chassis_link" xyz="0.105 -0.105 0.24122" rpy="0 0 0"/>
 
   <!-- Gazebo plugin to enable ROS control -->
   <gazebo>
@@ -31,8 +28,7 @@
     </plugin>
   </gazebo>
 
-
-  <!-- Front Right Propeller Transmission -->
+  <!-- Propeller transmissions -->
   <transmission name="front_right_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="front_right_prop_joint">
@@ -43,8 +39,6 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
-  <!-- Front Left Propeller Transmission -->
   <transmission name="front_left_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="front_left_prop_joint">
@@ -55,8 +49,6 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
-  <!-- Rear Left Propeller Transmission -->
   <transmission name="rear_left_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="rear_left_prop_joint">
@@ -67,8 +59,6 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
-  <!-- Rear Right Propeller Transmission -->
   <transmission name="rear_right_prop_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="rear_right_prop_joint">
@@ -79,5 +69,49 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+
+  <!-- LiftDragPlugin: generates lift from joint velocity -->
+  <gazebo>
+    <plugin name="liftdrag_front_right" filename="libLiftDragPlugin.so">
+      <link_name>front_right_prop_link</link_name>
+      <control_joint>front_right_prop_joint</control_joint>
+      <a0>0.1</a0>
+      <cla>2.0</cla>
+      <cda>0.01</cda>
+      <area>1.2</area>
+      <air_density>1.225</air_density>
+      <cp>0 0 0</cp>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <plugin name="liftdrag_front_left" filename="libLiftDragPlugin.so">
+      <link_name>front_left_prop_link</link_name>
+      <control_joint>front_left_prop_joint</control_joint>
+      <a0>0.1</a0><cla>2.0</cla><cda>0.01</cda><area>1.2</area><air_density>1.225</air_density>
+      <cp>0 0 0</cp>
+      <forward>1 0 0</forward><upward>0 0 1</upward>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <plugin name="liftdrag_rear_left" filename="libLiftDragPlugin.so">
+      <link_name>rear_left_prop_link</link_name>
+      <control_joint>rear_left_prop_joint</control_joint>
+      <a0>0.1</a0><cla>2.0</cla><cda>0.01</cda><area>1.2</area><air_density>1.225</air_density>
+      <cp>0 0 0</cp>
+      <forward>1 0 0</forward><upward>0 0 1</upward>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <plugin name="liftdrag_rear_right" filename="libLiftDragPlugin.so">
+      <link_name>rear_right_prop_link</link_name>
+      <control_joint>rear_right_prop_joint</control_joint>
+      <a0>0.1</a0><cla>2.0</cla><cda>0.01</cda><area>1.2</area><air_density>1.225</air_density>
+      <cp>0 0 0</cp>
+      <forward>1 0 0</forward><upward>0 0 1</upward>
+    </plugin>
+  </gazebo>
+  
 
 </robot>

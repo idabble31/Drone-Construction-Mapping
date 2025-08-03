@@ -2,7 +2,7 @@
 import time
 
 #--------------------------------------------------------------------------------------------------------------------------------------
-def PID(roll, pitch, yaw, f):
+def PID(roll, pitch, yaw, f, setpoint_roll, setpoint_pitch, setpoint_yaw, throttle):
 	#Define the global variables to prevent them from dying and resetting to zero, each time a function call occurs. Some of these variables 		may be redundant.
 	global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, flag, setpoint, sampleTime
 	#-----------------------
@@ -19,10 +19,18 @@ def PID(roll, pitch, yaw, f):
 	flag = 0
 	#Define other variables here, and calculate the errors.
 	sampleTime = 0
-	setpoint = 0
-	err_pitch = float(pitch)*(180 / 3.141592653) - setpoint 
- 	err_roll = float(roll)*(180 / 3.141592653) - setpoint
-	err_yaw = float(yaw)*(180/3.14159263) - setpoint
+	# setpoint = 0
+	# err_pitch = float(pitch)*(180 / 3.141592653) - setpoint 
+	# err_roll = float(roll)*(180 / 3.141592653) - setpoint
+	# err_yaw = float(yaw)*(180/3.14159263) - setpoint
+	# err_roll = float(roll)*(180 / 3.141592653) - target_roll
+	# err_pitch = float(pitch)*(180 / 3.141592653) - target_pitch
+	# err_yaw = float(yaw)*(180 / 3.141592653) - target_yaw
+	err_pitch = float(pitch)*(180 / 3.141592653) - setpoint_pitch
+	err_roll = float(roll)*(180 / 3.141592653) - setpoint_roll
+	err_yaw = float(yaw)*(180/3.14159263) - setpoint_yaw
+
+
 	currTime = time.time()
 	#-----------------------
 	#Reset the following variables during the first run only.
@@ -109,13 +117,20 @@ def PID(roll, pitch, yaw, f):
 	#Calculate the ESC pulses (1000us - 2000us PWM signal) for each of the motor.
 	
 	#br in my code is fr in gazebo's world
-	esc_br = 1500 + output_roll + output_pitch - output_yaw
-	#bl in my code is br in gazebo's world
-	esc_bl = 1500 + output_roll - output_pitch + output_yaw
-	#fl in my code is bl in gazebo's world
-	esc_fl = 1500 - output_roll - output_pitch - output_yaw
-	#fr in my code is fl in gazebo's world
-	esc_fr = 1500 - output_roll + output_pitch + output_yaw
+	# esc_br = 1500 + output_roll + output_pitch - output_yaw
+	# #bl in my code is br in gazebo's world
+	# esc_bl = 1500 + output_roll - output_pitch + output_yaw
+	# #fl in my code is bl in gazebo's world
+	# esc_fl = 1500 - output_roll - output_pitch - output_yaw
+	# #fr in my code is fl in gazebo's world
+	# esc_fr = 1500 - output_roll + output_pitch + output_yaw
+
+	base_throttle = throttle  # e.g. from 1400 to 1600 depending on lift
+	esc_br = base_throttle + output_roll + output_pitch - output_yaw
+	esc_bl = base_throttle + output_roll - output_pitch + output_yaw
+	esc_fl = base_throttle - output_roll - output_pitch - output_yaw
+	esc_fr = base_throttle - output_roll + output_pitch + output_yaw
+
 	
 	#Limit the ESC pulses to upper limit and lower limit, in case the PID algorithm goes crazy and high af.
 	if(esc_br > 2000): esc_br = 2000

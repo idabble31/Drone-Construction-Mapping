@@ -1,18 +1,18 @@
 gazebo_ros_control:
   pid_gains:
     front_right_prop_joint:
-      p: 100.0
+      p: 1000.0
       i:   0.0
       d:   1.0
     front_left_prop_joint:
-      p: 100.0
+      p: 1000.0
       i:   0.0
       d:   1.0
     rear_left_prop_joint:
-      p: 100.0
+      p: 1000.0
       i:   0.0
       d:   1.0
     rear_right_prop_joint:
-      p: 100.0
+      p: 1000.0
       i:   0.0
       d:   1.0

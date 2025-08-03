@@ -14,7 +14,8 @@
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
 
-    <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0 -param robot_description" output="screen"/>
+    <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.40 -param robot_description" output="screen"/>
+    <!-- <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-param robot_description -urdf -model construction_drone" /> -->
 
     <!-- <rosparam file="$(find drone_description)/config/propeller_controller.yaml" command="load"/>
 
@@ -30,7 +31,7 @@
     <!-- Start controller manager (ros_control) -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
           respawn="false" output="screen"
-          args="joint_state_controller prop_vel_controller"/>
+          args="joint_state_controller joint_motor_controller"/>
 
 
     <node name="rviz" pkg="rviz" type="rviz"
