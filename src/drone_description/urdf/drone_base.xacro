@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <robot name="drone_base" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Dummy root link to satisfy KDL (no inertia) -->
-  <link name="base_link"/>
+  <!-- <link name="base_link"/> -->
 
   <!-- Base link (drone chassis) -->
-  <link name="chassis_link">
+  <link name="base_link">
     <visual>
       <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
@@ -18,7 +18,7 @@
       <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
         <!-- <mesh filename="package://drone_description/meshes/drone_base_w_motors.stl" scale="1 1 1"/>  -->
-        <box size="0.3 0.3 0.3"/> 
+        <box size="0.3 0.3 0.2"/> 
       </geometry>
     </collision>
     <inertial>
@@ -28,9 +28,9 @@
   </link>
 
   <!-- Fixed joint connecting world_link to base_link -->
-  <joint name="base_to_chassis" type="fixed">
+  <!-- <joint name="base_to_chassis" type="fixed">
     <parent link="base_link"/>
     <child link="chassis_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
+  </joint> -->
 </robot>

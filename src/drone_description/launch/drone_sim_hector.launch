@@ -1,0 +1,32 @@
+<launch>
+  <!-- Gazebo world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find drone_description)/worlds/collapsed_house.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+  </include>
+
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+
+  <!-- Load your Hector-flavored URDF into robot_description -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro $(find drone_description)/urdf/construction_drone_hector.xacro" />
+
+  <!-- Spawn a bit above ground -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
+        args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.4"
+        output="screen"/>
+
+  <!-- Load Hector controller gains and spawn the Twist controller (exactly like the repo) -->
+  <rosparam file="$(find hector_quadrotor_controller)/params/controller.yaml" />
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        respawn="false" output="screen"
+        args="controller/twist --shutdown-timeout 3"/>
+
+  <!-- Optional: RViz -->
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find drone_description)/rviz/drone_view.rviz" />
+</launch>

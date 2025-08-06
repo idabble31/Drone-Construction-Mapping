@@ -31,7 +31,7 @@
     </joint>
     
     <!-- Gazebo Sensor -->
-    <!-- <gazebo reference="${name}_link">
+    <gazebo reference="${name}_link">
       <sensor type="gpu_ray" name="${name}_velodyne">
         <pose>0 0 0 0 0 0</pose>
         <update_rate>20</update_rate>
@@ -63,7 +63,7 @@
           <frameName>${name}_link</frameName>
         </plugin>
       </sensor>
-    </gazebo> -->
+    </gazebo>
 
     </xacro:macro>
 

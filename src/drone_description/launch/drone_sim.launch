@@ -7,7 +7,7 @@
         <arg name="gui" value="true"/>
     </include>
 
-    <param name="robot_description" command="$(find xacro)/xacro $(find drone_description)/urdf/construction_drone.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro $(find drone_description)/urdf/construction_drone_hector.xacro"/>
 
     <!-- After loading robot_description -->
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>

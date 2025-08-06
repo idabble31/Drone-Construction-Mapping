@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot name="construction_drone" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- your model pieces -->
+  <xacro:include filename="$(find drone_description)/urdf/drone_base.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/airy_lidar.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/fisheye_camera.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/propeller.xacro"/>
+
+  <!-- instantiate sensors as before -->
+  <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 0"/>
+  <xacro:robosense_airy_lidar name="lidar_left"  parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
+  <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" hfov="2.094"/>
+  <xacro:fisheye_camera name="fisheye_camera_rear"  parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="2.094"/>
+  <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" hfov="2.094"/>
+
+  <!-- props, visual only (NO ros_control joints here) -->
+  <xacro:propeller name="front_right_prop" parent="base_link" xyz="0.105  0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="front_left_prop"  parent="base_link" xyz="-0.105  0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_left_prop"   parent="base_link" xyz="-0.105 -0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_right_prop"  parent="base_link" xyz="0.105  -0.105  0.24122" rpy="0 0 0"/>
+
+  <!-- make the same args Hector's macros expect -->
+  <xacro:arg name="world_frame" default="world"/>
+  <xacro:arg name="base_link_frame" default="base_link"/>
+
+  <!-- include the exact Hector macro files we inspected -->
+  <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_controller.gazebo.xacro"/>
+  <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_propulsion.gazebo.xacro"/>
+  <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_aerodynamics.gazebo.xacro"/>
+
+  <!-- call the macros (these inject the plugins) -->
+  <xacro:quadrotor_controller/>
+  <xacro:quadrotor_propulsion/>
+  <xacro:quadrotor_aerodynamics/>
+
+</robot>

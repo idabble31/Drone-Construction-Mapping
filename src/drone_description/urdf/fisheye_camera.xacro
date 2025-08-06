@@ -31,7 +31,7 @@
     </joint>
 
     <!-- Gazebo plugin for regular camera (not fisheye) -->
-    <!-- <gazebo reference="${name}_link">
+    <gazebo reference="${name}_link">
       <sensor type="camera" name="${name}_regular_cam">
         <pose>0 -0.5 0 0 0 -1.5708</pose>
         <always_on>true</always_on>
@@ -56,6 +56,6 @@
           <updateRate>30.0</updateRate>
         </plugin>
       </sensor>
-    </gazebo> -->
+    </gazebo>
   </xacro:macro>
 </robot>
