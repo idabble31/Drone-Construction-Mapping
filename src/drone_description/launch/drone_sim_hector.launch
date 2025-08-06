@@ -7,6 +7,15 @@
     <arg name="gui" value="true"/>
   </include>
 
+  <arg name="use_ground_truth_for_tf" default="true" />
+  <arg name="use_ground_truth_for_control" default="true" />
+  <arg name="use_pose_estimation" if="$(arg use_ground_truth_for_control)" default="false"/>
+  <arg name="use_pose_estimation" unless="$(arg use_ground_truth_for_control)" default="true"/>
+
+  <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+  <arg name="world_frame" default="world"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
+  <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/>
+
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
@@ -19,6 +28,32 @@
   <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
         args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.4"
         output="screen"/>
+
+  <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
+    <param name="odometry_topic" value="ground_truth/state" />
+    <param name="frame_id" value="/$(arg world_frame)" />
+    <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)" />
+    <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)" />
+  </node>
+
+  <group if="$(arg use_pose_estimation)">
+    <node name="pose_estimation" pkg="hector_quadrotor_pose_estimation" type="hector_quadrotor_pose_estimation" output="screen">
+      <rosparam file="$(find hector_quadrotor_pose_estimation)/params/simulation.yaml" />
+      <param name="nav_frame" value="$(arg tf_prefix)/nav" />
+      <param name="publish_world_nav_transform" value="true" />
+      <param name="tf_prefix" value="$(arg tf_prefix)" unless="$(arg use_ground_truth_for_tf)" />
+      <param name="tf_prefix" value="$(arg tf_prefix)/pose_estimation" if="$(arg use_ground_truth_for_tf)" />
+    </node>
+  </group>
+
+<group if="$(arg use_ground_truth_for_control)">
+    <param name="controller/state_topic" value="" />
+    <param name="controller/imu_topic" value="" />
+  </group>
+  <group unless="$(arg use_ground_truth_for_control)">
+    <param name="controller/state_topic" value="state" />
+    <param name="controller/imu_topic" value="imu" />
+  </group>
 
   <!-- Load Hector controller gains and spawn the Twist controller (exactly like the repo) -->
   <rosparam file="$(find hector_quadrotor_controller)/params/controller.yaml" />

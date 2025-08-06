@@ -72,12 +72,27 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        fisheye_camera_below_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         fisheye_camera_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         fisheye_camera_rear_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_prop_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_prop_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -92,10 +107,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        world_link:
+        rear_left_prop_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
+        rear_right_prop_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -105,8 +126,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.5928995609283447
-        Min Value: -0.7866347432136536
+        Max Value: 3.9700469970703125
+        Min Value: -0.413782000541687
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -133,8 +154,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.531648635864258
-        Min Value: -0.7736766338348389
+        Max Value: 3.1643083095550537
+        Min Value: -0.5096215605735779
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -171,7 +192,9 @@ Visualization Manager:
       Visibility:
         Camera: true
         Grid: true
+        Odometry: true
         PointCloud2: true
+        Pose: true
         RobotModel: true
         Value: false
       Zoom Factor: 1
@@ -188,7 +211,9 @@ Visualization Manager:
       Visibility:
         Camera: true
         Grid: true
+        Odometry: true
         PointCloud2: true
+        Pose: true
         RobotModel: true
         Value: false
       Zoom Factor: 1
@@ -205,15 +230,68 @@ Visualization Manager:
       Visibility:
         Camera: true
         Grid: true
+        Odometry: true
         PointCloud2: true
+        Pose: true
         RobotModel: true
         Value: false
       Zoom Factor: 1
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /ground_truth_to_tf/pose
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 10
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /ground_truth/state
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -237,7 +315,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.927556037902832
+      Distance: 16.126708984375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -245,17 +323,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.1861761510372162
-        Y: -0.13723504543304443
-        Z: 0.5511147975921631
+        X: 0.8234567046165466
+        Y: 1.0245318412780762
+        Z: 0.011137641035020351
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.14979717135429382
+      Pitch: 0.3297971487045288
       Target Frame: <Fixed Frame>
-      Yaw: 5.403593063354492
+      Yaw: 5.938593864440918
     Saved: ~
 Window Geometry:
   Camera:
