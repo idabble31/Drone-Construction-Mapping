@@ -6,23 +6,31 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   pcl_ros
   pcl_conversions
+  tf2_ros
+  tf2_sensor_msgs
+  message_filters
 )
+
+find_package(PCL REQUIRED COMPONENTS common io filters)
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs pcl_ros pcl_conversions
+  CATKIN_DEPENDS roscpp sensor_msgs pcl_ros pcl_conversions tf2_ros tf2_sensor_msgs message_filters
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
-add_executable(pcl_merge
-  src/pcl_merge_node.cpp
+add_executable(pcl_merge_node
   src/pcl_merge.cpp
 )
 
-target_link_libraries(pcl_merge
+target_link_libraries(pcl_merge_node
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
+add_executable(merge_two_lidars src/merge_two_lidars.cpp)
+target_link_libraries(merge_two_lidars ${catkin_LIBRARIES} ${PCL_LIBRARIES})

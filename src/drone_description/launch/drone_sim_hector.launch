@@ -16,6 +16,15 @@
   <arg name="world_frame" default="world"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
   <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/>
 
+  <arg name="cloud1_topic"   default="/lidar_right/points"/>
+  <arg name="cloud2_topic"   default="/lidar_left/points"/>
+  <arg name="output_topic"   default="/lidar/merged"/>
+  <arg name="target_frame"   default=""/>     <!-- leave empty to skip TF -->
+  <arg name="leaf_size"      default="0.10"/> <!-- meters; 0 disables -->
+  <arg name="queue_size"     default="50"/>
+  <arg name="approx_slop"    default="0.03"/> <!-- seconds -->
+  <arg name="tf_timeout"     default="0.05"/> <!-- seconds -->
+
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
@@ -61,13 +70,24 @@
         respawn="false" output="screen"
         args="controller/twist -(make it closer in uncomment)-shutdown-timeout 3"/> -->
   
-  <node pkg="drone_middleware" type="pcl_merge" name="pcl_merge" output="screen">
+  <!-- <node pkg="drone_middleware" type="pcl_merge" name="pcl_merge" output="screen">
       <rosparam>
           lidar_topics:
             - /lidar_right/points
             - /lidar_left/points
       </rosparam>
-      <!-- <param name="lidar_topics" value="[/lidar_right/points, /lidar_left/points]" /> -->
+      <param name="lidar_topics" value="[/lidar_right/points, /lidar_left/points]" />
+  </node> -->
+
+  <node pkg="drone_middleware" type="pcl_merge_node" name="pcl_merge" output="screen">
+    <param name="cloud1_topic"  value="$(arg cloud1_topic)"/>
+    <param name="cloud2_topic"  value="$(arg cloud2_topic)"/>
+    <param name="output_topic"  value="$(arg output_topic)"/>
+    <param name="target_frame"  value="$(arg target_frame)"/>
+    <param name="leaf_size"     value="$(arg leaf_size)"/>
+    <param name="queue_size"    value="$(arg queue_size)"/>
+    <param name="approx_slop"   value="$(arg approx_slop)"/>
+    <param name="tf_timeout"    value="$(arg tf_timeout)"/>
   </node>
 
   <!-- Optional: RViz -->

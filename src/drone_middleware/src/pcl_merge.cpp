@@ -1,49 +1,101 @@
 #include "drone_middleware/pcl_merge.hpp"
 
-PCLMergeNode::PCLMergeNode(ros::NodeHandle& nh, ros::NodeHandle& pnh)
-    : nh_(nh), pnh_(pnh)
+CloudMerger::CloudMerger(ros::NodeHandle& nh, ros::NodeHandle& pnh)
+  : sub1_(nh, "", 10), sub2_(nh, "", 10),
+    tf_buffer_(), tf_listener_(new tf2_ros::TransformListener(tf_buffer_))
 {
-    // Read parameter
-    if (!pnh_.getParam("lidar_topics", lidar_topics_)) {
-        ROS_ERROR("Parameter 'lidar_topics' not found!");
-        ros::shutdown();
-        return;
-    }
+  // parameters
+  pnh.param<std::string>("cloud1_topic", cloud1_topic_, "/lidar_right/points");
+  pnh.param<std::string>("cloud2_topic", cloud2_topic_, "/lidar_left/points");
+  pnh.param<std::string>("output_topic", out_topic_, "/lidar/merged");
+  pnh.param<std::string>("target_frame", target_frame_, std::string("")); // empty => no TF
+  pnh.param("leaf_size", leaf_, 0.0);
+  pnh.param("queue_size", queue_size_, 50);
+  pnh.param("approx_slop", approx_slop_, 0.03);
+  pnh.param("tf_timeout", tf_timeout_, 0.05);
 
-    if (lidar_topics_.size() != 2) {
-        ROS_ERROR("This version only supports merging exactly 2 LiDAR topics!");
-        ros::shutdown();
-        return;
-    }
+  // wire subscribers & sync
+  sub1_.subscribe(nh, cloud1_topic_, 10);
+  sub2_.subscribe(nh, cloud2_topic_, 10);
+  sync_.reset(new Sync(SyncPolicy(queue_size_), sub1_, sub2_));
+  sync_->setMaxIntervalDuration(ros::Duration(approx_slop_));
+  sync_->registerCallback(boost::bind(&CloudMerger::cb, this, _1, _2));
 
-    // Subscribers with message_filters
-    sub1_.subscribe(nh_, lidar_topics_[0], 1);
-    sub2_.subscribe(nh_, lidar_topics_[1], 1);
+  pub_ = nh.advertise<sensor_msgs::PointCloud2>(out_topic_, 1, false);
 
-    sync_.reset(new Sync(MySyncPolicy(10), sub1_, sub2_));
-    sync_->registerCallback(boost::bind(&PCLMergeNode::pointCloudCallback, this, _1, _2));
-
-    pub_ = nh_.advertise<sensor_msgs::PointCloud2>("merged_points", 1);
-
-    ROS_INFO("PCLMergeNode subscribed to: %s and %s",
-             lidar_topics_[0].c_str(), lidar_topics_[1].c_str());
+  ROS_INFO_STREAM("[pcl_merge] cloud1_topic=" << cloud1_topic_
+                  << " cloud2_topic=" << cloud2_topic_
+                  << " output=" << out_topic_
+                  << " target_frame=" << (target_frame_.empty() ? "<none>" : target_frame_)
+                  << " leaf_size=" << leaf_);
 }
 
-void PCLMergeNode::pointCloudCallback(
-    const sensor_msgs::PointCloud2ConstPtr& cloud1,
-    const sensor_msgs::PointCloud2ConstPtr& cloud2)
+bool CloudMerger::transformIfNeeded(const sensor_msgs::PointCloud2& in,
+                                    sensor_msgs::PointCloud2& out)
 {
-    pcl::PointCloud<pcl::PointXYZ> pcl1, pcl2;
-    pcl::fromROSMsg(*cloud1, pcl1);
-    pcl::fromROSMsg(*cloud2, pcl2);
+  if (target_frame_.empty() || in.header.frame_id == target_frame_) {
+    out = in;
+    return true;
+  }
+  try {
+    auto tf = tf_buffer_.lookupTransform(
+        target_frame_, in.header.frame_id, in.header.stamp,
+        ros::Duration(tf_timeout_));
+    tf2::doTransform(in, out, tf);
+    return true;
+  } catch (const std::exception& e) {
+    ROS_WARN_THROTTLE(1.0, "[pcl_merge] TF to %s failed from %s: %s",
+                      target_frame_.c_str(), in.header.frame_id.c_str(), e.what());
+    return false;
+  }
+}
 
-    pcl::PointCloud<pcl::PointXYZ> merged = pcl1;
-    merged += pcl2;
+void CloudMerger::cb(const sensor_msgs::PointCloud2ConstPtr& c1,
+                     const sensor_msgs::PointCloud2ConstPtr& c2)
+{
+  // transform if requested
+  sensor_msgs::PointCloud2 c1_tf, c2_tf;
+  bool ok1 = transformIfNeeded(*c1, c1_tf);
+  bool ok2 = transformIfNeeded(*c2, c2_tf);
+  if (!ok1 || !ok2) return; // wait for TF to become available
 
-    sensor_msgs::PointCloud2 output;
-    pcl::toROSMsg(merged, output);
-    output.header.stamp = ros::Time::now();
-    output.header.frame_id = cloud1->header.frame_id; // assuming same frame
+  // to PCL
+  pcl::PCLPointCloud2 pc1, pc2, merged;
+  pcl_conversions::toPCL(c1_tf, pc1);
+  pcl_conversions::toPCL(c2_tf, pc2);
 
-    pub_.publish(output);
+  // concatenate (keeps fields/metadata)
+  pcl::concatenatePointCloud(pc1, pc2, merged);
+
+  // optional voxel downsample
+  if (leaf_ > 1e-9) {
+    pcl::VoxelGrid<pcl::PCLPointCloud2> vg;
+    pcl::PCLPointCloud2::Ptr merged_ptr(new pcl::PCLPointCloud2(merged));
+    vg.setInputCloud(merged_ptr);
+    vg.setLeafSize(leaf_, leaf_, leaf_);
+    pcl::PCLPointCloud2 filtered;
+    vg.filter(filtered);
+    merged = filtered;
+  }
+
+  // back to ROS msg
+  sensor_msgs::PointCloud2 out;
+  pcl_conversions::fromPCL(merged, out);
+
+  // header: frame is either target_frame_ (if set) or input frame
+  out.header.frame_id = target_frame_.empty() ? c1_tf.header.frame_id : target_frame_;
+  out.header.stamp = (c1_tf.header.stamp > c2_tf.header.stamp) ? c1_tf.header.stamp
+                                                               : c2_tf.header.stamp;
+
+  pub_.publish(out);
+}
+
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "pcl_merge_node");
+  ros::NodeHandle nh;
+  ros::NodeHandle pnh("~");
+  CloudMerger node(nh, pnh);
+  ros::spin();
+  return 0;
 }
