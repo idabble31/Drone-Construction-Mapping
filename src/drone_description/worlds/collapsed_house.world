@@ -123,18 +123,18 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-4.07442 3.63864 0 0 -0 0</pose>
+      <pose>10.7862 0.356849 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>349 816000000</sim_time>
-      <real_time>351 279525987</real_time>
-      <wall_time>1753527285 28969144</wall_time>
-      <iterations>349816</iterations>
+      <sim_time>88 723000000</sim_time>
+      <real_time>89 128093656</real_time>
+      <wall_time>1755601111 233696320</wall_time>
+      <iterations>88723</iterations>
       <model name='collapsed_house'>
-        <pose>-2.25759 9.61327 0 0 -0 0</pose>
+        <pose>8.76615 -0.116897 0 0 -0 1.56576</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-2.25759 9.61327 0 0 -0 0</pose>
+          <pose>8.76615 -0.116897 0 0 -0 1.56576</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -156,7 +156,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>18.1855 -5.78393 10.4613 0 0.403643 2.7642</pose>
+        <pose>-52.8108 21.1739 12.0286 0 0.101797 -0.423001</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

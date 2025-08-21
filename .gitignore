@@ -1,3 +1,10 @@
+# ROS build artifacts
 build/
 devel/
 
+# Bag files & test data
+*.bag
+test_bags/
+
+# External libs
+third_party/

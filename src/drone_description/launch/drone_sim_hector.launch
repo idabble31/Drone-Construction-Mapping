@@ -1,7 +1,8 @@
 <launch>
   <!-- Gazebo world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find drone_description)/worlds/collapsed_house.world"/>
+    <!-- <arg name="world_name" value="$(find drone_description)/worlds/apartment.world"/> -->
+    <arg name="world_name" value="$(find hector_gazebo_worlds)/worlds/rolling_landscape_120m.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -12,18 +13,15 @@
   <arg name="use_pose_estimation" if="$(arg use_ground_truth_for_control)" default="false"/>
   <arg name="use_pose_estimation" unless="$(arg use_ground_truth_for_control)" default="true"/>
 
+  <!-- directory holding your YAMLs -->
+  <arg name="calib_dir"    default="$(env HOME)/.ros/camera_info"/>
+  <!-- run image_proc rectifiers? -->
+  <!-- <arg name="run_rectify"  default="true"/> -->
+
+
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
   <arg name="world_frame" default="world"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
   <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/>
-
-  <arg name="cloud1_topic"   default="/lidar_right/points"/>
-  <arg name="cloud2_topic"   default="/lidar_left/points"/>
-  <arg name="output_topic"   default="/lidar/merged"/>
-  <arg name="target_frame"   default=""/>     <!-- leave empty to skip TF -->
-  <arg name="leaf_size"      default="0.10"/> <!-- meters; 0 disables -->
-  <arg name="queue_size"     default="50"/>
-  <arg name="approx_slop"    default="0.03"/> <!-- seconds -->
-  <arg name="tf_timeout"     default="0.05"/> <!-- seconds -->
 
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen"/>
 
@@ -38,14 +36,14 @@
         args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.4"
         output="screen"/>
 
-  <!-- <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
+  <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
     <param name="odometry_topic" value="ground_truth/state" />
     <param name="frame_id" value="/$(arg world_frame)" />
     <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)" />
     <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)" />
-  </node> -->
+  </node>
 
-  <!-- <group if="$(arg use_pose_estimation)">
+  <group if="$(arg use_pose_estimation)">
     <node name="pose_estimation" pkg="hector_quadrotor_pose_estimation" type="hector_quadrotor_pose_estimation" output="screen">
       <rosparam file="$(find hector_quadrotor_pose_estimation)/params/simulation.yaml" />
       <param name="nav_frame" value="$(arg tf_prefix)/nav" />
@@ -53,44 +51,43 @@
       <param name="tf_prefix" value="$(arg tf_prefix)" unless="$(arg use_ground_truth_for_tf)" />
       <param name="tf_prefix" value="$(arg tf_prefix)/pose_estimation" if="$(arg use_ground_truth_for_tf)" />
     </node>
-  </group> -->
+  </group>
 
-<!-- <group if="$(arg use_ground_truth_for_control)">
+<group if="$(arg use_ground_truth_for_control)">
     <param name="controller/state_topic" value="" />
     <param name="controller/imu_topic" value="" />
   </group>
   <group unless="$(arg use_ground_truth_for_control)">
     <param name="controller/state_topic" value="state" />
     <param name="controller/imu_topic" value="imu" />
-  </group> -->
+  </group>
 
   <!-- Load Hector controller gains and spawn the Twist controller (exactly like the repo) -->
-  <!-- <rosparam file="$(find hector_quadrotor_controller)/params/controller.yaml" /> -->
-  <!--<node name="controller_spawner" pkg="controller_manager" type="spawner"
+  <rosparam file="$(find hector_quadrotor_controller)/params/controller.yaml" />
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen"
-        args="controller/twist -(make it closer in uncomment)-shutdown-timeout 3"/> -->
-  
-  <!-- <node pkg="drone_middleware" type="pcl_merge" name="pcl_merge" output="screen">
-      <rosparam>
-          lidar_topics:
-            - /lidar_right/points
-            - /lidar_left/points
-      </rosparam>
-      <param name="lidar_topics" value="[/lidar_right/points, /lidar_left/points]" />
-  </node> -->
+        args="controller/twist --shutdown-timeout 3"/>
 
-  <node pkg="drone_middleware" type="pcl_merge_node" name="pcl_merge" output="screen">
-    <param name="cloud1_topic"  value="$(arg cloud1_topic)"/>
-    <param name="cloud2_topic"  value="$(arg cloud2_topic)"/>
-    <param name="output_topic"  value="$(arg output_topic)"/>
-    <param name="target_frame"  value="$(arg target_frame)"/>
-    <param name="leaf_size"     value="$(arg leaf_size)"/>
-    <param name="queue_size"    value="$(arg queue_size)"/>
-    <param name="approx_slop"   value="$(arg approx_slop)"/>
-    <param name="tf_timeout"    value="$(arg tf_timeout)"/>
+  <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen" >
+      <param name="topic1" value="/lidar_right/points" />
+      <param name="topic2" value="/lidar_left/points" />
+      <param name="output" value="/lidar/merged_points" />
   </node>
 
+  <!-- <param name="/fisheye_camera_front/camera_info_url"
+         value="file://$(arg calib_dir)/fisheye_camera_front.yaml"/>
+  <param name="/fisheye_camera_rear/camera_info_url"
+         value="file://$(arg calib_dir)/fisheye_camera_rear.yaml"/>
+  <param name="/fisheye_camera_below/camera_info_url"
+         value="file://$(arg calib_dir)/fisheye_camera_below.yaml"/>
+
+  <group if="$(arg run_rectify)">
+    <node pkg="image_proc" type="image_proc" name="image_proc" ns="/fisheye_camera_front/fisheye_camera_front" />
+    <node pkg="image_proc" type="image_proc" name="image_proc" ns="/fisheye_camera_rear/fisheye_camera_rear" />
+    <node pkg="image_proc" type="image_proc" name="image_proc" ns="/fisheye_camera_below/fisheye_camera_below" />
+  </group> -->
+
   <!-- Optional: RViz -->
-  <node name="rviz" pkg="rviz" type="rviz"
-        args="-d $(find drone_description)/rviz/drone_view.rviz" />
+  <!-- <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find drone_description)/rviz/drone_view.rviz" /> -->
 </launch>
