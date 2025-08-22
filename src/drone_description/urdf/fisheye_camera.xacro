@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="fisheye_camera" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Macro for wide-angle (fisheye) camera -->
-  <xacro:macro name="fisheye_camera" params="name parent xyz rpy hfov">
+  <xacro:macro name="fisheye_camera" params="name parent xyz rpy">
     <link name="${name}_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -31,7 +31,7 @@
     </joint>
 
     <!-- Wide-angle (fisheye) Gazebo sensor -->
-    <gazebo reference="${name}_link">
+    <!-- <gazebo reference="${name}_link">
       <sensor type="wideanglecamera" name="${name}_fisheye_cam">
         <pose>0 -0.5 0 0 0 -1.5708</pose>
         <always_on>true</always_on>
@@ -78,6 +78,6 @@
           <updateRate>50.0</updateRate>
         </plugin>
       </sensor>
-    </gazebo>
+    </gazebo> -->
   </xacro:macro>
 </robot>
