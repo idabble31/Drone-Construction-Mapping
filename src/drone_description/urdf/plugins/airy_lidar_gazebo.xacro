@@ -2,11 +2,11 @@
 <robot name="robosense_airy_lidar_gz" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Gazebo sensor + ROS plugin for the Robosense Airy LIDAR -->
-  <xacro:macro name="robosense_airy_lidar_gazebo" params="name frame topic">
+  <xacro:macro name="robosense_airy_lidar_gazebo" params="name topic pose">
 
-    <gazebo reference="${frame}">
+    <gazebo reference="${name}_link">
       <sensor type="gpu_ray" name="${name}_velodyne">
-        <pose>0 0 0 0 0 0</pose>
+        <pose>${pose}</pose>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
         <ray>
@@ -33,7 +33,7 @@
 
         <plugin name="${name}_plugin" filename="libgazebo_ros_velodyne_gpu_laser.so">
           <topicName>${topic}</topicName>
-          <frameName>${frame}</frameName>
+          <frameName>${name}_link</frameName>
         </plugin>
       </sensor>
     </gazebo>

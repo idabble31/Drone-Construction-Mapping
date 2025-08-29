@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>drone_middleware</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The drone_middleware package</description>
 
-  <maintainer email="idabble@todo.todo">wii</maintainer>
+  <maintainer email="rafly.daffaldi@gmail.com">idabble</maintainer>
 
-  <license>TODO</license>
+  <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 

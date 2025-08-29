@@ -7,9 +7,9 @@
   <param name="map_output_dir" type="string" value="$(env HOME)/r3live_output" />
   <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
 
-  <rosparam command="load"
+  <!-- <rosparam command="load"
           ns="fisheye_camera_front/fisheye_camera_front"
-          file="$(env HOME)/.ros/camera_info/fisheye_camera_front.yaml"/>
+          file="$(env HOME)/.ros/camera_info/fisheye_camera_front.yaml"/> -->
 
 
   <!-- Use SIM_MERGED (enum 4) -->
@@ -26,4 +26,3 @@
           args="-d $(find r3live)/../config/rviz/r3live_rviz_config_ouster.rviz" />
   </group>
 </launch>
-<!-- <arg name="world_name" value="$(find hector_gazebo_worlds)/worlds/rolling_landscape_120m.world"/> -->

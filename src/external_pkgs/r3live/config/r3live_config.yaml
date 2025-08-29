@@ -23,13 +23,37 @@ r3live_vio:
       0.0,  863.4171, 518.3392,
       0.0, 0.0, 1.0 ] 
    camera_dist_coeffs: [-0.1080, 0.1050, -1.2872e-04, 5.7923e-05, -0.0222]  #k1, k2, p1, p2, k3
+   # front camera extrinsics
+   camera_ext_R: [1.0, 0.0, 0.0,
+                 0.0, 0.0, 1.0,
+                 0.0,-1.0, 0.0]
+   camera_ext_t: [0.122, 0.0, 0.18]
+   # rear camera extrinsics
+   # camera_ext_R: [-1.0, 0.0, 0.0,
+   #               0.0, 0.0, -1.0,
+   #               0.0,-1.0, 0.0]
+   # camera_ext_t: [-0.122, 0.0, 0.18]
+   # below camera extrinsics
+   # camera_ext_R: [0.0, -1.0, 0.0,
+   #                0.0,  0.0,-1.0,
+   #                1.0,  0.0, 0.0]
+   # camera_ext_R: [ 0.0,  1.0, 0.0,
+   #                 0.0,  0.0,  -1.0,
+   #                 -1.0,  0.0,  0.0]
+   # camera_ext_t: [0.0, 0.0, 0.095]
    # Fine extrinsic value. form camera-LiDAR calibration.
-   camera_ext_R:
-         [-0.00113207, -0.0158688, 0.999873,
-            -0.9999999,  -0.000486594, -0.00113994,
-            0.000504622,  -0.999874,  -0.0158682]
+   # camera_ext_R:
+   #       [-0.00113207, -0.0158688, 0.999873,
+   #          -0.9999999,  -0.000486594, -0.00113994,
+   #          0.000504622,  -0.999874,  -0.0158682]
+   # camera_ext_R: [0.00292758, 0.99987498, -0.01553909,
+   #               -0.99991498, 0.00272954, -0.01275054,
+   #               -0.01270653, 0.01557510, 0.99979796]
+#   camera_ext_t: [-0.137, 0.004, -0.231]
    # camera_ext_t: [0.050166, 0.0474116, -0.0312415] 
-   camera_ext_t: [0,0,0] 
+   # camera_ext_t: [0.050166, 0.0474116, -0.0312415]
+   # camera_ext_t: [0.050166, 0.0474116, -0.0312415] 
+   # camera_ext_t: [0,0,0] 
    # Rough extrinsic value, form CAD model, is not correct enough, but can be online calibrated in our datasets.
    # camera_ext_R:
    #    [0, 0, 1,
