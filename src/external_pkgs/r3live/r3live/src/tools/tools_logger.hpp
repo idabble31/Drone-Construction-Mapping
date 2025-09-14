@@ -61,6 +61,14 @@ Dr. Fu Zhang < fuzhang@hku.hk >.
 #include <iomanip>
 #include "tools_color_printf.hpp"
 #include "tools_timer.hpp"
+
+// === Arch check (x86 vs non-x86) ==========================================
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+  #define COMMON_TOOLS_X86 1
+#else
+  #define COMMON_TOOLS_X86 0
+#endif
+
 // #define FILE_LOGGER_VERSION      "V1.0"
 // #define FILE_LOGGER_VERSION_INFO "First version"
 
@@ -1004,17 +1012,17 @@ inline String get_current_folder()
     return ensureUnifySlash( dir );
 }
 
-#ifdef _MSC_VER
-#include <intrin.h>
-inline void CPUID( int CPUInfo[ 4 ], int level ) { __cpuid( CPUInfo, level ); }
-#else
-#include <cpuid.h>
-inline void CPUID( int CPUInfo[ 4 ], int level )
-{
-    unsigned *p( ( unsigned * ) CPUInfo );
-    __get_cpuid( ( unsigned & ) level, p + 0, p + 1, p + 2, p + 3 );
-}
-#endif
+// #ifdef _MSC_VER
+// #include <intrin.h>
+// inline void CPUID( int CPUInfo[ 4 ], int level ) { __cpuid( CPUInfo, level ); }
+// #else
+// #include <cpuid.h>
+// inline void CPUID( int CPUInfo[ 4 ], int level )
+// {
+//     unsigned *p( ( unsigned * ) CPUInfo );
+//     __get_cpuid( ( unsigned & ) level, p + 0, p + 1, p + 2, p + 3 );
+// }
+// #endif
 
 inline CPUINFO GetCPUInfo_()
 {
@@ -1316,17 +1324,42 @@ inline String get_current_folder()
     return ensureUnifySlash( dir );
 }
 
-#ifdef _MSC_VER
-#include <intrin.h>
-inline void CPUID( int CPUInfo[ 4 ], int level ) { __cpuid( CPUInfo, level ); }
+// #ifdef _MSC_VER
+// #include <intrin.h>
+// inline void CPUID( int CPUInfo[ 4 ], int level ) { __cpuid( CPUInfo, level ); }
+// #else
+// #include <cpuid.h>
+// inline void CPUID( int CPUInfo[ 4 ], int level )
+// {
+//     unsigned *p( ( unsigned * ) CPUInfo );
+//     __get_cpuid( ( unsigned & ) level, p + 0, p + 1, p + 2, p + 3 );
+// }
+// #endif
+// === Portable CPUID (x86 only) ============================================
+// Make sure we only define CPUID once even if this header duplicates content.
+#ifndef COMMON_TOOLS_CPUID_DEFINED
+#define COMMON_TOOLS_CPUID_DEFINED
+
+#if COMMON_TOOLS_X86
+  #ifdef _MSC_VER
+    #include <intrin.h>
+    inline void CPUID( int CPUInfo[4], int level ) { __cpuid( CPUInfo, level ); }
+  #else
+    #include <cpuid.h>
+    inline void CPUID( int CPUInfo[4], int level ) {
+      unsigned* p = reinterpret_cast<unsigned*>(CPUInfo);
+      __get_cpuid((unsigned&)level, p+0, p+1, p+2, p+3);
+    }
+  #endif
 #else
-#include <cpuid.h>
-inline void CPUID( int CPUInfo[ 4 ], int level )
-{
-    unsigned *p( ( unsigned * ) CPUInfo );
-    __get_cpuid( ( unsigned & ) level, p + 0, p + 1, p + 2, p + 3 );
-}
+  // Non-x86: provide a harmless stub (no features, empty vendor/name)
+  inline void CPUID( int CPUInfo[4], int /*level*/ ) {
+    CPUInfo[0] = CPUInfo[1] = CPUInfo[2] = CPUInfo[3] = 0;
+  }
 #endif
+
+#endif // COMMON_TOOLS_CPUID_DEFINED
+
 
 inline CPUINFO GetCPUInfo_()
 {

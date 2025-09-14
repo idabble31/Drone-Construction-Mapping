@@ -7,6 +7,11 @@
 
 #include "Common.h"
 #include "Util.h"
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+  #define SEACAVE_X86 1
+#else
+  #define SEACAVE_X86 0
+#endif
 #ifdef _MSC_VER
 #include <Shlobj.h>
 #ifndef _USE_WINSDKOS
@@ -57,7 +62,7 @@ bool OSSupportsSSE();
 bool OSSupportsAVX();
 
 
-// G L O B A L S ///////////////////////////////////////////////////
+// G L O B A LS ///////////////////////////////////////////////////
 
 const Flags Util::ms_CPUFNC(InitCPU());
 
@@ -473,17 +478,24 @@ Flags InitCPU()
 /*----------------------------------------------------------------*/
 
 
-#ifdef _MSC_VER
-#include <intrin.h>
-inline void CPUID(int CPUInfo[4], int level) {
-	__cpuid(CPUInfo, level);
-}
+#if SEACAVE_X86
+  #ifdef _MSC_VER
+    #include <intrin.h>
+    inline void CPUID(int CPUInfo[4], int level) {
+    	__cpuid(CPUInfo, level);
+    }
+  #else
+    #include <cpuid.h>
+    inline void CPUID(int CPUInfo[4], int level) {
+    	unsigned* p((unsigned*)CPUInfo);
+    	__get_cpuid((unsigned&)level, p+0, p+1, p+2, p+3);
+    }
+  #endif
 #else
-#include <cpuid.h>
-inline void CPUID(int CPUInfo[4], int level) {
-	unsigned* p((unsigned*)CPUInfo);
-	__get_cpuid((unsigned&)level, p+0, p+1, p+2, p+3);
-}
+  // Non-x86: harmless stub so callers compile and get "no features".
+  inline void CPUID(int CPUInfo[4], int /*level*/) {
+  	CPUInfo[0] = CPUInfo[1] = CPUInfo[2] = CPUInfo[3] = 0;
+  }
 #endif
 
 /**
@@ -604,24 +616,28 @@ bool OSSupportsAVX()
 // Function to detect SSE availability in operating system.
 bool OSSupportsSSE()
 {
-	// try SSE instruction and look for crash
-	try {
-		asm("xorps %xmm0, %xmm0");
-	}
-	catch(int e) {
-		return false;     // unknown exception occurred
-	}
+	// Only meaningful on x86; return false on non-x86.
+#if SEACAVE_X86
+	// Best-effort: assume SSE state is supported when compiling for x86/x64 here.
 	return true;
+#else
+	return false;
+#endif
 }
 // Function to detect AVX availability in operating system.
 bool OSSupportsAVX()
 {
+	// Only meaningful on x86; return false on non-x86.
+#if SEACAVE_X86
 	// check if the OS will save the YMM registers
 	unsigned int index(0); //specify 0 for XFEATURE_ENABLED_MASK register
 	unsigned int eax, edx;
 	__asm__ __volatile__("xgetbv" : "=a"(eax), "=d"(edx) : "c"(index));
 	unsigned long long xcrFeatureMask(((unsigned long long)edx << 32) | eax);
 	return (xcrFeatureMask & 0x6) == 0x6;
+#else
+	return false;
+#endif
 }
 /*----------------------------------------------------------------*/
 #endif // _MSC_VER
