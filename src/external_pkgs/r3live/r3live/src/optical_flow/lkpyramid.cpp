@@ -46,6 +46,20 @@
 #include "tools_logger.hpp"
 #include <omp.h>
 
+// --- SIMD portability: map SSE intrinsics to NEON on ARM, or include SSE on x86 ---
+#if defined(__aarch64__) || defined(__ARM_NEON) || defined(__ARM_NEON__)
+  // 1-file header that maps SSE2/3/… intrinsics to ARM NEON.
+  // Vendor it into your tree (see note below) and include it here:
+  #include "sse2neon.h"
+#elif defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+  #include <emmintrin.h>  // SSE2
+  #include <xmmintrin.h>  // SSE
+#else
+  // Unknown arch without SSE/NEON: you can either add another shim
+  // or compile a scalar-only path if one exists in this file.
+  #define R3LIVE_NO_SIMD 1
+#endif
+
 #define CV_DESCALE(x, n) (((x) + (1 << ((n)-1))) >> (n))
 using namespace cv;
 using std::cout;

@@ -138,6 +138,22 @@ add_executable(r3live_mapping src/r3live.cpp
                 src/rgb_map/image_frame.cpp
                 src/rgb_map/pointcloud_rgbd.cpp
               )
+
+# >>> Add this block (ARM/Jetson only) <<<
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+  # adjust this path if you put sse2neon.h somewhere else
+  set(SSE2NEON_DIR
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/external_pkgs/r3live/r3live/thirdparty/sse2neon)
+  if (EXISTS ${SSE2NEON_DIR}/sse2neon.h)
+    target_include_directories(r3live_mapping PRIVATE ${SSE2NEON_DIR})
+    # some compilers look at this to enable NEON codepaths
+    target_compile_definitions(r3live_mapping PRIVATE __ARM_NEON=1)
+  else()
+    message(FATAL_ERROR "sse2neon.h not found in ${SSE2NEON_DIR}.")
+  endif()
+endif()
+# <<< end block >>>
+
 target_link_libraries(r3live_mapping 
                           ${catkin_LIBRARIES}
                           ${Boost_LIBRARIES}
