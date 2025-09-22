@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Front LiDAR -->
+  <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_front" output="screen">
+    <param name="config_path" value="$(find rslidar_sdk)/config/lidar_front.yaml"/>
+  </node>
+
+  <!-- Rear LiDAR -->
+  <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_rear" output="screen">
+    <param name="config_path" value="$(find rslidar_sdk)/config/lidar_rear.yaml"/>
+  </node>
+
+  <!-- Transforms -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_front" output="screen"
+        args="1.2 0.0 0.5 0 -1.5708 0 base_link rslidar_front"/> <!-- rslidar_front -->
+  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_rear" output="screen"
+        args="2.4 0.0 0.5 0 -1.5708 -3.14159 base_link rslidar_rear"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_front_robot_description" output="screen"
+        args="0 0 0 0 0 0 rslidar_front lidar_right_link" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_rear_robot_description" output="screen"
+        args="0 0 0 0 0 0 rslidar_rear lidar_left_link" />
+
+  <!-- rviz -->
+  <node pkg="rviz" name="rviz" type="rviz" output="screen" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+</launch>

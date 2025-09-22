@@ -1,0 +1,11 @@
+<launch>
+  <!-- Run dual lidar drivers -->
+  <include file="$(find rslidar_sdk)/launch/dual_lidar.launch"/>
+
+  <!-- PointCloud concatenation -->
+  <node pkg="pcl_ros" type="pointcloud_concat" name="lidar_fusion_node" output="screen">
+    <remap from="input1" to="/rslidar_front/points"/>
+    <remap from="input2" to="/rslidar_rear/points"/>
+    <remap from="output" to="/lidar/points_combined"/>
+  </node>
+</launch>

@@ -47,7 +47,7 @@ find_package(catkin REQUIRED COMPONENTS ${CORE_CATKIN_DEPS})
 
 # find_package(Ceres REQUIRED)
 find_package(PCL REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.2 REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")
@@ -143,7 +143,7 @@ add_executable(r3live_mapping src/r3live.cpp
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
   # adjust this path if you put sse2neon.h somewhere else
   set(SSE2NEON_DIR
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/external_pkgs/r3live/r3live/thirdparty/sse2neon)
+      ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sse2neon)
   if (EXISTS ${SSE2NEON_DIR}/sse2neon.h)
     target_include_directories(r3live_mapping PRIVATE ${SSE2NEON_DIR})
     # some compilers look at this to enable NEON codepaths
