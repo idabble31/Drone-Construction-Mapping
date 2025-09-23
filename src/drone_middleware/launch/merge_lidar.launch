@@ -1,0 +1,7 @@
+<launch>
+<node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
+    <param name="topic1" value="/rslidar_front/points"/>
+    <param name="topic2" value="rslidar_rear/points"/>
+    <param name="output" value="/lidar/merged_points"/>
+  </node>
+</launch>

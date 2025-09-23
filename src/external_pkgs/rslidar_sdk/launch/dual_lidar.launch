@@ -23,5 +23,5 @@
         args="0 0 0 0 0 0 rslidar_rear lidar_left_link" />
 
   <!-- rviz -->
-  <node pkg="rviz" name="rviz" type="rviz" output="screen" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+  <!-- <node pkg="rviz" name="rviz" type="rviz" output="screen" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" /> -->
 </launch>
