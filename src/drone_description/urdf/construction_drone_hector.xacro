@@ -16,7 +16,7 @@
   <xacro:robosense_airy_lidar name="lidar_left"  parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
   <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" /> -->
   <!-- <xacro:fisheye_camera name="fisheye_camera_rear"  parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="3.1415"/> -->
-  <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" />
+  <!-- <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" /> -->
 
   <!-- <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" />
   <xacro:robosense_airy_lidar name="lidar_left" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" />
@@ -27,15 +27,15 @@
   <!-- Second positioning -->
   <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 -1.5708"/>
   <xacro:robosense_airy_lidar name="lidar_left"  parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 1.5708"/>
-  <!-- <xacro:fisheye_camera name="fisheye_camera_front"  parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 1.5708" /> -->
+  <xacro:fisheye_camera name="fisheye_camera_front"  parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 1.5708" />
   <!-- <xacro:fisheye_camera name="fisheye_camera_rear" parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 -1.5708" /> -->
 
   <xacro:if value="$(arg simulation_mode)">
     <xacro:robosense_airy_lidar_gazebo name="lidar_right" topic="/lidar_right/points" pose="0.0 0.0 0.0 0.0 0.0 0.0"/>
     <xacro:robosense_airy_lidar_gazebo name="lidar_left" topic="/lidar_left/points" pose="0.0 0.0 0.0 0.0 0.0 0.0"/>
-    <!-- <xacro:fisheye_camera_gazebo name="fisheye_camera_front" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/> -->
+    <xacro:fisheye_camera_gazebo name="fisheye_camera_front" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/>
     <!-- <xacro:fisheye_camera_gazebo name="fisheye_camera_rear" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/> -->
-    <xacro:fisheye_camera_gazebo name="fisheye_camera_below" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/>
+    <!-- <xacro:fisheye_camera_gazebo name="fisheye_camera_below" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/> -->
 
     <xacro:arg name="world_frame" default="world"/>
     <xacro:arg name="base_link_frame" default="lidar_left_link"/>

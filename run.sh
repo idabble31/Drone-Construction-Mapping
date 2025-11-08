@@ -3,4 +3,5 @@
 source devel/setup.bash
 
 roslaunch drone_routine main.launch \
-    simulation_mode:=true
+    simulation_mode:=true \
+    rviz:=0
