@@ -1,0 +1,27 @@
+<launch>
+    <!-- local guard arg so the included file can be enabled/disabled -->
+    <!-- <arg name="enabled" default="true" /> -->
+    <!-- <group if="$(arg enabled)"> -->
+        <!-- r3live core params -->
+        <param name="Lidar_front_end/rs_airy/cloud_topic" type="string" value="/rslidar_rear/points" />
+        <param name="/LiDAR_pointcloud_topic" type="string" value="/laser_cloud_flat" />
+        <param name="/IMU_topic"             type="string" value="/imu" />
+        <param name="/Image_topic"           type="string" value="/front_camera/image_dewarped" />
+        <param name="map_output_dir" type="string" value="$(env HOME)/r3live_output" />
+        <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
+
+        <!-- Lidar front end selection (ensure this matches the enum index in LiDAR_front_end.cpp) -->
+        <param name="/Lidar_front_end/lidar_type" type="int" value="4" />
+        <param name="/Lidar_front_end/point_step" type="int" value="1" />
+        <param name="r3live_lio/lio_update_point_step" type="int" value="6" />
+
+        <!-- Airy-specific tuning params -->
+        <param name="/Lidar_front_end/airy_points_per_scan" type="int" value="8640" />
+        <param name="/Lidar_front_end/airy_scan_duration" type="double" value="0.1" />
+        <param name="/Lidar_front_end/point_filter_num" type="double" value="3.0" />
+
+        <!-- r3live nodes -->
+        <node pkg="r3live" type="r3live_LiDAR_front_end" name="r3live_LiDAR_front_end" output="screen" required="true"/>
+        <node pkg="r3live" type="r3live_mapping"       name="r3live_mapping"       output="screen" required="true"/>
+    <!-- </group> -->
+</launch>

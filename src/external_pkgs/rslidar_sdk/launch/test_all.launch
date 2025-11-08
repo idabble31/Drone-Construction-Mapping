@@ -3,67 +3,88 @@
   <!-- <node pkg="rslidar_sdk" name="rslidar_sdk_node_left" type="rslidar_sdk_node" output="screen">
     <param name="config_path" value="$(find rslidar_sdk)/config/config_left.yaml"/>
   </node> -->
-
+  
   <!-- Right LiDAR -->
   <!-- <node pkg="rslidar_sdk" name="rslidar_sdk_node_right" type="rslidar_sdk_node" output="screen">
     <param name="config_path" value="$(find rslidar_sdk)/config/config_right.yaml"/>
   </node> -->
-
+  
   <!-- <node pkg="tf" type="static_transform_publisher" name="map_to_rslidar_transform"
     args="0 0 0 0 0 0 map rslidar 100" />
-
   <node pkg="lidar_transformer" name="point_cloud_transformer_right" type="point_cloud_transformer_node.py" output="screen" />
-
   <node pkg="lidar_transformer" name="point_cloud_transformer_left" type="point_cloud_transformer_node_left.py" output="screen" /> -->
-
+  
   <!-- Front Camera -->
-    <group ns="front_camera">
-        <node name="front_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
-            <param name="video_device" value="/dev/video0" />
-            <param name="image_width" value="640" />
-            <param name="image_height" value="480" />
-            <param name="pixel_format" value="yuyv" />
-            <param name="camera_frame_id" value="front_camera" />
-            <param name="io_method" value="mmap"/>
-            <!-- <param name="camera_info_url" value="file:///home/scanhub/scanFLY/src/scanfly_cameras/config/dewarp.yaml" /> -->
-        </node>
-    </group>
-
-    <!-- Middle Camera -->
-    <group ns="middle_camera">
-        <node name="middle_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
-            <param name="video_device" value="/dev/video2" />
-            <param name="image_width" value="640" />
-            <param name="image_height" value="480" />
-            <param name="pixel_format" value="yuyv" />
-            <param name="camera_frame_id" value="middle_camera" />
-            <param name="io_method" value="mmap"/>
-            <!-- <param name="camera_info_url" value="file:///home/scanhub/scanFLY/src/scanfly_cameras/config/dewarp.yaml" /> -->
-        </node>
-    </group>
-
-    <!-- Back Camera -->
-    <group ns="back_camera">
-        <node name="back_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
-            <param name="video_device" value="/dev/video4" />
-            <param name="image_width" value="640" />
-            <param name="image_height" value="480" />
-            <param name="pixel_format" value="yuyv" />
-            <param name="camera_frame_id" value="back_camera" />
-            <param name="io_method" value="mmap"/>
-            <!-- <param name="camera_info_url" value="file:///home/scanhub/scanFLY/src/scanfly_cameras/config/dewarp.yaml" /> -->
-        </node>
-    </group>
-
-    <!-- Static Transforms from all_cameras.launch -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_front_camera" args="0 0 0 0 0 0 base_link front_camera" />
-    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_middle_camera" args="-0.5 0 0 0 0 0 base_link middle_camera" />
-    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_back_camera" args="-1 0 0 0 0 0 base_link back_camera" />
-
-  <!-- <node pkg="tf" type="static_transform_publisher" name="base_link_to_rslidar_transform"
-    args="0 0 0 0 0 0 base_link rslidar 100" /> -->
-
-    <node pkg="inertial_sense" type="inertial_sense_node" name="inertial_sense_node" />
-    <node pkg="tf2_ros" type="static_transform_publisher" name="ins_to_body" args="0 0 0 0 0 0 ins body" />
-    
+  <group ns="front_camera">
+    <node name="front_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="/dev/video0" />
+      <param name="image_width" value="640" />
+      <param name="image_height" value="480" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="front_camera" />
+      <param name="io_method" value="mmap"/>
+    </node>
+  </group>
+  
+  <!-- Middle Camera -->
+  <group ns="middle_camera">
+    <node name="middle_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="/dev/video2" />
+      <param name="image_width" value="640" />
+      <param name="image_height" value="480" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="middle_camera" />
+      <param name="io_method" value="mmap"/>
+    </node>
+  </group>
+  
+  <!-- Back Camera -->
+  <group ns="back_camera">
+    <node name="back_camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="/dev/video4" />
+      <param name="image_width" value="640" />
+      <param name="image_height" value="480" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="back_camera" />
+      <param name="io_method" value="mmap"/>
+    </node>
+  </group>
+  
+  <!-- Static Transforms for Cameras -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_front_camera" 
+        args="0 0 0 0 0 0 base_link front_camera" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_middle_camera" 
+        args="-0.5 0 0 0 0 0 base_link middle_camera" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_back_camera" 
+        args="-1 0 0 0 0 0 base_link back_camera" />
+  
+  <!-- Inertial Sense IMU Node -->
+  <node pkg="inertial_sense" type="inertial_sense_node" name="inertial_sense_node" />
+  
+  <!-- ========================================== -->
+  <!-- FIXED: Corrected IMU TF Chain             -->
+  <!-- ========================================== -->
+  
+  <!-- REMOVED: This was redundant and confusing -->
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="ins_to_body" 
+        args="0 0 0 0 0 0 ins body" /> -->
+  
+  <!-- FIXED: Changed from "ins" to "body" to match IMU frame_id -->
+  <!-- IMU publishes in "body" frame, so connect "body" directly to "base_link" -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="body_to_base_link"
+        args="0 0 0 0 0 0 body base_link" />
+  
+  <!-- ADDED: Explicit transform from base_link to LiDAR frames -->
+  <!-- Left LiDAR: positioned at (0.0, 0.139, 0.14) with +90° yaw rotation -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_lidar_left" 
+        args="0.0 0.139 0.14 0 0 1.5708 base_link lidar_left_link" />
+  
+  <!-- Right LiDAR: positioned at (0.0, -0.139, 0.14) with -90° yaw rotation -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_lidar_right" 
+        args="0.0 -0.139 0.14 0 0 -1.5708 base_link lidar_right_link" />
+  
+  <!-- OPTIONAL: If using merged point cloud, create a merged frame -->
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_lidar_merged" 
+        args="0.0 0.0 0.14 0 0 0 base_link lidar_merged_link" /> -->
+   
 </launch>

@@ -51,11 +51,17 @@ void R3LIVE::imu_cbk( const sensor_msgs::Imu::ConstPtr &msg_in )
 {
     sensor_msgs::Imu::Ptr msg( new sensor_msgs::Imu( *msg_in ) );
     double                timestamp = msg->header.stamp.toSec();
+
+    //  std::cout << "IMU time: " << std::fixed << std::setprecision(9) << timestamp 
+    //           << " (diff from last: " << timestamp - last_timestamp_imu << ")" << std::endl;
+
     g_camera_lidar_queue.imu_in( timestamp );
     mtx_buffer.lock();
     if ( timestamp < last_timestamp_imu )
     {
         ROS_ERROR( "imu loop back, clear buffer" );
+        ROS_INFO("IMU timestamp: %.9f, last: %.9f, diff: %.9f", 
+         timestamp, last_timestamp_imu, timestamp - last_timestamp_imu);
         imu_buffer_lio.clear();
         imu_buffer_vio.clear();
         flg_reset = true;
@@ -463,6 +469,12 @@ void R3LIVE::feat_points_cbk( const sensor_msgs::PointCloud2::ConstPtr &msg_in )
 {
     sensor_msgs::PointCloud2::Ptr msg( new sensor_msgs::PointCloud2( *msg_in ) );
     msg->header.stamp = ros::Time( msg_in->header.stamp.toSec() - m_lidar_imu_time_delay );
+
+    // std::cout << "LiDAR time: " << std::fixed << std::setprecision(9) 
+    //           << msg->header.stamp.toSec() << " (original: " 
+    //           << msg_in->header.stamp.toSec() << ", delay: " 
+    //           << m_lidar_imu_time_delay << ")" << std::endl;
+
     if ( g_camera_lidar_queue.lidar_in( msg_in->header.stamp.toSec() + 0.1 ) == 0 )
     {
         return;
@@ -566,6 +578,22 @@ int R3LIVE::service_LIO_update()
             pca_time = 0;
             svd_time = 0;
             t0 = omp_get_wtime();
+            std::cout << "Before IMU Process - Measures.lidar points: " << Measures.lidar->points.size() 
+                      << ", IMU messages: " << Measures.imu.size() << std::endl;
+                    
+            p_imu->Process( Measures, g_lio_state, feats_undistort );
+                    
+            std::cout << "After IMU Process - feats_undistort points: " << feats_undistort->points.size() << std::endl;
+            if (feats_undistort->points.size() > 50000) {
+                ROS_WARN("Too many points (%lu), downsampling to 50000", feats_undistort->points.size());
+                pcl::PointCloud<PointType>::Ptr temp(new pcl::PointCloud<PointType>());
+                pcl::VoxelGrid<PointType> voxel;
+                voxel.setInputCloud(feats_undistort);
+                voxel.setLeafSize(0.1, 0.1, 0.1);  // Changed from 0.5 to 0.1
+                voxel.filter(*temp);
+                *feats_undistort = *temp;
+                ROS_INFO("After downsampling: %lu points", feats_undistort->points.size());
+            }
             p_imu->Process( Measures, g_lio_state, feats_undistort );
 
             g_camera_lidar_queue.g_noise_cov_acc = p_imu->cov_acc;

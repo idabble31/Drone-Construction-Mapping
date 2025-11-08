@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   cv_bridge
   std_msgs
+  camera_info_manager
 )
 
 find_package(PCL REQUIRED COMPONENTS common io filters)
@@ -33,6 +34,7 @@ catkin_package(
     image_transport
     cv_bridge
     std_msgs
+    camera_info_manager
 )
 
 include_directories(
@@ -55,6 +57,20 @@ target_link_libraries(merge_two_lidars
   ${PCL_LIBRARIES}
 )
 
+add_executable(pcd_saver_node src/pcd_saver.cpp)
+target_link_libraries(pcd_saver_node
+  ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
+
+add_executable(sensor_sync_node src/synchronize_sensor.cpp)
+target_link_libraries(sensor_sync_node ${catkin_LIBRARIES})
+add_dependencies(sensor_sync_node ${catkin_EXPORTED_TARGETS})
+
+add_executable(sync_with_imu_interp src/sync_sensor_interp.cpp)
+target_link_libraries(sync_with_imu_interp ${catkin_LIBRARIES})
+add_dependencies(sync_with_imu_interp ${catkin_EXPORTED_TARGETS})
+
 # ---------- Fisheye dewarp node (ROS1 Noetic) ----------
 # Vendor cnpy (NPY reader): place cnpy.h/cnpy.cpp in third_party/cnpy
 #   mkdir -p third_party/cnpy
@@ -76,5 +92,7 @@ install(TARGETS
   pcl_merge_node
   merge_two_lidars
   dewarp_fisheye_node
+  pcd_saver_node
+  sensor_sync_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

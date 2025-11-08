@@ -5,6 +5,7 @@ devel/
 # Bag files & test data
 *.bag
 test_bags/
+bags/
 
 # External libs
 third_party/

@@ -937,7 +937,6 @@ bool InertialSenseROS::update_firmware_srv_callback(inertial_sense::FirmwareUpda
   return true;
 }
 
-
 ros::Time InertialSenseROS::ros_time_from_week_and_tow(const uint32_t week, const double timeOfWeek)
 {
   ros::Time rostime(0, 0);
@@ -956,11 +955,7 @@ ros::Time InertialSenseROS::ros_time_from_week_and_tow(const uint32_t week, cons
       got_first_message_ = true;
       INS_local_offset_ = ros::Time::now().toSec() - timeOfWeek;
     }
-    else // low-pass filter offset to account for drift
-    {
-      double y_offset = ros::Time::now().toSec() - timeOfWeek;
-      INS_local_offset_ = 0.005 * y_offset + 0.995 * INS_local_offset_;
-    }
+    // REMOVED THE FILTERING - just use the original offset
     // Publish with ROS time
     rostime = ros::Time(INS_local_offset_ + timeOfWeek);
   }
@@ -986,16 +981,72 @@ ros::Time InertialSenseROS::ros_time_from_start_time(const double time)
       got_first_message_ = true;
       INS_local_offset_ = ros::Time::now().toSec() - time;
     }
-    else // low-pass filter offset to account for drift
-    {
-      double y_offset = ros::Time::now().toSec() - time;
-      INS_local_offset_ = 0.005 * y_offset + 0.995 * INS_local_offset_;
-    }
+    // REMOVED THE FILTERING - just use the original offset
     // Publish with ROS time
     rostime = ros::Time(INS_local_offset_ + time);
   }
   return rostime;
 }
+
+
+// ros::Time InertialSenseROS::ros_time_from_week_and_tow(const uint32_t week, const double timeOfWeek)
+// {
+//   ros::Time rostime(0, 0);
+//   //  If we have a GPS fix, then use it to set timestamp
+//   if (GPS_towOffset_)
+//   {
+//     uint64_t sec = UNIX_TO_GPS_OFFSET + floor(timeOfWeek) + week*7*24*3600;
+//     uint64_t nsec = (timeOfWeek - floor(timeOfWeek))*1e9;
+//     rostime = ros::Time(sec, nsec);
+//   }
+//   else
+//   {
+//     // Otherwise, estimate the uINS boot time and offset the messages
+//     if (!got_first_message_)
+//     {
+//       got_first_message_ = true;
+//       INS_local_offset_ = ros::Time::now().toSec() - timeOfWeek;
+//     }
+//     else // low-pass filter offset to account for drift
+//     {
+//       double y_offset = ros::Time::now().toSec() - timeOfWeek;
+//       INS_local_offset_ = 0.005 * y_offset + 0.995 * INS_local_offset_;
+//     }
+//     // Publish with ROS time
+//     rostime = ros::Time(INS_local_offset_ + timeOfWeek);
+//   }
+//   return rostime;
+// }
+
+// ros::Time InertialSenseROS::ros_time_from_start_time(const double time)
+// {
+//   ros::Time rostime(0, 0);
+  
+//   //  If we have a GPS fix, then use it to set timestamp
+//   if (GPS_towOffset_ > 0.001)
+//   {
+//     uint64_t sec = UNIX_TO_GPS_OFFSET + floor(time + GPS_towOffset_) + GPS_week_*7*24*3600;
+//     uint64_t nsec = (time + GPS_towOffset_ - floor(time + GPS_towOffset_))*1e9;
+//     rostime = ros::Time(sec, nsec);
+//   }
+//   else
+//   {
+//     // Otherwise, estimate the uINS boot time and offset the messages
+//     if (!got_first_message_)
+//     {
+//       got_first_message_ = true;
+//       INS_local_offset_ = ros::Time::now().toSec() - time;
+//     }
+//     else // low-pass filter offset to account for drift
+//     {
+//       double y_offset = ros::Time::now().toSec() - time;
+//       INS_local_offset_ = 0.005 * y_offset + 0.995 * INS_local_offset_;
+//     }
+//     // Publish with ROS time
+//     rostime = ros::Time(INS_local_offset_ + time);
+//   }
+//   return rostime;
+// }
 
 ros::Time InertialSenseROS::ros_time_from_tow(const double tow)
 {

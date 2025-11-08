@@ -180,6 +180,11 @@ struct Camera_Lidar_queue
 
     int lidar_in(const double &in_time)
     {
+        // std::cout << "lidar_in called - LiDAR time: " << std::fixed << std::setprecision(9) 
+        //       << in_time << ", Last IMU time: " << m_last_imu_time 
+        //       << ", Diff: " << (m_last_imu_time - in_time) 
+        //       << ", Window: " << m_sliding_window_tim << std::endl;
+
         // cout << "LIDAR in " << endl;
         if (m_if_have_lidar_data == 0)
         {

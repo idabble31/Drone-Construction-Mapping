@@ -87,15 +87,34 @@ void ImuProcess::IMU_Initial( const MeasureGroup &meas, StatesGroup &state_inout
         cov_gyr = cov_gyr * ( N - 1.0 ) / N + ( cur_gyr - mean_gyr ).cwiseProduct( cur_gyr - mean_gyr ) * ( N - 1.0 ) / ( N * N );
         // cov_acc = Eigen::Vector3d(0.1, 0.1, 0.1);
         // cov_gyr = Eigen::Vector3d(0.01, 0.01, 0.01);
+        if (N % 10 == 0) {
+            std::cout << "=== Init N=" << N << " ===" << std::endl;
+            std::cout << "Mean ACC: " << mean_acc.transpose() << " (norm: " << mean_acc.norm() << ")" << std::endl;
+            std::cout << "Mean GYR: " << mean_gyr.transpose() << std::endl;
+        }
         N++;
     }
 
     // TODO: fix the cov
     cov_acc = Eigen::Vector3d( COV_START_ACC_DIAG, COV_START_ACC_DIAG, COV_START_ACC_DIAG );
     cov_gyr = Eigen::Vector3d( COV_START_GYRO_DIAG, COV_START_GYRO_DIAG, COV_START_GYRO_DIAG );
-    state_inout.gravity = Eigen::Vector3d( 0, 0, 9.805 );
+    state_inout.gravity = Eigen::Vector3d( 0, 0, -9.805 ); // add negative in z-axis
     state_inout.rot_end = Eye3d;
     state_inout.bias_g = mean_gyr;
+
+    // Add bias calculation
+    // METHOD 1: Fixed Gravity
+    state_inout.bias_a = mean_acc - state_inout.gravity;  // This computes the bias!
+
+    // OR METHOD 2: Auto-align gravity (more robust)
+    // Normalize mean_acc to get gravity direction
+    // state_inout.gravity = -mean_acc.normalized() * 9.805;
+    // state_inout.bias_a = Eigen::Vector3d::Zero();
+
+    // Debug prints:
+    std::cout << "=== IMU Init Complete ===" << std::endl;
+    std::cout << "Final bias_g: " << state_inout.bias_g.transpose() << std::endl;
+    std::cout << "Final gravity: " << state_inout.gravity.transpose() << std::endl;
 }
 
 void ImuProcess::lic_state_propagate( const MeasureGroup &meas, StatesGroup &state_inout )
@@ -113,6 +132,26 @@ void ImuProcess::lic_state_propagate( const MeasureGroup &meas, StatesGroup &sta
     const double &pcl_end_time = pcl_beg_time + pcl_out.points.back().curvature / double( 1000 );
     double        end_pose_dt = pcl_end_time - imu_end_time;
 
+    // ADD THIS:
+    static double sum_offset = 0;
+    static int count_offset = 0;
+    sum_offset += (imu_end_time - pcl_beg_time);
+    count_offset++;
+    if (count_offset % 50 == 0) {
+        double avg_offset = sum_offset / count_offset;
+        ROS_WARN("Average IMU-LiDAR time offset: %.6f seconds", avg_offset);
+        ROS_WARN("Suggested lidar_time_delay: %.6f", avg_offset);
+    }
+    
+    // ADD THIS DEBUG:
+    std::cout << "=== Timestamp Check ===" << std::endl;
+    std::cout << "PCL begin: " << std::fixed << std::setprecision(6) << pcl_beg_time << std::endl;
+    std::cout << "PCL end:   " << pcl_end_time << std::endl;
+    std::cout << "IMU end:   " << imu_end_time << std::endl;
+    std::cout << "end_pose_dt: " << end_pose_dt << std::endl;
+    std::cout << "IMU samples: " << v_imu.size() << std::endl;
+    std::cout << "========================" << std::endl;
+
     state_inout = imu_preintegration( state_inout, v_imu, end_pose_dt );
     last_imu_ = meas.imu.back();
 }
@@ -123,7 +162,7 @@ bool check_state( StatesGroup &state_inout )
     bool is_fail = false;
     for ( int idx = 0; idx < 3; idx++ )
     {
-        if ( fabs( state_inout.vel_end( idx ) ) > 10 )
+        if ( fabs( state_inout.vel_end( idx ) ) > 50 )
         {
             is_fail = true;
             scope_color( ANSI_COLOR_RED_BG );
@@ -158,6 +197,15 @@ StatesGroup ImuProcess::imu_preintegration( const StatesGroup &state_in, std::de
 {
     std::unique_lock< std::mutex > lock( g_imu_premutex );
     StatesGroup                    state_inout = state_in;
+
+    
+    // ADD THIS DEBUG:
+    std::cout << "=== Preintegration Start ===" << std::endl;
+    std::cout << "Input vel: " << state_in.vel_end.transpose() << std::endl;
+    std::cout << "Input bias_a: " << state_in.bias_a.transpose() << std::endl;
+    std::cout << "Input bias_g: " << state_in.bias_g.transpose() << std::endl;
+    std::cout << "Gravity: " << state_inout.gravity.transpose() << std::endl;
+
     if ( check_state( state_inout ) )
     {
         state_inout.display( state_inout, "state_inout" );
@@ -193,6 +241,12 @@ StatesGroup ImuProcess::imu_preintegration( const StatesGroup &state_in, std::de
         angvel_avr -= state_inout.bias_g;
 
         acc_avr = acc_avr - state_inout.bias_a;
+
+        if (it_imu == v_imu.begin()) {
+            std::cout << "First IMU in sequence:" << std::endl;
+            std::cout << "  Raw acc: " << acc_avr.transpose() << std::endl;
+            std::cout << "  Raw gyr: " << angvel_avr.transpose() << std::endl;
+        }
 
         if ( tail->header.stamp.toSec() < state_inout.last_update_time )
         {
@@ -255,6 +309,12 @@ StatesGroup ImuProcess::imu_preintegration( const StatesGroup &state_in, std::de
         angvel_last = angvel_avr;
         acc_s_last = acc_imu;
 
+        if (it_imu == v_imu.begin()) {
+            std::cout << "  After rotation acc_imu: " << acc_imu.transpose() << std::endl;
+            std::cout << "  dt: " << dt << std::endl;
+            std::cout << "  vel_imu: " << vel_imu.transpose() << std::endl;
+        }
+
         // cout <<  std::setprecision(3) << " dt = " << dt << ", acc: " << acc_avr.transpose()
         //      << " acc_imu: " << acc_imu.transpose()
         //      << " vel_imu: " << vel_imu.transpose()
@@ -282,6 +342,13 @@ StatesGroup ImuProcess::imu_preintegration( const StatesGroup &state_in, std::de
     state_inout.vel_end = vel_imu + acc_imu * dt;
     state_inout.rot_end = R_imu * Exp( angvel_avr, dt );
     state_inout.pos_end = pos_imu + vel_imu * dt + 0.5 * acc_imu * dt * dt;
+
+     // ADD THIS DEBUG:
+    std::cout << "=== Preintegration End ===" << std::endl;
+    std::cout << "Output vel: " << state_inout.vel_end.transpose() << std::endl;
+    std::cout << "Vel change: " << (state_inout.vel_end - state_in.vel_end).transpose() << std::endl;
+    std::cout << "Pos change: " << (state_inout.pos_end - state_in.pos_end).transpose() << std::endl;
+    std::cout << "=============================\n" << std::endl;
 
     // cout <<__FILE__ << ", " << __LINE__ <<" ,diagnose lio_state = " << std::setprecision(2) <<(state_inout - StatesGroup()).transpose() << endl;
 
@@ -314,6 +381,15 @@ void ImuProcess::lic_point_cloud_undistort( const MeasureGroup &meas, const Stat
     /*** sort point clouds by offset time ***/
     pcl_out = *( meas.lidar );
     std::sort( pcl_out.points.begin(), pcl_out.points.end(), time_list );
+
+    // ADD THIS DEBUG:
+    std::cout << "=== Point Cloud Time Check ===" << std::endl;
+    std::cout << "Total points: " << pcl_out.points.size() << std::endl;
+    std::cout << "First point curvature: " << pcl_out.points.front().curvature << std::endl;
+    std::cout << "Last point curvature: " << pcl_out.points.back().curvature << std::endl;
+    std::cout << "PCL scan duration: " << pcl_out.points.back().curvature / 1000.0 << " seconds" << std::endl;
+    std::cout << "===============================" << std::endl;
+    
     const double &pcl_end_time = pcl_beg_time + pcl_out.points.back().curvature / double( 1000 );
     /*std::cout << "[ IMU Process ]: Process lidar from " << pcl_beg_time - g_lidar_star_tim << " to " << pcl_end_time- g_lidar_star_tim << ", "
               << meas.imu.size() << " imu msgs from " << imu_beg_time- g_lidar_star_tim << " to " << imu_end_time- g_lidar_star_tim

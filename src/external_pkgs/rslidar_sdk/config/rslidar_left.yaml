@@ -12,18 +12,18 @@ lidar:
       tail_layer_bytes: 0
       min_distance: 0.2
       max_distance: 200
-      use_lidar_clock: true
+      use_lidar_clock: false # was true
       dense_points: false
-      ts_first_point: true
+      ts_first_point: false # was true
       start_angle: 0
       end_angle: 360
       pcap_repeat: true
       pcap_rate: 1.0
       pcap_path: /home/robosense/lidar.pcap
     ros:
-      ros_frame_id: rslidar_rear
-      ros_recv_packet_topic: /rslidar_packets_rear
-      ros_send_packet_topic: /rslidar_packets_rear
-      ros_send_imu_data_topic: /rslidar_imu_data_rear
-      ros_send_point_cloud_topic: /rslidar_rear/points
+      ros_frame_id: lidar_left_link
+      ros_recv_packet_topic: /rslidar_packets_left
+      ros_send_packet_topic: /rslidar_packets_left
+      ros_send_imu_data_topic: /rslidar_imu_data_left
+      ros_send_point_cloud_topic: /rslidar_left/points
       ros_queue_length: 100

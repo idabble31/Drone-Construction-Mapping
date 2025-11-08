@@ -1,0 +1,30 @@
+# Inertial Sense IMU Configuration
+
+# IMU Rotation (how IMU is physically mounted)
+# [roll, pitch, yaw] in radians
+INS_rpy_radians: [0.0, 0.0, 0.0]  # Start with identity (no rotation)
+
+# IMU Position offset from base_link
+# [x, y, z] in meters
+INS_xyz: [0.0, 0.0, 0.0]
+
+# Frame settings
+frame_id: "body"
+
+# Local Tangent Coordinate Frame
+# 0 = NED (North-East-Down)
+# 1 = ENU (East-North-Up) - ROS standard
+LTCF: 1
+
+# Serial port
+port: "/dev/ttyACM0"
+baudrate: 921600
+
+# Enable data streams
+stream_IMU: true
+stream_INS: true
+stream_GPS: true
+stream_GPS_info: false
+stream_mag: false
+stream_baro: false
+stream_preint_IMU: false

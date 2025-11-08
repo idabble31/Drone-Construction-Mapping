@@ -21,6 +21,13 @@ endif()
 
 add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
 
+set(OpenCV_DIR "$ENV{HOME}/opencv-4.5.3-install/lib/cmake/opencv4" CACHE PATH "OpenCV directory" FORCE)
+find_package(OpenCV 4.5 REQUIRED)
+message(STATUS "===== BEFORE CATKIN - OpenCV version: ${OpenCV_VERSION} =====")
+message(STATUS "===== OpenCV_DIR: ${OpenCV_DIR} =====")
+message(STATUS "===== OpenCV_LIBS: ${OpenCV_LIBS} =====")
+message(STATUS "===== OpenCV_LIBRARIES: ${OpenCV_LIBRARIES} =====")
+
 # Add OpenCV if available
 # set(OpenCV_DIR "/home/zivlin/opt/opencv/build")
 FIND_PACKAGE(Boost REQUIRED COMPONENTS filesystem iostreams program_options system serialization)
@@ -44,10 +51,25 @@ if(USE_LIVOX)
 endif()
 
 find_package(catkin REQUIRED COMPONENTS ${CORE_CATKIN_DEPS})
+message(STATUS "===== AFTER CATKIN - OpenCV_VERSION: ${OpenCV_VERSION} =====")
+message(STATUS "===== AFTER CATKIN - OpenCV_DIR: ${OpenCV_DIR} =====")
+
+set(OpenCV_DIR "$ENV{HOME}/opencv-4.5.3-install/lib/cmake/opencv4" CACHE PATH "OpenCV directory" FORCE)
+find_package(OpenCV 4.5 REQUIRED)
+
+message(STATUS "===== AFTER RE-FINDING OpenCV =====")
+message(STATUS "===== FOUND OpenCV version: ${OpenCV_VERSION} =====")
+message(STATUS "===== OpenCV_DIR: ${OpenCV_DIR} =====")
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};$ENV{HOME}/opencv-4.5.3-install/lib")
+link_directories($ENV{HOME}/opencv-4.5.3-install/lib)
+
+message(STATUS "===== AFTER CATKIN - OpenCV version: ${OpenCV_VERSION} =====")
 
 # find_package(Ceres REQUIRED)
 find_package(PCL REQUIRED)
-find_package(OpenCV 4.2 REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")

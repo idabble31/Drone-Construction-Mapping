@@ -1,0 +1,45 @@
+ <launch>
+
+
+
+  <arg name="simulation_mode" default="true"/>
+
+  <arg name="lidar_type_sim"  default="5"/>   <!-- SIM_MERGED -->
+
+  <arg name="lidar_type_real" default="5"/>   <!-- keep same unless you know the correct enum -->
+
+ 
+
+  <!-- R3LIVE common params -->
+
+  <param name="/LiDAR_pointcloud_topic" type="string" value="/laser_cloud_flat" />
+
+  <param name="/IMU_topic"             type="string" value="/imu" />
+
+  <param name="/Image_topic"           type="string" value="/front_camera/image_dewarped" />
+
+  <param name="map_output_dir"         type="string" value="$(env HOME)/r3live_output" />
+
+  <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
+
+
+
+  <!-- R3LIVE lidar_type differs by mode -->
+
+  <param name="/Lidar_front_end/point_step" type="int" value="6" />
+
+  <param name="r3live_lio/lio_update_point_step" type="int" value="6" />
+
+  <param name="/Lidar_front_end/lidar_type" type="int" value="$(arg lidar_type_sim)"  if="$(arg simulation_mode)"/>
+
+  <param name="/Lidar_front_end/lidar_type" type="int" value="$(arg lidar_type_real)" unless="$(arg simulation_mode)"/>
+
+
+
+  <node pkg="r3live" type="r3live_LiDAR_front_end" name="r3live_LiDAR_front_end" output="screen" required="true"/>
+
+  <node pkg="r3live" type="r3live_mapping"       name="r3live_mapping"       output="screen" required="true"/>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find drone_routine)/rviz/r3live_view.rviz" required="false"/>
+
+</launch>

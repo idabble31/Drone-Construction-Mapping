@@ -4,6 +4,8 @@
 #include <sensor_msgs/Image.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Header.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <camera_info_manager/camera_info_manager.h>
 #include <cctype>
 
 #include <opencv2/opencv.hpp>
@@ -31,7 +33,11 @@ public:
     pnh.param<std::string>("matrix_path", matrix_path_, std::string("camera_matrix.npy"));
     pnh.param<std::string>("dist_path", dist_path_, std::string("dist_coeffs.npy"));
     pnh.param<bool>("publish_side_by_side", publish_sbs_, true);
-    pnh.param<std::string>("frame_id", frame_id_, std::string("camera"));  // <-- Option A
+    pnh.param<std::string>("frame_id", frame_id_, std::string("camera"));
+
+    // New params for CameraInfo
+    pnh.param<std::string>("camera_name", camera_name_, std::string("front_camera"));
+    pnh.param<std::string>("camera_info_url", camera_info_url_, std::string("")); // e.g., file:///.../front_camera.yaml
 
     // Topics
     std::string ns;
@@ -40,9 +46,13 @@ public:
     std::string topic_dewarp = ns.empty() ? "image_dewarped" : ns + "/image_dewarped";
     std::string topic_sbs    = ns.empty() ? "image_sbs"      : ns + "/image_sbs";
 
-    pub_orig_   = it_.advertise(topic_orig,   1);
-    pub_dewarp_ = it_.advertise(topic_dewarp, 1);
-    if (publish_sbs_) pub_sbs_ = it_.advertise(topic_sbs, 1);
+    // Camera publishers (publish image + CameraInfo)
+    cam_pub_orig_   = it_.advertiseCamera(topic_orig,   1);
+    cam_pub_dewarp_ = it_.advertiseCamera(topic_dewarp, 1);
+    if (publish_sbs_) pub_sbs_ = it_.advertise(topic_sbs, 1); // image only
+
+    // Initialize CameraInfo manager (may be empty if no URL provided)
+    cinfo_.reset(new camera_info_manager::CameraInfoManager(nh_, camera_name_, camera_info_url_));
 
     // Live balance adjustment
     sub_balance_ = nh_.subscribe<std_msgs::Float64>("fisheye_dewarp/set_balance", 1,
@@ -55,7 +65,7 @@ public:
         }
       });
 
-    // Load calibration
+    // Load calibration (K, D)
     loadCalibration(matrix_path_, dist_path_);
 
     // Open camera
@@ -90,19 +100,31 @@ public:
       // Common header for all images
       std_msgs::Header hdr;
       hdr.stamp = ros::Time::now();
-      hdr.frame_id = frame_id_;  // <-- set frame_id
+      hdr.frame_id = frame_id_;
 
-      // Publish original
+      // Build CameraInfo for RAW (prefer YAML; otherwise synthesize from K_, D_)
+      sensor_msgs::CameraInfo ci_raw = getOrMakeCameraInfo(K_, D_, size_.width, size_.height);
+      ci_raw.header = hdr;
+
+      // Publish original (image + info)
       sensor_msgs::ImagePtr msg_orig = cv_bridge::CvImage(hdr, "bgr8", frame).toImageMsg();
-      pub_orig_.publish(msg_orig);
+      cam_pub_orig_.publish(*msg_orig, ci_raw);
 
       // Dewarp
       cv::Mat undist;
       cv::remap(frame, undist, map1_, map2_, cv::INTER_LINEAR);
 
-      sensor_msgs::ImagePtr msg_dew = cv_bridge::CvImage(hdr, "bgr8", undist).toImageMsg();
-      pub_dewarp_.publish(msg_dew);
+      // CameraInfo for DEWARPED: use Knew_, zero distortion
+      sensor_msgs::CameraInfo ci_dew = ci_raw; // start from raw info for metadata
+      overwriteWithRectifiedIntrinsics(ci_dew, Knew_);
+      zeroDistortion(ci_dew);
+      ci_dew.header = hdr;
 
+      // Publish dewarped (image + info)
+      sensor_msgs::ImagePtr msg_dew = cv_bridge::CvImage(hdr, "bgr8", undist).toImageMsg();
+      cam_pub_dewarp_.publish(*msg_dew, ci_dew);
+
+      // Optional side-by-side (image only)
       if (publish_sbs_ && pub_sbs_.getNumSubscribers() > 0) {
         int h = frame.rows, w = frame.cols;
         cv::Mat combo(h, w*2, frame.type());
@@ -118,6 +140,70 @@ public:
   }
 
 private:
+  // ---- Helpers for CameraInfo ----
+  static std::string guessDistortionModel(const cv::Mat& D) {
+    // OpenCV fisheye typically 4 coeffs; else default to pinhole/radtan
+    int rows = D.rows, cols = D.cols;
+    int n = rows * cols;
+    if (n == 4) return "equidistant"; // ROS name for OpenCV fisheye
+    return "plumb_bob";               // radial-tangential
+  }
+
+  static void setK(sensor_msgs::CameraInfo& ci, const cv::Mat& K) {
+    for (int r=0, i=0; r<3; ++r)
+      for (int c=0; c<3; ++c, ++i)
+        ci.K[i] = K.at<double>(r,c);
+  }
+
+  static void setPFromK(sensor_msgs::CameraInfo& ci, const cv::Mat& K) {
+    // P = [ fx 0 cx 0 ; 0 fy cy 0 ; 0 0 1 0 ]
+    for (double &v : ci.P) v = 0.0;
+    ci.P[0] = K.at<double>(0,0);
+    ci.P[2] = K.at<double>(0,2);
+    ci.P[5] = K.at<double>(1,1);
+    ci.P[6] = K.at<double>(1,2);
+    ci.P[10]= 1.0;
+  }
+
+  static void zeroDistortion(sensor_msgs::CameraInfo& ci) {
+    ci.D.assign(ci.D.size(), 0.0);
+  }
+
+  sensor_msgs::CameraInfo getOrMakeCameraInfo(const cv::Mat& K, const cv::Mat& D,
+                                              int w, int h) {
+    sensor_msgs::CameraInfo ci = cinfo_->getCameraInfo();
+    // Ensure size matches actual stream
+    ci.width = w; ci.height = h;
+
+    bool yaml_has_intrinsics =
+      (ci.K[0] != 0.0 || ci.K[4] != 0.0 || ci.K[2] != 0.0 || ci.K[5] != 0.0);
+
+    if (!yaml_has_intrinsics) {
+      // Synthesize from K/D
+      ci.distortion_model = guessDistortionModel(D);
+      ci.D.resize(D.rows * D.cols);
+      for (size_t i=0; i<ci.D.size(); ++i) ci.D[i] = D.at<double>(int(i), 0);
+
+      setK(ci, K);
+
+      // Identity rectification
+      for (int i=0; i<9; ++i) ci.R[i] = (i%4==0) ? 1.0 : 0.0;
+
+      setPFromK(ci, K);
+    }
+
+    return ci;
+  }
+
+  void overwriteWithRectifiedIntrinsics(sensor_msgs::CameraInfo& ci, const cv::Mat& Krect) {
+    // For the rectified (dewarped) image: use Knew_ and zero distortion
+    setK(ci, Krect);
+    setPFromK(ci, Krect);
+    // Keep R as identity for monocular rectified image
+    for (int i=0; i<9; ++i) ci.R[i] = (i%4==0) ? 1.0 : 0.0;
+  }
+
+  // ---- Existing code ----
   static cv::Mat loadNPY(const std::string& path) {
     cnpy::NpyArray arr = cnpy::npy_load(path);
     const std::vector<size_t>& shp = arr.shape;
@@ -154,9 +240,9 @@ private:
     if (K_.rows != 3 || K_.cols != 3)
       throw std::runtime_error("camera_matrix.npy must be 3x3");
     // Fisheye supports 4/8/12/14; proceed even if different shape
-    if (!((D_.rows == 4 && D_.cols == 1) || (D_.rows == 1 && D_.cols == 4) ||
-          D_.rows == 8 || D_.rows == 12 || D_.rows == 14)) {
-      ROS_WARN("Unexpected dist_coeffs shape %dx%d; continuing", D_.rows, D_.cols);
+    int n = D_.rows * D_.cols;
+    if (!(n == 4 || n == 8 || n == 12 || n == 14)) {
+      ROS_WARN("Unexpected dist_coeffs length %d; continuing", n);
     }
   }
 
@@ -188,15 +274,19 @@ private:
   // Members
   ros::NodeHandle nh_;
   image_transport::ImageTransport it_;
-  image_transport::Publisher pub_orig_, pub_dewarp_, pub_sbs_;
+  // Replaced image publishers with CameraPublishers for raw & dewarped
+  image_transport::CameraPublisher cam_pub_orig_, cam_pub_dewarp_;
+  image_transport::Publisher pub_sbs_;
   ros::Subscriber sub_balance_;
+  std::unique_ptr<camera_info_manager::CameraInfoManager> cinfo_;
 
   std::string device_, matrix_path_, dist_path_;
   int req_w_{1920}, req_h_{1080};
   double fps_{30.0}, balance_{0.0};
   bool publish_sbs_{true};
   bool have_size_{false};
-  std::string frame_id_{"camera"};  // <-- Option A member
+  std::string frame_id_{"camera"};
+  std::string camera_name_, camera_info_url_;
 
   cv::VideoCapture cap_;
   cv::Size size_;

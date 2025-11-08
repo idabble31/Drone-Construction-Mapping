@@ -2,5 +2,5 @@
 
 source devel/setup.bash
 
-roslaunch drone_routine new_main.launch \
-    simulation_mode:=false
+roslaunch drone_routine main.launch \
+    simulation_mode:=true
