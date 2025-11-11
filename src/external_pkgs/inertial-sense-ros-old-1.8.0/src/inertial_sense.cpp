@@ -51,8 +51,8 @@ void InertialSenseROS::configure_data_streams()
     SET_CALLBACK(DID_DUAL_IMU, dual_imu_t, IMU_callback,1);
 //    SET_CALLBACK(DID_INL2_VARIANCE, nav_dt_ms, inl2_variance_t, INS_variance_callback);
   }
-  nh_private_.param<bool>("publishTf", publishTf, true);
-  nh_private_.param<int>("LTCF", LTCF, NED);
+  nh_private_.param<bool>("publishTf", publishTf, false);
+  nh_private_.param<int>("LTCF", LTCF, ENU);
   // Set up the IMU ROS stream
   nh_private_.param<bool>("stream_IMU", IMU_.enabled, true);
 
@@ -152,7 +152,7 @@ void InertialSenseROS::connect()
 {
   nh_private_.param<std::string>("port", port_, "/dev/ttyACM0");
   nh_private_.param<int>("baudrate", baudrate_, 921600);
-  nh_private_.param<std::string>("frame_id", frame_id_, "body");
+  nh_private_.param<std::string>("frame_id", frame_id_, "base_link");
 
   /// Connect to the uINS
   ROS_INFO("Connecting to serial port \"%s\", at %d baud", port_.c_str(), baudrate_);

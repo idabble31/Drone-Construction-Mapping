@@ -30,7 +30,7 @@
 #define HECTOR_GAZEBO_PLUGINS_UPDATE_TIMER_H
 
 #include <sdf/sdf.hh>
-#include <gazebo/physics/World.hh>
+#include <gazebo/physicsworld.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
 
 #include <gazebo/common/Event.hh>

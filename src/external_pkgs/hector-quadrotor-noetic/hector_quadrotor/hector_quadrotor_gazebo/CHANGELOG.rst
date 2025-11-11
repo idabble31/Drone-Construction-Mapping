@@ -42,7 +42,7 @@ Changelog for package hector_quadrotor_gazebo
 * a few fixes for RTT integration in hector_quadrotor. Added urdf macro for rtt_gazebo_plugin macro.
 * deprecated quadrotor_simple_controller.gazebo.xacro
 * fixed node type for static_transform_publisher in spawn_quadrotor.launch
-* changed frame_id for gazebo fixed frame to /world and added a static_transform_publisher for world->nav
+* changed frame_id for gazebo fixed frame to world and added a static_transform_publisher for world->nav
 * increased drift for the barometric pressure sensor
 * added some command input ports to quadrotor_controller.gazebo.xacro
 * Contributors: Johannes Meyer

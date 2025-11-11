@@ -494,7 +494,7 @@ int R3LIVE::service_LIO_update()
 {
     nav_msgs::Path path;
     path.header.stamp = ros::Time::now();
-    path.header.frame_id = "/world";
+    path.header.frame_id = "world";
     /*** variables definition ***/
     Eigen::Matrix< double, DIM_OF_STATES, DIM_OF_STATES > G, H_T_H, I_STATE;
     G.setZero();

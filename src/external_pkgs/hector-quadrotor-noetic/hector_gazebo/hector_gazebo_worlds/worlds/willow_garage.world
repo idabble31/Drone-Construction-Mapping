@@ -40,5 +40,5 @@
       <direction>0 0 -1</direction>
       <cast_shadows>false</cast_shadows>
     </light>
-  </world>
+  <world>
 </sdf>

@@ -1,0 +1,131 @@
+<launch>
+  <!-- ========= Arguments ========= -->
+  <arg name="simulation_mode" default="true"/>
+
+  <!-- Namespace-derived TF prefix (empty if no ROS_NAMESPACE set) -->
+  <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+  <arg name="world_frame" default="aft_mapped"/>
+
+  <!-- Hector control/TF choices -->
+  <arg name="use_ground_truth_for_tf" default="true"/>
+  <arg name="use_ground_truth_for_control" default="true"/>
+
+  <!-- use_pose_estimation depends on 'use_ground_truth_for_control':
+       - if using GT for control -> default false
+       - else -> default true -->
+  <arg name="use_pose_estimation" default="false" if="$(arg use_ground_truth_for_control)"/>
+  <arg name="use_pose_estimation" default="true" unless="$(arg use_ground_truth_for_control)"/>
+
+  <!-- LIDAR topics available globally; defaults switch by sim/real -->
+  <arg name="lidar_right_topic" default="/lidar_right/points" if="$(arg simulation_mode)"/>
+  <arg name="lidar_right_topic" default="/rs_airy/right"     unless="$(arg simulation_mode)"/>
+  <arg name="lidar_left_topic"  default="/lidar_left/points" if="$(arg simulation_mode)"/>
+  <arg name="lidar_left_topic"  default="/rs_airy/left"      unless="$(arg simulation_mode)"/>
+
+  <!-- ========= Robot description ========= -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder
+                  $(find drone_description)/urdf/construction_drone_hector.xacro
+                  simulation_mode:=$(arg simulation_mode)"/>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher"
+        name="robot_state_publisher" output="screen"/>
+
+  <!-- ========= Simulation ========= -->
+  <group if="$(arg simulation_mode)">
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <!-- <arg name="world_name" value="$(find drone_description)/worlds/apartment.world"/>] -->
+      <arg name="world_name" value="$(find hector_gazebo_worlds)/worlds/rolling_landscape_120m.world"/>
+      <arg name="paused" value="false"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="gui" value="true"/>
+    </include>
+
+    <!-- Joint state publisher (for fixed joints/visuals) -->
+    <node pkg="joint_state_publisher" type="joint_state_publisher"
+          name="joint_state_publisher" output="screen"/>
+
+    <!-- Spawn the URDF into Gazebo -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
+          args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.0 -R 0 -P 0 -Y 0"
+          output="screen"/>
+
+    <!-- Ground truth -> TF -->
+    <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
+      <param name="odometry_topic" value="ground_truth/state"/>
+      <!-- No leading slash (TF best practice) -->
+      <param name="frame_id" value="$(arg world_frame)"/>
+      <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)"/>
+      <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)"/>
+    </node>
+
+    <!-- Pose estimation (enabled when not using GT for control by default) -->
+    <group if="$(arg use_pose_estimation)">
+      <node name="pose_estimation" pkg="hector_quadrotor_pose_estimation"
+            type="hector_quadrotor_pose_estimation" output="screen">
+        <rosparam file="$(find hector_quadrotor_pose_estimation)/params/simulation.yaml"/>
+        <param name="nav_frame" value="$(arg tf_prefix)/nav"/>
+        <param name="publish_world_nav_transform" value="true"/>
+        <param name="tf_prefix" value="$(arg tf_prefix)" unless="$(arg use_ground_truth_for_tf)"/>
+        <param name="tf_prefix" value="$(arg tf_prefix)/pose_estimation" if="$(arg use_ground_truth_for_tf)"/>
+      </node>
+    </group>
+
+    <!-- Controller IO selection -->
+    <group if="$(arg use_ground_truth_for_control)">
+      <param name="controller/state_topic" value=""/>
+      <param name="controller/imu_topic" value=""/>
+    </group>
+    <group unless="$(arg use_ground_truth_for_control)">
+      <param name="controller/state_topic" value="state"/>
+      <param name="controller/imu_topic" value="imu"/>
+    </group>
+
+    <!-- Hector controller gains + twist controller -->
+    <rosparam file="$(find hector_quadrotor_controller)/params/controller.yaml"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+          respawn="false" output="screen"
+          args="controller/twist --shutdown-timeout 3"/>
+  </group>
+
+  <!-- ========= Real hardware ========= -->
+  <group unless="$(arg simulation_mode)">
+    <!-- Add real drivers for LIDARs, cameras, IMU here -->
+    <!-- Topics already set via top-level args. -->
+  </group>
+
+  <!-- ========= LIDAR merger (works in both sim & real) ========= -->
+  <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
+    <param name="topic1" value="$(arg lidar_right_topic)"/>
+    <param name="topic2" value="$(arg lidar_left_topic)"/>
+    <param name="output" value="/lidar/merged_points"/>
+  </node>
+
+  <!-- R3Live (add here as needed) -->
+  <param name="/LiDAR_pointcloud_topic" type="string" value="/laser_cloud_flat" />
+  <param name="/IMU_topic"             type="string" value="/raw_imu" />
+  <param name="/Image_topic"           type="string" value="/camera/image_color" />
+
+  <param name="map_output_dir" type="string" value="$(env HOME)/r3live_output" />
+  <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
+
+  <!-- <rosparam command="load"
+          ns="fisheye_camera_front/fisheye_camera_front"
+          file="$(env HOME)/.ros/camera_info/fisheye_camera_front.yaml"/> -->
+
+
+  <!-- Use SIM_MERGED (enum 4) -->
+  <param name="/Lidar_front_end/lidar_type" type="int" value="4" />
+  <param name="/Lidar_front_end/point_step" type="int" value="1" />
+  <param name="r3live_lio/lio_update_point_step" type="int" value="6" />
+
+  <node pkg="r3live" type="r3live_LiDAR_front_end" name="r3live_LiDAR_front_end" output="screen" required="true"/>
+  <node pkg="r3live" type="r3live_mapping"       name="r3live_mapping"       output="screen" required="true"/>
+
+  <arg name="rviz" default="0" />
+  <group if="$(arg rviz)">
+    <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log"
+          args="-d $(find drone_routine)/rviz/r3live_view.rviz" />
+  </group>
+  
+</launch>

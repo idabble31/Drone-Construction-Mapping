@@ -163,6 +163,8 @@ catkin_install_python(PROGRAMS
   scripts/sync_monitor.py
   scripts/timestamp_diagnostic_tool.py
   scripts/timestamp_relay.py
+  scripts/drift_monitor.py
+  scripts/cloud_frame_checker.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
