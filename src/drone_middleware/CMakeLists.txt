@@ -9,13 +9,24 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   tf2_sensor_msgs
   message_filters
+  actionlib_msgs
+  actionlib
 )
 
 find_package(PCL REQUIRED COMPONENTS common io filters)
 
+add_action_files(
+  DIRECTORY action
+  FILES ScanMap.action
+)
+
+generate_messages(
+  DEPENDENCIES std_msgs actionlib_msgs
+)
+
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs pcl_ros pcl_conversions tf2_ros tf2_sensor_msgs message_filters
+  CATKIN_DEPENDS roscpp sensor_msgs pcl_ros pcl_conversions tf2_ros tf2_sensor_msgs message_filters actionlib_msgs actionlib std_msgs
 )
 
 include_directories(

@@ -43,7 +43,7 @@ if(USE_LIVOX)
   list(APPEND CORE_CATKIN_DEPS livox_ros_driver)
 endif()
 
-find_package(catkin REQUIRED COMPONENTS ${CORE_CATKIN_DEPS})
+find_package(catkin REQUIRED COMPONENTS ${CORE_CATKIN_DEPS} actionlib actionlib_msgs drone_middleware)
 
 # find_package(Ceres REQUIRED)
 find_package(PCL REQUIRED)

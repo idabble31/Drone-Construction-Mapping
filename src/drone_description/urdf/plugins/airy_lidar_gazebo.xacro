@@ -8,7 +8,7 @@
       <sensor type="gpu_ray" name="${name}_velodyne">
         <pose>${pose}</pose>
         <update_rate>20</update_rate>
-        <visualize>true</visualize> <!-- set 'true' to make it visible in gazebo -->
+        <visualize>false</visualize> <!-- set 'true' to make it visible in gazebo -->
         <ray>
           <scan>
             <horizontal>

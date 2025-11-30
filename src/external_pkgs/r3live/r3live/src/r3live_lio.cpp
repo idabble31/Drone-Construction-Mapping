@@ -49,6 +49,12 @@ Dr. Fu Zhang < fuzhang@hku.hk >.
 
 void R3LIVE::imu_cbk( const sensor_msgs::Imu::ConstPtr &msg_in )
 {
+
+    // === GATEKEEPER ===
+    if (!is_mapping_active) return;
+    if (is_paused) return;
+    // ==================
+    
     sensor_msgs::Imu::Ptr msg( new sensor_msgs::Imu( *msg_in ) );
     double                timestamp = msg->header.stamp.toSec();
     g_camera_lidar_queue.imu_in( timestamp );
@@ -461,6 +467,12 @@ void R3LIVE::lasermap_fov_segment()
 
 void R3LIVE::feat_points_cbk( const sensor_msgs::PointCloud2::ConstPtr &msg_in )
 {
+    // === GATEKEEPER ===
+    if (!is_mapping_active || is_paused) {
+        return; // Drop data immediately
+    }
+    // ==================
+
     sensor_msgs::PointCloud2::Ptr msg( new sensor_msgs::PointCloud2( *msg_in ) );
     msg->header.stamp = ros::Time( msg_in->header.stamp.toSec() - m_lidar_imu_time_delay );
     if ( g_camera_lidar_queue.lidar_in( msg_in->header.stamp.toSec() + 0.1 ) == 0 )

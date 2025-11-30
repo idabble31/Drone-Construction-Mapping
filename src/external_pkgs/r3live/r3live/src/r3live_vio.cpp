@@ -341,6 +341,11 @@ void R3LIVE::image_comp_callback( const sensor_msgs::CompressedImageConstPtr &ms
 // ANCHOR - image_callback
 void R3LIVE::image_callback( const sensor_msgs::ImageConstPtr &msg )
 {
+    // === GATEKEEPER ===
+    if (!is_mapping_active || is_paused) {
+        return;
+    }
+    // ==================
     std::unique_lock< std::mutex > lock( mutex_image_callback );
     if ( sub_image_typed == 2 )
     {

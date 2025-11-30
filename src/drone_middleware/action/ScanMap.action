@@ -1,0 +1,14 @@
+# r3live/action/ScanMap.action
+
+# === GOAL ===
+int32 command       # 1=START, 2=PAUSE, 3=RESUME
+string filename     # Desired filename for the saved map
+---
+# === RESULT ===
+bool success        # Did it save successfully?
+string filepath     # The full path where the file was saved
+---
+# === FEEDBACK ===
+int32 point_count   # Number of points in map
+int32 frame_count   # Number of camera frames processed
+int32 current_state # 0=Idle, 1=Mapping, 2=Paused

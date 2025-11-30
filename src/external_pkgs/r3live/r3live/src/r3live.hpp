@@ -96,6 +96,9 @@ Dr. Fu Zhang < fuzhang@hku.hk >.
 #include "pointcloud_rgbd.hpp"
 #include "rgbmap_tracker.hpp"
 
+#include <actionlib/server/simple_action_server.h>
+#include <drone_middleware/ScanMapAction.h>
+
 #define THREAD_SLEEP_TIM 1
 
 #include "offline_map_recorder.hpp"
@@ -265,6 +268,17 @@ public:
     int m_if_record_mvs = 0;
     cv::Mat intrinsic, dist_coeffs;
 
+    // === SCANHUB ACTION SERVER INTEGRATION ===
+    typedef actionlib::SimpleActionServer<drone_middleware::ScanMapAction> ScanActionServer;
+    std::shared_ptr<ScanActionServer> as_;
+
+    // flags for the gatekeeper
+    bool is_mapping_active;
+    bool is_paused;
+
+    drone_middleware::ScanMapFeedback feedback_;
+    drone_middleware::ScanMapResult result_;
+
     mat_3_3 m_inital_rot_ext_i2c;
     vec_3  m_inital_pos_ext_i2c;
     Eigen::Matrix<double, 3, 3, Eigen::RowMajor> m_camera_intrinsic;
@@ -305,6 +319,7 @@ public:
     void service_pub_rgb_maps();
     char cv_keyboard_callback();
     void set_initial_state_cov(StatesGroup &stat);
+    void execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal);
     cv::Mat generate_control_panel_img();
     // ANCHOR -  service_pub_rgb_maps
     
@@ -314,6 +329,10 @@ public:
     
     R3LIVE()
     {
+        // === INITIALIZE FLAGS FOR SCAN ACTION SERVER ===
+        is_mapping_active = false;
+        is_paused = false;
+
         pubLaserCloudFullRes = m_ros_node_handle.advertise<sensor_msgs::PointCloud2>("/cloud_registered", 100);
         pubLaserCloudEffect = m_ros_node_handle.advertise<sensor_msgs::PointCloud2>("/cloud_effected", 100);
         pubLaserCloudMap = m_ros_node_handle.advertise<sensor_msgs::PointCloud2>("/Laser_map", 100);
@@ -327,6 +346,16 @@ public:
         pub_odom_cam = m_ros_node_handle.advertise<nav_msgs::Odometry>("/camera_odom", 10);
         pub_path_cam = m_ros_node_handle.advertise<nav_msgs::Path>("/camera_path", 10);
         std::string LiDAR_pointcloud_topic, IMU_topic, IMAGE_topic, IMAGE_topic_compressed;
+
+        // === START ACTION SERVER ===
+        as_ = std::make_shared<ScanActionServer>(
+            m_ros_node_handle,
+            "scan_mapping",
+            boost::bind(&R3LIVE::execute_action_cb, this, _1),
+            false
+        );
+        as_->start();
+        // ============================
 
         get_ros_parameter<std::string>(m_ros_node_handle, "/LiDAR_pointcloud_topic", LiDAR_pointcloud_topic, std::string("/laser_cloud_flat") );
         get_ros_parameter<std::string>(m_ros_node_handle, "/IMU_topic", IMU_topic, std::string("/livox/imu") );
