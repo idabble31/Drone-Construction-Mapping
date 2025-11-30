@@ -8,3 +8,7 @@ test_bags/
 
 # External libs
 third_party/
+
+src/external_pkgs/FAST-LIVO2
+src/external_pkgs/Sophus
+src/external_pkgs/rpg_vikit

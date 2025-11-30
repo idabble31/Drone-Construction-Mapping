@@ -45,7 +45,8 @@ enum LID_TYPE
     HORIZON,
     VELO16,
     OUST64,
-    SIM_MERGED
+    SIM_MERGED,
+    ROBOSENSE
 };
 
 enum Feature
@@ -115,6 +116,7 @@ void   horizon_handler( const livox_ros_driver::CustomMsg::ConstPtr &msg );
 void   velo16_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 void   oust64_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 void sim_merged_handler( const sensor_msgs::PointCloud2::ConstPtr &msg);
+void robosense_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 void   give_feature( pcl::PointCloud< PointType > &pl, vector< orgtype > &types, pcl::PointCloud< PointType > &pl_corn,
                      pcl::PointCloud< PointType > &pl_surf );
 void   pub_func( pcl::PointCloud< PointType > &pl, ros::Publisher pub, const ros::Time &ct );
@@ -187,6 +189,12 @@ int main( int argc, char **argv )
         printf("SIM_MERGED\n");
         sub_points = n.subscribe("/lidar/merged_points", 1000,
                                 sim_merged_handler, ros::TransportHints().tcpNoDelay());
+        break;
+    
+    case ROBOSENSE:
+        printf("ROBOSENSE\n");
+        sub_points = n.subscribe("/rslidar_front/points", 1000,
+                                robosense_handler, ros::TransportHints().tcpNoDelay());
         break;
 
     default:
@@ -378,6 +386,48 @@ void sim_merged_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
         pl_processed.points.push_back(out);
     }
 
+    pub_func(pl_processed, pub_full, msg->header.stamp);
+    pub_func(pl_processed, pub_surf, msg->header.stamp);
+    pub_func(pl_processed, pub_corn, msg->header.stamp);
+}
+
+void robosense_handler( const sensor_msgs::PointCloud2::ConstPtr &msg )
+{
+    // TODO
+    pcl::PointCloud<PointType>   pl_processed;
+    pcl::PointCloud<PointXYZIRT> pl_in;
+    
+    pcl::fromROSMsg(*msg, pl_in);
+    
+    pl_processed.clear();
+    pl_processed.reserve(pl_in.points.size());
+    
+    for (size_t i = 0; i < pl_in.points.size(); ++i)
+    {
+        const auto& p = pl_in.points[i];
+    
+        const double range = std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+        if (range < blind) continue;
+    
+        PointType out;
+        out.x = p.x;
+        out.y = p.y;
+        out.z = p.z;
+        out.intensity = p.intensity;
+    
+        // no normals in input; zero them like the other handlers
+        out.normal_x = 0;
+        out.normal_y = 0;
+        out.normal_z = 0;
+    
+        // keep your convention: store per-point time in curvature (ms)
+        // If your "time" is already seconds, multiply by 1000.0.
+        // If it's nanoseconds as double, use p.time / 1e6.
+        out.curvature = p.time * 1000.0;
+    
+        pl_processed.points.push_back(out);
+    }
+    
     pub_func(pl_processed, pub_full, msg->header.stamp);
     pub_func(pl_processed, pub_surf, msg->header.stamp);
     pub_func(pl_processed, pub_corn, msg->header.stamp);

@@ -1,6 +1,8 @@
 <launch>
   <!-- ========= Arguments ========= -->
   <arg name="simulation_mode" default="true"/>
+  <arg name="device" default="drone" />
+  <arg name="device_config" default="1L1C" /> <!-- Stands for 1Lidar 1Camera -->
 
   <!-- Namespace-derived TF prefix (empty if no ROS_NAMESPACE set) -->
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
@@ -16,6 +18,13 @@
   <arg name="use_pose_estimation" default="false" if="$(arg use_ground_truth_for_control)"/>
   <arg name="use_pose_estimation" default="true" unless="$(arg use_ground_truth_for_control)"/>
 
+  <!-- Determine URDF file based on device_config -->
+  <arg name="urdf_file" default="drone_$(arg device_config).xacro" />
+  
+  <!-- Determine if we should merge multiple LIDARs (only for configs with 2+ LIDARs) -->
+  <arg name="use_lidar_merger" default="true"  if="$(eval arg('device_config') in ['2L1C', '2L2C', '2L3C', '2L4C'])"/>
+  <arg name="use_lidar_merger" default="false" unless="$(eval arg('device_config') in ['2L1C', '2L2C', '2L3C', '2L4C'])"/>
+
   <!-- LIDAR topics available globally; defaults switch by sim/real -->
   <arg name="lidar_right_topic" default="/lidar_right/points" if="$(arg simulation_mode)"/>
   <arg name="lidar_right_topic" default="/rs_airy/right"     unless="$(arg simulation_mode)"/>
@@ -25,7 +34,7 @@
   <!-- ========= Robot description ========= -->
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder
-                  $(find drone_description)/urdf/construction_drone_hector.xacro
+                  $(find drone_description)/urdf/$(arg urdf_file)
                   simulation_mode:=$(arg simulation_mode)"/>
 
   <node pkg="robot_state_publisher" type="robot_state_publisher"
@@ -47,7 +56,7 @@
 
     <!-- Spawn the URDF into Gazebo -->
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
-          args="-param robot_description -urdf -model construction_drone -x 0 -y 0 -z 0.0 -R 0 -P 0 -Y 0"
+          args="-param robot_description -urdf -model $(arg device)_$(arg device_config) -x 0 -y 0 -z 0.0 -R 0 -P 0 -Y 0"
           output="screen"/>
 
     <!-- Ground truth -> TF -->
@@ -95,19 +104,21 @@
   </group>
 
   <!-- ========= LIDAR merger (works in both sim & real) ========= -->
-  <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
-    <param name="topic1" value="$(arg lidar_right_topic)"/>
-    <param name="topic2" value="$(arg lidar_left_topic)"/>
-    <param name="output" value="/lidar/merged_points"/>
-  </node>
+  <group if="$(arg use_lidar_merger)">
+    <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
+      <param name="topic1" value="$(arg lidar_right_topic)"/>
+      <param name="topic2" value="$(arg lidar_left_topic)"/>
+      <param name="output" value="/lidar/merged_points"/>
+    </node>
+  </group>
 
   <!-- R3Live (add here as needed) -->
   <param name="/LiDAR_pointcloud_topic" type="string" value="/laser_cloud_flat" />
   <param name="/IMU_topic"             type="string" value="/raw_imu" />
-  <param name="/Image_topic"           type="string" value="/camera/image_color" />
+  <param name="/Image_topic"           type="string" value="/front_camera/image_color" />
 
   <param name="map_output_dir" type="string" value="$(env HOME)/r3live_output" />
-  <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
+  <rosparam command="load" file="$(find r3live)/../config/r3live_front_config.yaml" />
 
   <!-- <rosparam command="load"
           ns="fisheye_camera_front/fisheye_camera_front"
@@ -115,7 +126,7 @@
 
 
   <!-- Use SIM_MERGED (enum 4) -->
-  <param name="/Lidar_front_end/lidar_type" type="int" value="4" />
+  <param name="/Lidar_front_end/lidar_type" type="int" value="5" />
   <param name="/Lidar_front_end/point_step" type="int" value="1" />
   <param name="r3live_lio/lio_update_point_step" type="int" value="6" />
 

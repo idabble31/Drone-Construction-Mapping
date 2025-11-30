@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<robot name="drone_1L1C" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="simulation_mode" default="false"/>
+
+  <xacro:include filename="$(find drone_description)/urdf/drone_base.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/airy_lidar.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/fisheye_camera.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/propeller.xacro"/>
+
+  <xacro:include filename="$(find drone_description)/urdf/plugins/airy_lidar_gazebo.xacro"/>
+  <xacro:include filename="$(find drone_description)/urdf/plugins/fisheye_camera_gazebo.xacro" />
+
+  <!-- First positioning -->
+  <!-- <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 0"/>
+  <xacro:robosense_airy_lidar name="lidar_left"  parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159"/>
+  <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" /> -->
+  <!-- <xacro:fisheye_camera name="fisheye_camera_rear"  parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" hfov="3.1415"/> -->
+  <!-- <xacro:fisheye_camera name="fisheye_camera_below" parent="base_link" xyz="0.0 0.0 0.095" rpy="1.5708 0 0" /> -->
+
+  <!-- <xacro:robosense_airy_lidar name="lidar_right" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 0 0" />
+  <xacro:robosense_airy_lidar name="lidar_left" parent="base_link" xyz="0.0 0.139 0.14" rpy="0 0 3.14159" />
+
+  <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="-0.122 0.0 0.18" rpy="0 0 3.14159" hfov="3.1415"/>
+  <xacro:fisheye_camera name="fisheye_camera_rear" parent="base_link" xyz="0.122 0.0 0.18" rpy="0 0 0" hfov="3.1415"/> -->
+
+  <!-- Second positioning -->
+  <!-- <xacro:robosense_airy_lidar name="lidar_left" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 -1.5708 -1.5708"/> -->
+  <!-- <xacro:robosense_airy_lidar name="lidar_right"  parent="base_link" xyz="0.0 0.139 0.14" rpy="0 -1.5708 1.5708"/> -->
+
+  <xacro:if value="$(arg simulation_mode)">
+    <!-- <xacro:robosense_airy_lidar_gazebo name="lidar_right" topic="/lidar_right/points" pose="0.0 0.0 0.0 0.0 0.0 0.0"/> -->
+    <!-- <xacro:robosense_airy_lidar_gazebo name="lidar_left" topic="/lidar_left/points" pose="0.0 0.0 0.0 0.0 0.0 0.0"/> -->
+    <xacro:robosense_airy_lidar name="lidar_front" parent="base_link" xyz="0.122 0.0 0.20" rpy="0 0.0 0.0"/>
+    <xacro:robosense_airy_lidar_gazebo name="lidar_front" topic="/rslidar_front/points" pose="0.0 0.0 0.0 0.0 0.0 0.0"/>
+    <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.122 0.0 0.14" rpy="0.0 0.0 1.5708" />
+    <xacro:fisheye_camera_gazebo name="fisheye_camera_front" topic="/front_camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/>
+    <!-- <xacro:fisheye_camera_gazebo name="fisheye_camera_rear" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/> -->
+    <!-- <xacro:fisheye_camera_gazebo name="fisheye_camera_below" topic="/camera/image_color" info_topic="/camera/camera_info" hfov="3.1415"/> -->
+
+    <xacro:arg name="world_frame" default="world"/>
+    <xacro:arg name="base_link_frame" default="base_link"/>
+  
+    <!-- include the exact Hector macro files we inspected -->
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_controller.gazebo.xacro"/>
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_propulsion.gazebo.xacro"/>
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_aerodynamics.gazebo.xacro"/>
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_sensors.gazebo.xacro" />
+  
+    <!-- call the macros (these inject the plugins) -->
+    <xacro:quadrotor_controller/>
+    <xacro:quadrotor_propulsion/>
+    <xacro:quadrotor_aerodynamics/>
+    <xacro:quadrotor_sensors/>
+    
+  </xacro:if>
+
+  <xacro:unless value="$(arg simulation_mode)">
+    <xacro:fisheye_camera name="fisheye_camera_front" parent="base_link" xyz="0.122 0.0 0.18" rpy="1.5708 -3.1415 1.5708" />
+    <xacro:robosense_airy_lidar name="lidar_left" parent="base_link" xyz="0.0 -0.139 0.14" rpy="0 -1.5708 -1.5708"/>
+<xacro:robosense_airy_lidar name="lidar_right"  parent="base_link" xyz="0.0 0.139 0.14" rpy="0 -1.5708 1.5708"/>
+  </xacro:unless>
+
+
+  <!-- props, visual only (NO ros_control joints here) -->
+  <xacro:propeller name="front_right_prop" parent="base_link" xyz="0.105  0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="front_left_prop"  parent="base_link" xyz="-0.105  0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_left_prop"   parent="base_link" xyz="-0.105 -0.105  0.24122" rpy="0 0 0"/>
+  <xacro:propeller name="rear_right_prop"  parent="base_link" xyz="0.105  -0.105  0.24122" rpy="0 0 0"/>
+
+</robot>
