@@ -89,6 +89,71 @@ MeasureGroup Measures;
 StatesGroup g_lio_state;
 std::string data_dump_dir = std::string("/mnt/0B3B134F0B3B134F/color_temp_r3live/");
 
+// void R3LIVE::execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal)
+// {
+//     ros::Rate r(10); // Feedback rate (10Hz)
+    
+//     // --- 1. HANDLE COMMANDS ---
+//     if (goal->command == 1) { // START
+//         ROS_WARN("[ScanHub] Mapping STARTED");
+//         is_mapping_active = true;
+//         is_paused = false;
+//         // Optional: Reset map here if needed
+//     }
+//     else if (goal->command == 2) { // PAUSE
+//         ROS_WARN("[ScanHub] Mapping PAUSED");
+//         is_paused = true;
+//     }
+//     else if (goal->command == 3) { // RESUME
+//         ROS_WARN("[ScanHub] Mapping RESUMED");
+//         is_paused = false;
+//     }
+
+//     // --- 2. CONTROL LOOP ---
+//     while(ros::ok()) {
+        
+//         // CHECK IF CLIENT CANCELLED (STOP/SAVE)
+//         if (as_->isPreemptRequested() || !ros::ok()) {
+//             ROS_WARN("[ScanHub] Stop & Save Requested...");
+            
+//             // A. Close the Gate
+//             is_mapping_active = false;
+            
+//             // B. Prepare Filename
+//             std::string filename = goal->filename;
+//             if (filename.empty()) filename = "scanhub_map";
+//             std::string full_path = m_map_output_dir + "/" + filename + ".pcd";
+
+//             // C. Save the Map (THREAD SAFE LOCK)
+//             m_mutex_lio_process.lock();
+//             if (featsFromMap->points.empty()) {
+//                 ROS_WARN("Map is empty, nothing to save!");
+//             } else {
+//                 pcl::io::savePCDFileBinary(full_path, *featsFromMap);
+//                 ROS_WARN("Map Saved to: %s", full_path.c_str());
+//             }
+//             m_mutex_lio_process.unlock();
+
+//             // D. Send Result
+//             result_.success = true;
+//             result_.filepath = full_path;
+//             as_->setSucceeded(result_);
+//             break; // Exit the action loop
+//         }
+
+//         // --- 3. SEND FEEDBACK ---
+//         if (featsFromMap) {
+//             feedback_.point_count = featsFromMap->points.size();
+//         }
+//         // Assuming g_camera_frame_idx tracks frames (from r3live.hpp)
+//         feedback_.frame_count = g_camera_frame_idx; 
+//         feedback_.current_state = is_paused ? 2 : (is_mapping_active ? 1 : 0);
+        
+//         as_->publishFeedback(feedback_);
+//         r.sleep();
+//     }
+// }
+
 void R3LIVE::execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal)
 {
     ros::Rate r(10); // Feedback rate (10Hz)
@@ -98,7 +163,6 @@ void R3LIVE::execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal
         ROS_WARN("[ScanHub] Mapping STARTED");
         is_mapping_active = true;
         is_paused = false;
-        // Optional: Reset map here if needed
     }
     else if (goal->command == 2) { // PAUSE
         ROS_WARN("[ScanHub] Mapping PAUSED");
@@ -122,30 +186,42 @@ void R3LIVE::execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal
             // B. Prepare Filename
             std::string filename = goal->filename;
             if (filename.empty()) filename = "scanhub_map";
-            std::string full_path = m_map_output_dir + "/" + filename + ".pcd";
+            
+            // Handle directory slash logic (Important for save_to_pcd)
+            std::string save_dir = m_map_output_dir;
+            if (save_dir.back() != '/') {
+                save_dir += "/";
+            }
+            std::string full_path = save_dir + filename + ".pcd";
 
             // C. Save the Map (THREAD SAFE LOCK)
             m_mutex_lio_process.lock();
-            if (featsFromMap->points.empty()) {
-                ROS_WARN("Map is empty, nothing to save!");
+            
+            // --- FIX IS HERE: Use m_map_rgb_pts (Dot operator, not Arrow) ---
+            if (m_map_rgb_pts.m_rgb_pts_vec.empty()) {
+                ROS_WARN("[ScanHub] Global Map is empty! Nothing to save.");
             } else {
-                pcl::io::savePCDFileBinary(full_path, *featsFromMap);
-                ROS_WARN("Map Saved to: %s", full_path.c_str());
+                ROS_WARN("[ScanHub] Saving Dense Colored Map to: %s", full_path.c_str());
+                
+                // Params: (Directory, Filename, Min Views Filter)
+                m_map_rgb_pts.save_to_pcd(save_dir, filename, 5);
+                
+                ROS_WARN("[ScanHub] Map Save Complete!");
             }
+            
             m_mutex_lio_process.unlock();
 
             // D. Send Result
             result_.success = true;
             result_.filepath = full_path;
             as_->setSucceeded(result_);
-            break; // Exit the action loop
+            break; 
         }
 
         // --- 3. SEND FEEDBACK ---
-        if (featsFromMap) {
-            feedback_.point_count = featsFromMap->points.size();
-        }
-        // Assuming g_camera_frame_idx tracks frames (from r3live.hpp)
+        // --- FIX IS HERE: Use m_map_rgb_pts ---
+        feedback_.point_count = m_map_rgb_pts.m_rgb_pts_vec.size();
+        
         feedback_.frame_count = g_camera_frame_idx; 
         feedback_.current_state = is_paused ? 2 : (is_mapping_active ? 1 : 0);
         
