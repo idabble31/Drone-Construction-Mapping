@@ -3,6 +3,7 @@
   <arg name="simulation_mode" default="true"/>
   <arg name="device" default="drone" />
   <arg name="device_config" default="1L1C" /> <!-- Stands for 1Lidar 1Camera -->
+  <arg name="enable_data_saver" default="false"/>
 
   <!-- Namespace-derived TF prefix (empty if no ROS_NAMESPACE set) -->
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
@@ -119,6 +120,11 @@
 
   <param name="map_output_dir" type="string" value="$(env HOME)/r3live_output" />
   <rosparam command="load" file="$(find r3live)/../config/r3live_front_config.yaml" />
+
+  <group if="$(arg enable_data_saver)">
+    <node pkg="drone_middleware" type="map_saver_node" name="map_saver_node" output="screen"/> 
+    <!-- <param name="save_dir" value="$(env HOME)/scanhub_maps" /> -->
+  </group>
 
   <!-- <rosparam command="load"
           ns="fisheye_camera_front/fisheye_camera_front"

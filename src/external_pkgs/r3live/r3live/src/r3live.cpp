@@ -156,75 +156,70 @@ std::string data_dump_dir = std::string("/mnt/0B3B134F0B3B134F/color_temp_r3live
 
 void R3LIVE::execute_action_cb(const drone_middleware::ScanMapGoalConstPtr &goal)
 {
-    ros::Rate r(10); // Feedback rate (10Hz)
+    ros::Rate r(10);
     
-    // --- 1. HANDLE COMMANDS ---
-    if (goal->command == 1) { // START
-        ROS_WARN("[ScanHub] Mapping STARTED");
-        is_mapping_active = true;
-        is_paused = false;
-    }
-    else if (goal->command == 2) { // PAUSE
-        ROS_WARN("[ScanHub] Mapping PAUSED");
-        is_paused = true;
-    }
-    else if (goal->command == 3) { // RESUME
-        ROS_WARN("[ScanHub] Mapping RESUMED");
-        is_paused = false;
-    }
+    if (goal->command == 1) { is_mapping_active = true; is_paused = false; }
+    else if (goal->command == 2) { is_paused = true; }
+    else if (goal->command == 3) { is_paused = false; }
 
-    // --- 2. CONTROL LOOP ---
     while(ros::ok()) {
         
-        // CHECK IF CLIENT CANCELLED (STOP/SAVE)
+        // --- STOP & SAVE REQUESTED ---
         if (as_->isPreemptRequested() || !ros::ok()) {
-            ROS_WARN("[ScanHub] Stop & Save Requested...");
+            ROS_WARN("[ScanHub] Stop Requested. Generating Snapshot for Saver Node...");
             
-            // A. Close the Gate
-            is_mapping_active = false;
-            
-            // B. Prepare Filename
-            std::string filename = goal->filename;
-            if (filename.empty()) filename = "scanhub_map";
-            
-            // Handle directory slash logic (Important for save_to_pcd)
-            std::string save_dir = m_map_output_dir;
-            if (save_dir.back() != '/') {
-                save_dir += "/";
-            }
-            std::string full_path = save_dir + filename + ".pcd";
+            // 1. Stop mapping immediately
+            is_mapping_active = false; 
 
-            // C. Save the Map (THREAD SAFE LOCK)
             m_mutex_lio_process.lock();
             
-            // --- FIX IS HERE: Use m_map_rgb_pts (Dot operator, not Arrow) ---
             if (m_map_rgb_pts.m_rgb_pts_vec.empty()) {
-                ROS_WARN("[ScanHub] Global Map is empty! Nothing to save.");
+                ROS_WARN("[ScanHub] Map empty. Nothing to publish.");
             } else {
-                ROS_WARN("[ScanHub] Saving Dense Colored Map to: %s", full_path.c_str());
-                
-                // Params: (Directory, Filename, Min Views Filter)
-                m_map_rgb_pts.save_to_pcd(save_dir, filename, 5);
-                
-                ROS_WARN("[ScanHub] Map Save Complete!");
+                // 2. Convert Global Map to PCL Cloud (In Memory)
+                pcl::PointCloud<pcl::PointXYZRGB> pcl_cloud;
+                pcl_cloud.reserve(m_map_rgb_pts.m_rgb_pts_vec.size());
+
+                for (const auto& pt_ptr : m_map_rgb_pts.m_rgb_pts_vec) {
+                    // Filter: Only send points seen > 5 times to ensure quality
+                    if (pt_ptr->m_N_rgb < 5) continue;
+
+                    pcl::PointXYZRGB pt;
+                    pt.x = pt_ptr->m_pos[0];
+                    pt.y = pt_ptr->m_pos[1];
+                    pt.z = pt_ptr->m_pos[2];
+                    // Note: R3LIVE typically stores BGR in m_rgb[0,1,2]. 
+                    // PCL expects RGB. Swap if colors look weird.
+                    pt.r = pt_ptr->m_rgb[2]; 
+                    pt.g = pt_ptr->m_rgb[1];
+                    pt.b = pt_ptr->m_rgb[0];
+                    pcl_cloud.push_back(pt);
+                }
+
+                // 3. Publish to Map Saver Node
+                sensor_msgs::PointCloud2 output_msg;
+                pcl::toROSMsg(pcl_cloud, output_msg);
+                output_msg.header.stamp = ros::Time::now();
+                output_msg.header.frame_id = "camera_init"; // Frame ID matters!
+
+                pub_map_snapshot.publish(output_msg);
+                ROS_WARN("[ScanHub] Snapshot Handed off! (%lu points)", pcl_cloud.size());
             }
             
             m_mutex_lio_process.unlock();
 
-            // D. Send Result
+            // 4. Return "Success" immediately
+            // We trust the Saver Node will handle the file writing.
             result_.success = true;
-            result_.filepath = full_path;
+            result_.filepath = "saving_in_background"; 
             as_->setSucceeded(result_);
-            break; 
+            break;
         }
 
-        // --- 3. SEND FEEDBACK ---
-        // --- FIX IS HERE: Use m_map_rgb_pts ---
+        // --- FEEDBACK LOOP ---
         feedback_.point_count = m_map_rgb_pts.m_rgb_pts_vec.size();
-        
         feedback_.frame_count = g_camera_frame_idx; 
         feedback_.current_state = is_paused ? 2 : (is_mapping_active ? 1 : 0);
-        
         as_->publishFeedback(feedback_);
         r.sleep();
     }
