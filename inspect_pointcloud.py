@@ -4,7 +4,7 @@ from sensor_msgs.msg import PointCloud2
 import sensor_msgs.point_cloud2 as pc2
 
 # topics = ['/lidar_right/points','/lidar_left/points','/lidar/merged_points']
-topics = ['/lidar/merged_points']
+topics = ['/rslidar_front/points', '/cloud_registered', 'cloud_effected']
 
 rospy.init_node('inspect_pc', anonymous=True)
 
