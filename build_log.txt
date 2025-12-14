@@ -1,0 +1,1046 @@
+[  0%] Built target _uuid_msgs_generate_messages_check_deps_UniqueID
+[  0%] Built target std_msgs_generate_messages_cpp
+[  1%] Built target uuid_msgs_generate_messages_cpp
+[  1%] Built target std_msgs_generate_messages_py
+[  2%] Built target uuid_msgs_generate_messages_py
+[  2%] Built target std_msgs_generate_messages_nodejs
+[  2%] Built target uuid_msgs_generate_messages_nodejs
+[  2%] Built target std_msgs_generate_messages_lisp
+[  3%] Built target uuid_msgs_generate_messages_lisp
+[  3%] Built target std_msgs_generate_messages_eus
+[  3%] Built target uuid_msgs_generate_messages_eus
+[  3%] Built target uuid_msgs_generate_messages
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_UpdateGeographicMap
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPose
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPointStamped
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_BoundingBox
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPoint
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_WayPoint
+[  3%] Built target geometry_msgs_generate_messages_eus
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GetRoutePlan
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPoseWithCovariance
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeographicMap
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPoseStamped
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPoseWithCovarianceStamped
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_MapFeature
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeographicMapChanges
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_RouteNetwork
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_RouteSegment
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_RoutePath
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GetGeographicMap
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_KeyValue
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GetGeoPath
+[  3%] Built target _geographic_msgs_generate_messages_check_deps_GeoPath
+[  9%] Built target geographic_msgs_generate_messages_eus
+[  9%] Built target geometry_msgs_generate_messages_py
+[ 17%] Built target geographic_msgs_generate_messages_py
+[ 17%] Built target geometry_msgs_generate_messages_lisp
+[ 23%] Built target geographic_msgs_generate_messages_lisp
+[ 23%] Built target geometry_msgs_generate_messages_nodejs
+[ 29%] Built target geographic_msgs_generate_messages_nodejs
+[ 29%] Built target geometry_msgs_generate_messages_cpp
+[ 36%] Built target geographic_msgs_generate_messages_cpp
+[ 36%] Built target geographic_msgs_generate_messages
+[ 41%] Built target r3live_meshing
+[ 41%] Built target test_timer
+[ 41%] Built target r3live_LiDAR_front_end
+[ 41%] Built target r3live_generate_messages_eus
+[ 41%] Built target r3live_generate_messages_py
+[ 41%] Built target r3live_generate_messages_nodejs
+[ 41%] Built target r3live_generate_messages_cpp
+[ 41%] Built target r3live_generate_messages_lisp
+[ 41%] Built target r3live_generate_messages
+[ 42%] Building CXX object external_pkgs/r3live/r3live/CMakeFiles/r3live_mapping.dir/src/r3live.cpp.o
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp: In instantiation of ‘T Common_tools::get_ros_parameter(ros::NodeHandle&, std::string, T&, T) [with T = std::vector<double, std::allocator<double> >; std::string = std::__cxx11::basic_string<char>]’:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.hpp:344:127:   required from here
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: error: no match for ‘operator<<’ (operand types are ‘std::basic_ostream<char>’ and ‘std::vector<double, std::allocator<double> >’)
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:108:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ostream_type& (*)(std::basic_ostream<_CharT, _Traits>::__ostream_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  108 |       operator<<(__ostream_type& (*__pf)(__ostream_type&))
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:108:36: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘std::basic_ostream<char>::__ostream_type& (*)(std::basic_ostream<char>::__ostream_type&)’ {aka ‘std::basic_ostream<char>& (*)(std::basic_ostream<char>&)’}
+  108 |       operator<<(__ostream_type& (*__pf)(__ostream_type&))
+      |                  ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ostream:117:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ios_type& (*)(std::basic_ostream<_CharT, _Traits>::__ios_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>; std::basic_ostream<_CharT, _Traits>::__ios_type = std::basic_ios<char>]’
+  117 |       operator<<(__ios_type& (*__pf)(__ios_type&))
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:117:32: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘std::basic_ostream<char>::__ios_type& (*)(std::basic_ostream<char>::__ios_type&)’ {aka ‘std::basic_ios<char>& (*)(std::basic_ios<char>&)’}
+  117 |       operator<<(__ios_type& (*__pf)(__ios_type&))
+      |                  ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ostream:127:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::ios_base& (*)(std::ios_base&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  127 |       operator<<(ios_base& (*__pf) (ios_base&))
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:127:30: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘std::ios_base& (*)(std::ios_base&)’
+  127 |       operator<<(ios_base& (*__pf) (ios_base&))
+      |                  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ostream:166:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  166 |       operator<<(long __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:166:23: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘long int’
+  166 |       operator<<(long __n)
+      |                  ~~~~~^~~
+/usr/include/c++/9/ostream:170:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  170 |       operator<<(unsigned long __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:170:32: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘long unsigned int’
+  170 |       operator<<(unsigned long __n)
+      |                  ~~~~~~~~~~~~~~^~~
+/usr/include/c++/9/ostream:174:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(bool) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  174 |       operator<<(bool __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:174:23: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘bool’
+  174 |       operator<<(bool __n)
+      |                  ~~~~~^~~
+In file included from /usr/include/c++/9/ostream:702,
+                 from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/bits/ostream.tcc:91:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(short int) [with _CharT = char; _Traits = std::char_traits<char>]’
+   91 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/bits/ostream.tcc:92:22: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘short int’
+   92 |     operator<<(short __n)
+      |                ~~~~~~^~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:181:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(short unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  181 |       operator<<(unsigned short __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:181:33: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘short unsigned int’
+  181 |       operator<<(unsigned short __n)
+      |                  ~~~~~~~~~~~~~~~^~~
+In file included from /usr/include/c++/9/ostream:702,
+                 from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/bits/ostream.tcc:105:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char; _Traits = std::char_traits<char>]’
+  105 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/bits/ostream.tcc:106:20: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘int’
+  106 |     operator<<(int __n)
+      |                ~~~~^~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:192:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  192 |       operator<<(unsigned int __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:192:31: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘unsigned int’
+  192 |       operator<<(unsigned int __n)
+      |                  ~~~~~~~~~~~~~^~~
+/usr/include/c++/9/ostream:201:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  201 |       operator<<(long long __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:201:28: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘long long int’
+  201 |       operator<<(long long __n)
+      |                  ~~~~~~~~~~^~~
+/usr/include/c++/9/ostream:205:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  205 |       operator<<(unsigned long long __n)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:205:37: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘long long unsigned int’
+  205 |       operator<<(unsigned long long __n)
+      |                  ~~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/9/ostream:220:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  220 |       operator<<(double __f)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:220:25: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘double’
+  220 |       operator<<(double __f)
+      |                  ~~~~~~~^~~
+/usr/include/c++/9/ostream:224:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(float) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  224 |       operator<<(float __f)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:224:24: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘float’
+  224 |       operator<<(float __f)
+      |                  ~~~~~~^~~
+/usr/include/c++/9/ostream:232:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  232 |       operator<<(long double __f)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:232:30: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘long double’
+  232 |       operator<<(long double __f)
+      |                  ~~~~~~~~~~~~^~~
+/usr/include/c++/9/ostream:245:7: note: candidate: ‘std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(const void*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]’
+  245 |       operator<<(const void* __p)
+      |       ^~~~~~~~
+/usr/include/c++/9/ostream:245:30: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘const void*’
+  245 |       operator<<(const void* __p)
+      |                  ~~~~~~~~~~~~^~~
+In file included from /usr/include/c++/9/ostream:702,
+                 from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/bits/ostream.tcc:119:5: note: candidate: ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__streambuf_type*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__streambuf_type = std::basic_streambuf<char>]’
+  119 |     basic_ostream<_CharT, _Traits>::
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/bits/ostream.tcc:120:34: note:   no known conversion for argument 1 from ‘std::vector<double, std::allocator<double> >’ to ‘std::basic_ostream<char>::__streambuf_type*’ {aka ‘std::basic_streambuf<char>*’}
+  120 |     operator<<(__streambuf_type* __sbin)
+      |                ~~~~~~~~~~~~~~~~~~^~~~~~
+In file included from /opt/ros/noetic/include/ros/node_handle.h:52,
+                 from /opt/ros/noetic/include/ros/ros.h:45,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:56:
+/opt/ros/noetic/include/xmlrpcpp/XmlRpcValue.h:216:29: note: candidate: ‘std::ostream& operator<<(std::ostream&, const XmlRpc::XmlRpcValue&)’
+  216 | XMLRPCPP_DECL std::ostream& operator<<(std::ostream& os, const XmlRpc::XmlRpcValue& v);
+      |                             ^~~~~~~~
+/opt/ros/noetic/include/xmlrpcpp/XmlRpcValue.h:216:85: note:   no known conversion for argument 2 from ‘std::vector<double, std::allocator<double> >’ to ‘const XmlRpc::XmlRpcValue&’
+  216 | XMLRPCPP_DECL std::ostream& operator<<(std::ostream& os, const XmlRpc::XmlRpcValue& v);
+      |                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:18,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:141:19: note: candidate: ‘template<class T, int M, int option> const void operator<<(eigen_vec_t<T, M, option>&, const T*)’
+  141 | inline const void operator<<( eigen_vec_t< T, M, option > &eigen_vec_lhs, const T *data_rhs )
+      |                   ^~~~~~~~
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:141:19: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::basic_ostream<char>’ is not derived from ‘eigen_vec_t<T, M, option>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:18,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:159:19: note: candidate: ‘template<class T, int M, class TT, int option> const void operator<<(eigen_vec_t<T, M, option>&, const std::pair<std::vector<TT>*, int>&)’
+  159 | inline const void operator<<( eigen_vec_t< T, M, option > &eigen_vec_lhs, const std::pair< std::vector< TT > *, int > &std_vector_start )
+      |                   ^~~~~~~~
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:159:19: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::basic_ostream<char>’ is not derived from ‘eigen_vec_t<T, M, option>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:18,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:170:19: note: candidate: ‘template<class T, int M, class TT, int option> const void operator<<(eigen_vec_t<T, M, option>&, std::pair<std::vector<TT>*, int>&)’
+  170 | inline const void operator<<( const eigen_vec_t< T, M, option > &eigen_vec_lhs, std::pair< std::vector< TT > *, int > &std_vector_start )
+      |                   ^~~~~~~~
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:170:19: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::basic_ostream<char>’ is not derived from ‘eigen_vec_t<T, M, option>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:18,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:188:19: note: candidate: ‘template<class T, int option> const void operator<<(eigen_q_t<T, option>&, const T*)’
+  188 | inline const void operator<<( eigen_q_t< T, option > &eigen_q_lhs, const T *data_rhs )
+      |                   ^~~~~~~~
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:188:19: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::basic_ostream<char>’ is not derived from ‘eigen_q_t<T, option>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:18,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:231:19: note: candidate: ‘template<class T> const void operator<<(Eigen::AngleAxis<_Scalar>&, const T*)’
+  231 | inline const void operator<<( Eigen::AngleAxis< T > &eigen_axisangle_lhs, const T *data_rhs )
+      |                   ^~~~~~~~
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_eigen.hpp:231:19: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::basic_ostream<char>’ is not derived from ‘Eigen::AngleAxis<_Scalar>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/string:55,
+                 from /usr/include/c++/9/stdexcept:39,
+                 from /usr/include/c++/9/array:39,
+                 from /usr/include/c++/9/tuple:39,
+                 from /usr/include/c++/9/mutex:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:49:
+/usr/include/c++/9/bits/basic_string.h:6419:5: note: candidate: ‘template<class _CharT, class _Traits, class _Alloc> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)’
+ 6419 |     operator<<(basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/basic_string.h:6419:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/mutex:42,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:49:
+/usr/include/c++/9/system_error:217:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::error_code&)’
+  217 |     operator<<(basic_ostream<_CharT, _Traits>& __os, const error_code& __e)
+      |     ^~~~~~~~
+/usr/include/c++/9/system_error:217:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const std::error_code&’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/memory:81,
+                 from /usr/include/c++/9/thread:39,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:51:
+/usr/include/c++/9/bits/shared_ptr.h:66:5: note: candidate: ‘template<class _Ch, class _Tr, class _Tp, __gnu_cxx::_Lock_policy _Lp> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__shared_ptr<_Tp, _Lp>&)’
+   66 |     operator<<(std::basic_ostream<_Ch, _Tr>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/shared_ptr.h:66:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:51:
+/usr/include/c++/9/thread:322:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::thread::id)’
+  322 |     operator<<(basic_ostream<_CharT, _Traits>& __out, thread::id __id)
+      |     ^~~~~~~~
+/usr/include/c++/9/thread:322:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::thread::id’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:506:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, _CharT)’
+  506 |     operator<<(basic_ostream<_CharT, _Traits>& __out, _CharT __c)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:506:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   deduced conflicting types for parameter ‘_CharT’ (‘char’ and ‘std::vector<double, std::allocator<double> >’)
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:511:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, char)’
+  511 |     operator<<(basic_ostream<_CharT, _Traits>& __out, char __c)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:511:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘char’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:517:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, char)’
+  517 |     operator<<(basic_ostream<char, _Traits>& __out, char __c)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:517:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘char’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:523:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, signed char)’
+  523 |     operator<<(basic_ostream<char, _Traits>& __out, signed char __c)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:523:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘signed char’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:528:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, unsigned char)’
+  528 |     operator<<(basic_ostream<char, _Traits>& __out, unsigned char __c)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:528:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘unsigned char’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:548:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const _CharT*)’
+  548 |     operator<<(basic_ostream<_CharT, _Traits>& __out, const _CharT* __s)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:548:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   mismatched types ‘const _CharT*’ and ‘std::vector<double, std::allocator<double> >’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/ostream:702,
+                 from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/bits/ostream.tcc:321:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const char*)’
+  321 |     operator<<(basic_ostream<_CharT, _Traits>& __out, const char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/ostream.tcc:321:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const char*’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:565:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const char*)’
+  565 |     operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:565:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const char*’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:578:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const signed char*)’
+  578 |     operator<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:578:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const signed char*’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:583:5: note: candidate: ‘template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const unsigned char*)’
+  583 |     operator<<(basic_ostream<char, _Traits>& __out, const unsigned char* __s)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:583:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const unsigned char*’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/istream:39,
+                 from /usr/include/c++/9/fstream:38,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:52:
+/usr/include/c++/9/ostream:691:5: note: candidate: ‘template<class _Ostream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_ostream<_Ostream>, std::__is_insertable<typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type, const _Tp&, void> >::value, typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type>::type std::operator<<(_Ostream&&, const _Tp&)’
+  691 |     operator<<(_Ostream&& __os, const _Tp& __x)
+      |     ^~~~~~~~
+/usr/include/c++/9/ostream:691:5: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/ostream: In substitution of ‘template<class _Ostream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_ostream<_Ostream>, std::__is_insertable<typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type, const _Tp&, void> >::value, typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type>::type std::operator<<(_Ostream&&, const _Tp&) [with _Ostream = std::basic_ostream<char>&; _Tp = std::vector<double, std::allocator<double> >]’:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62:   required from ‘T Common_tools::get_ros_parameter(ros::NodeHandle&, std::string, T&, T) [with T = std::vector<double, std::allocator<double> >; std::string = std::__cxx11::basic_string<char>]’
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.hpp:344:127:   required from here
+/usr/include/c++/9/ostream:691:5: error: no type named ‘type’ in ‘struct std::enable_if<false, std::basic_ostream<char>&>’
+In file included from /usr/include/eigen3/Eigen/Core:96,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:5,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp: In instantiation of ‘T Common_tools::get_ros_parameter(ros::NodeHandle&, std::string, T&, T) [with T = std::vector<double, std::allocator<double> >; std::string = std::__cxx11::basic_string<char>]’:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.hpp:344:127:   required from here
+/usr/include/c++/9/complex:552:5: note: candidate: ‘template<class _Tp, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::complex<_Tp>&)’
+  552 |     operator<<(basic_ostream<_CharT, _Traits>& __os, const complex<_Tp>& __x)
+      |     ^~~~~~~~
+/usr/include/c++/9/complex:552:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::complex<_Tp>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:79:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Resetiosflags)’
+   79 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Resetiosflags __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:79:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::_Resetiosflags’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:109:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setiosflags)’
+  109 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Setiosflags __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:109:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::_Setiosflags’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:143:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setbase)’
+  143 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Setbase __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:143:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::_Setbase’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:178:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setfill<_CharT>)’
+  178 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Setfill<_CharT> __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:178:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘std::_Setfill<_CharT>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:208:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setprecision)’
+  208 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Setprecision __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:208:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::_Setprecision’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:238:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setw)’
+  238 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Setw __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:238:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘std::_Setw’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:311:5: note: candidate: ‘template<class _CharT, class _Traits, class _MoneyT> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Put_money<_MoneyT>)’
+  311 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Put_money<_MoneyT> __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:311:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘std::_Put_money<_MoneyT>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_table.h:42,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/lsh_index.h:49,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/all_indices.h:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann/flann_base.hpp:44,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/flann.hpp:48,
+                 from /home/scanhub/opencv-4.5.3-install/include/opencv4/opencv2/opencv.hpp:65,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/so3_math.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:55:
+/usr/include/c++/9/iomanip:363:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Put_time<_CharT>)’
+  363 |     operator<<(basic_ostream<_CharT, _Traits>& __os, _Put_time<_CharT> __f)
+      |     ^~~~~~~~
+/usr/include/c++/9/iomanip:363:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘std::_Put_time<_CharT>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/pcl-1.10/pcl/point_types.h:43,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:6,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bitset:1538:5: note: candidate: ‘template<class _CharT, class _Traits, long unsigned int _Nb> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::bitset<_Nb>&)’
+ 1538 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bitset:1538:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::bitset<_Nb>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:49,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.h:1298:5: note: candidate: ‘template<class _RandomNumberEngine, long unsigned int __w, class _UIntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::independent_bits_engine<_RandomNumberEngine, __w, _UIntType>&)’
+ 1298 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.h:1298:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::independent_bits_engine<_RandomNumberEngine, __w, _UIntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:877:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::uniform_int_distribution<_IntType>&)’
+  877 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:877:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::uniform_int_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:936:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::uniform_real_distribution<_IntType>&)’
+  936 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:936:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::uniform_real_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2133:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::cauchy_distribution<_RealType>&)’
+ 2133 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2133:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::cauchy_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:998:5: note: candidate: ‘template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::bernoulli_distribution&)’
+  998 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:998:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   cannot convert ‘parameter’ (type ‘std::vector<double, std::allocator<double> >’) to type ‘const std::bernoulli_distribution&’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1080:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::geometric_distribution<_IntType>&)’
+ 1080 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1080:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::geometric_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1737:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::exponential_distribution<_RealType>&)’
+ 1737 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1737:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::exponential_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2532:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::weibull_distribution<_RealType>&)’
+ 2532 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2532:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::weibull_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2608:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::extreme_value_distribution<_RealType>&)’
+ 2608 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2608:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::extreme_value_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:154:5: note: candidate: ‘template<class _UIntType, _UIntType __a, _UIntType __c, _UIntType __m, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::linear_congruential_engine<_UIntType, __a, __c, __m>&)’
+  154 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:154:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::linear_congruential_engine<_UIntType, __a, __c, __m>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:476:5: note: candidate: ‘template<class _UIntType1, long unsigned int __w1, long unsigned int __n1, long unsigned int __m1, long unsigned int __r1, _UIntType1 __a1, long unsigned int __u1, _UIntType1 __d1, long unsigned int __s1, _UIntType1 __b1, long unsigned int __t1, _UIntType1 __c1, long unsigned int __l1, _UIntType1 __f1, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>&)’
+  476 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:476:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:632:5: note: candidate: ‘template<class _UIntType, long unsigned int __w, long unsigned int __s, long unsigned int __r, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::subtract_with_carry_engine<_UIntType, __w, __s, __r>&)’
+  632 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:632:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::subtract_with_carry_engine<_UIntType, __w, __s, __r>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:702:5: note: candidate: ‘template<class _RandomNumberEngine, long unsigned int __p, long unsigned int __r, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::discard_block_engine<_RandomNumberEngine, __p, __r>&)’
+  702 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:702:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::discard_block_engine<_RandomNumberEngine, __p, __r>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:831:5: note: candidate: ‘template<class _RandomNumberEngine, long unsigned int __k, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::shuffle_order_engine<_RandomNumberEngine, __k>&)’
+  831 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:831:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::shuffle_order_engine<_RandomNumberEngine, __k>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1195:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::negative_binomial_distribution<_IntType>&)’
+ 1195 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1195:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::negative_binomial_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1406:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::poisson_distribution<_IntType>&)’
+ 1406 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1406:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::poisson_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1673:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::binomial_distribution<_IntType>&)’
+ 1673 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1673:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::binomial_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1904:5: note: candidate: ‘template<class _RealType1, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::normal_distribution<_RealType>&)’
+ 1904 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1904:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::normal_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:1973:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::lognormal_distribution<_RealType>&)’
+ 1973 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:1973:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::lognormal_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2046:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::chi_squared_distribution<_RealType>&)’
+ 2046 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2046:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::chi_squared_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2210:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::fisher_f_distribution<_RealType>&)’
+ 2210 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2210:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::fisher_f_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2285:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::student_t_distribution<_RealType>&)’
+ 2285 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2285:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::student_t_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2454:5: note: candidate: ‘template<class _RealType1, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::gamma_distribution<_RealType>&)’
+ 2454 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2454:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::gamma_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2745:5: note: candidate: ‘template<class _IntType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::discrete_distribution<_IntType>&)’
+ 2745 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2745:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::discrete_distribution<_IntType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:2969:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::piecewise_constant_distribution<_RealType>&)’
+ 2969 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:2969:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::piecewise_constant_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+In file included from /usr/include/c++/9/random:51,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/common.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/types.hpp:8,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/rotation_matrix.hpp:10,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/so3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/lib_sophus/se3.hpp:7,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:22,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/usr/include/c++/9/bits/random.tcc:3177:5: note: candidate: ‘template<class _RealType, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::piecewise_linear_distribution<_RealType>&)’
+ 3177 |     operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+      |     ^~~~~~~~
+/usr/include/c++/9/bits/random.tcc:3177:5: note:   template argument deduction/substitution failed:
+In file included from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/loam/include/common_lib.h:19,
+                 from /home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/src/r3live.cpp:59:
+/home/scanhub/dev/Drone-Construction-Mapping/src/external_pkgs/r3live/r3live/./src/tools/tools_ros.hpp:64:62: note:   ‘std::vector<double, std::allocator<double> >’ is not derived from ‘const std::piecewise_linear_distribution<_RealType>’
+   64 |     cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+make[2]: *** [external_pkgs/r3live/r3live/CMakeFiles/r3live_mapping.dir/build.make:63: external_pkgs/r3live/r3live/CMakeFiles/r3live_mapping.dir/src/r3live.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:4165: external_pkgs/r3live/r3live/CMakeFiles/r3live_mapping.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2
+Base path: /home/scanhub/dev/Drone-Construction-Mapping
+Source space: /home/scanhub/dev/Drone-Construction-Mapping/src
+Build space: /home/scanhub/dev/Drone-Construction-Mapping/build
+Devel space: /home/scanhub/dev/Drone-Construction-Mapping/devel
+Install space: /home/scanhub/dev/Drone-Construction-Mapping/install
+####
+#### Running command: "make cmake_check_build_system" in "/home/scanhub/dev/Drone-Construction-Mapping/build"
+####
+####
+#### Running command: "make -j1" in "/home/scanhub/dev/Drone-Construction-Mapping/build"
+####
+Invoking "make -j1" failed

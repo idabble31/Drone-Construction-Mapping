@@ -21,7 +21,7 @@ lidar:
       pcap_rate: 1.0
       pcap_path: /home/robosense/lidar.pcap
     ros:
-      ros_frame_id: lidar_right_link
+      ros_frame_id: lidar_right_link # Temporary change to 'base_link', formerly 'lidar_right_link'
       ros_recv_packet_topic: /rslidar_packets_right
       ros_send_packet_topic: /rslidar_packets_right
       ros_send_imu_data_topic: /rslidar_imu_data_right

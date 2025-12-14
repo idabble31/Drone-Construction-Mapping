@@ -1,20 +1,20 @@
 Lidar_front_end:
    lidar_type: 5   # 1 for Livox-avia, 3 for Ouster-OS1-64, 5 for Robosense Airy
-   N_SCANS: 16      # was 16
+   N_SCANS: 16      
    using_raw_point: 1
    point_step: 1
    
 r3live_common:
-   if_dump_log: 0                   # If recording ESIKF update log. [default = 0]
-   record_offline_map: 1            # If recording offline map. [default = 1]
-   pub_pt_minimum_views: 3          # Publish points which have been render up to "pub_pt_minimum_views" time. [default = 3]
-   minimum_pts_size: 0.01           # The minimum distance for every two points in Global map (unit in meter). [default = 0.01] 
-   image_downsample_ratio: 1        # The downsample ratio of the input image. [default = 1]
-   estimate_i2c_extrinsic: 1        # If enable estimate the extrinsic between camera and IMU. [default = 1] 
-   estimate_intrinsic: 1            # If enable estimate the online intrinsic calibration of the camera lens. [default = 1] 
-   maximum_vio_tracked_pts: 600     # The maximum points for tracking. [default = 600]
-   append_global_map_point_step: 4  # The point step of append point to global map. [default = 4]
-
+   if_dump_log: 0                   
+   record_offline_map: 1            
+   pub_pt_minimum_views: 3          
+   minimum_pts_size: 0.02           # INCREASED from 0.01 - more aggressive map filtering
+   image_downsample_ratio: 1        
+   estimate_i2c_extrinsic: 1        
+   estimate_intrinsic: 1            
+   maximum_vio_tracked_pts: 600     
+   append_global_map_point_step: 8  # INCREASED from 4 - reduce map growth rate
+   
 r3live_vio:
    image_width: 1920
    image_height: 1080
@@ -27,17 +27,16 @@ r3live_vio:
                  0.0, 0.0, -1.0,
                  0.0,-1.0, 0.0]
    camera_ext_t: [-0.122, 0.0, 0.18]
-
+   
 r3live_lio:        
-   lio_update_point_step: 2   # Point step used for LIO update.  
-   max_iteration: 3           # Maximum times of LIO esikf.
-   lidar_time_delay: 0.005   # The time-offset between LiDAR and IMU, provided by user. was 0.1, -0.0374
-   filter_size_corner: 0.30   
-   filter_size_surf: 0.11
-   filter_size_surf_z: 0.30
-   filter_size_map: 0.80
-   extrinsic_T: [0.0, -0.139, -0.14]  # base_link to lidar_left
-   extrinsic_R: [0.0, -1.0, 0.0,      # +90° yaw rotation
+   lio_update_point_step: 4   # INCREASED from 2 - use fewer points, faster & more stable
+   max_iteration: 2           # REDUCED from 3 - prevent over-convergence to local minima
+   lidar_time_delay: 0.005    
+   filter_size_corner: 0.50   # INCREASED from 0.30 - more aggressive corner filtering
+   filter_size_surf: 0.30     # INCREASED from 0.11 - CRITICAL: much more aggressive filtering
+   filter_size_surf_z: 0.40   # INCREASED from 0.30 - more Z-axis filtering
+   filter_size_map: 1.20      # INCREASED from 0.80 - larger voxel grid for map
+   extrinsic_T: [0.0, -0.139, -0.14]
+   extrinsic_R: [0.0, -1.0, 0.0,
                  1.0, 0.0, 0.0,
                  0.0, 0.0, 1.0]
-   

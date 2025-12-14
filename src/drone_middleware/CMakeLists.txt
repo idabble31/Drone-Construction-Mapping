@@ -71,6 +71,13 @@ add_executable(sync_with_imu_interp src/sync_sensor_interp.cpp)
 target_link_libraries(sync_with_imu_interp ${catkin_LIBRARIES})
 add_dependencies(sync_with_imu_interp ${catkin_EXPORTED_TARGETS})
 
+add_executable(message_to_tf
+  src/message_to_tf.cpp
+)
+target_link_libraries(message_to_tf
+  ${catkin_LIBRARIES}
+)
+
 # ---------- Fisheye dewarp node (ROS1 Noetic) ----------
 # Vendor cnpy (NPY reader): place cnpy.h/cnpy.cpp in third_party/cnpy
 #   mkdir -p third_party/cnpy

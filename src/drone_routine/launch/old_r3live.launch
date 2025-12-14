@@ -21,6 +21,7 @@
   <param name="map_output_dir"         type="string" value="$(env HOME)/r3live_output" />
 
   <rosparam command="load" file="$(find r3live)/../config/r3live_config.yaml" />
+  <rosparam command="load" file="$(find drone_routine)/config/r3live_lidar_front.yaml" />
 
 
 

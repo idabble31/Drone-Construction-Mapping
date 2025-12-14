@@ -1,50 +1,3 @@
-/* 
-This code is the implementation of our paper "R3LIVE: A Robust, Real-time, RGB-colored, 
-LiDAR-Inertial-Visual tightly-coupled state Estimation and mapping package".
-
-Author: Jiarong Lin   < ziv.lin.ljr@gmail.com >
-
-If you use any code of this repo in your academic research, please cite at least
-one of our papers:
-[1] Lin, Jiarong, and Fu Zhang. "R3LIVE: A Robust, Real-time, RGB-colored, 
-    LiDAR-Inertial-Visual tightly-coupled state Estimation and mapping package." 
-[2] Xu, Wei, et al. "Fast-lio2: Fast direct lidar-inertial odometry."
-[3] Lin, Jiarong, et al. "R2LIVE: A Robust, Real-time, LiDAR-Inertial-Visual
-     tightly-coupled state Estimator and mapping." 
-[4] Xu, Wei, and Fu Zhang. "Fast-lio: A fast, robust lidar-inertial odometry 
-    package by tightly-coupled iterated kalman filter."
-[5] Cai, Yixi, Wei Xu, and Fu Zhang. "ikd-Tree: An Incremental KD Tree for 
-    Robotic Applications."
-[6] Lin, Jiarong, and Fu Zhang. "Loam-livox: A fast, robust, high-precision 
-    LiDAR odometry and mapping package for LiDARs of small FoV."
-
-For commercial use, please contact me < ziv.lin.ljr@gmail.com > and
-Dr. Fu Zhang < fuzhang@hku.hk >.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
- 3. Neither the name of the copyright holder nor the names of its
-    contributors may be used to endorse or promote products derived from this
-    software without specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
-*/
 #pragma once
 #include <omp.h>
 #include <mutex>
@@ -72,12 +25,15 @@ Dr. Fu Zhang < fuzhang@hku.hk >.
 #include <sensor_msgs/PointCloud2.h>
 #include <tf/transform_datatypes.h>
 #include <tf/transform_broadcaster.h>
-
 #include <geometry_msgs/Vector3.h>
 #include <FOV_Checker/FOV_Checker.h>
-
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
+
+// --- ADD THESE INCLUDES TO FIX COMPILATION ---
+#include <iostream>
+#include <vector>
+// ---------------------------------------------
 
 #include "lib_sophus/so3.hpp"
 #include "lib_sophus/se3.hpp"
@@ -101,16 +57,15 @@ Dr. Fu Zhang < fuzhang@hku.hk >.
 #include "offline_map_recorder.hpp"
 
 #define INIT_TIME (0)
-// #define LASER_POINT_COV (0.0015) // Ori
 #define LASER_POINT_COV (0.00015)    
-#define NUM_MATCH_POINTS (5)
+#define NUM_MATCH_POINTS (7)
 
 #define MAXN 360000
 const int laserCloudWidth = 48;
 const int laserCloudHeight = 48;
 const int laserCloudDepth = 48;
 const int laserCloudNum = laserCloudWidth * laserCloudHeight * laserCloudDepth;
-//estimator inputs and output;
+
 extern Camera_Lidar_queue g_camera_lidar_queue;
 extern MeasureGroup Measures;
 extern StatesGroup g_lio_state;
@@ -121,9 +76,9 @@ extern double g_vio_frame_cost_time;
 extern double g_lio_frame_cost_time;
 void dump_lio_state_to_log(FILE *fp);
 
-
 extern Common_tools::Cost_time_logger g_cost_time_logger;
 extern std::shared_ptr<Common_tools::ThreadPool> m_thread_pool_ptr;
+
 class R3LIVE
 {
 public:
@@ -133,15 +88,15 @@ public:
     std::string root_dir = ROOT_DIR;
     FILE * m_lio_state_fp;
     FILE * m_lio_costtime_fp;
-    double m_maximum_pt_kdtree_dis = 1.0;
-    double m_maximum_res_dis = 1.0;
-    double m_planar_check_dis = 0.05;
+    double m_maximum_pt_kdtree_dis = 0.5;
+    double m_maximum_res_dis = 0.08;
+    double m_planar_check_dis = 0.03;
     double m_lidar_imu_time_delay = 0;
-    double m_long_rang_pt_dis = 500.0;
+    double m_long_rang_pt_dis = 50.0;
     bool m_if_publish_feature_map = false;
     int iterCount = 0;
     int NUM_MAX_ITERATIONS = 0;
-    int FOV_RANGE = 4; // range of FOV = FOV_RANGE * cube_len
+    int FOV_RANGE = 4; 
     int laserCloudCenWidth = 24;
     int laserCloudCenHeight = 24;
     int laserCloudCenDepth = 24;
@@ -149,10 +104,13 @@ public:
     int laserCloudValidNum = 0;
     int laserCloudSelNum = 0;
 
-    // std::vector<double> T1, T2, s_plot, s_plot2, s_plot3, s_plot4, s_plot5, s_plot6;
+    // --- YOUR NEW VARIABLES ---
+    Eigen::Matrix3d m_lidar_ext_R;
+    Eigen::Vector3d m_lidar_ext_t;
+    // --------------------------
+
     double T1[MAXN], T2[MAXN], s_plot[MAXN], s_plot2[MAXN], s_plot3[MAXN], s_plot4[MAXN], s_plot5[MAXN], s_plot6[MAXN];
     int time_log_counter = 0;
-    /// IMU relative variables
     std::mutex mtx_buffer;
     std::condition_variable sig_buffer;
     bool lidar_pushed = false;
@@ -176,14 +134,12 @@ public:
     std::deque<sensor_msgs::Imu::ConstPtr> imu_buffer_lio;
     std::deque<sensor_msgs::Imu::ConstPtr> imu_buffer_vio;
 
-    //surf feature in map
     PointCloudXYZINormal::Ptr featsFromMap;     
     PointCloudXYZINormal::Ptr cube_points_add;  
-    //all points
     PointCloudXYZINormal::Ptr laserCloudFullRes2; 
 
-    Eigen::Vector3f XAxisPoint_body; //(LIDAR_SP_LEN, 0.0, 0.0);
-    Eigen::Vector3f XAxisPoint_world; //(LIDAR_SP_LEN, 0.0, 0.0);
+    Eigen::Vector3f XAxisPoint_body;
+    Eigen::Vector3f XAxisPoint_world;
 
     std::vector<BoxPointType> cub_needrm;
     std::vector<BoxPointType> cub_needad;
@@ -193,7 +149,7 @@ public:
     bool now_inFOV[laserCloudNum];
     bool cube_updated[laserCloudNum];
     int laserCloudValidInd[laserCloudNum];
-    pcl::PointCloud<pcl::PointXYZI>::Ptr laserCloudFullResColor; //(new pcl::PointCloud<pcl::PointXYZI>());
+    pcl::PointCloud<pcl::PointXYZI>::Ptr laserCloudFullResColor; 
 
     KD_TREE ikdtree;
 
@@ -221,11 +177,8 @@ public:
 
     Offline_map_recorder m_mvs_recorder;
 
-    /*** debug record ***/
-    // R3LIVE() = delete;
     ros::NodeHandle             m_ros_node_handle;
 
-    // ANCHOR - camera measurement related.
     ros::Publisher m_pub_visual_tracked_3d_pts;
     ros::Publisher m_pub_render_rgb_pts;
     std::vector< std::shared_ptr <ros::Publisher> > m_pub_rgb_render_pointcloud_ptr_vec;
@@ -239,8 +192,8 @@ public:
     double m_vio_scale_factor = 1.0;
     cv::Mat m_ud_map1, m_ud_map2;
 
-    int                          g_camera_frame_idx = 0;
-    int                          g_LiDAR_frame_index = 0;
+    int                              g_camera_frame_idx = 0;
+    int                              g_LiDAR_frame_index = 0;
     std::mutex g_mutex_render;
     std::shared_ptr<Image_frame> g_last_image_pose_for_render = nullptr;
     std::list<double> frame_cost_time_vec;
@@ -281,14 +234,9 @@ public:
     std::string m_map_output_dir;
     std::shared_ptr<std::shared_future<void> > m_render_thread = nullptr;
     
-    // VIO subsystem related
+    // Member functions
     void load_vio_parameters();
-    void set_initial_camera_parameter(StatesGroup &state,
-                                          double * camera_intrinsic_data,
-                                          double * camera_dist_data,
-                                          double * imu_camera_ext_R ,
-                                          double * imu_camera_ext_t ,
-                                          double cam_k_scale);
+    void set_initial_camera_parameter(StatesGroup &state, double * camera_intrinsic_data, double * camera_dist_data, double * imu_camera_ext_R , double * imu_camera_ext_t , double cam_k_scale);
     void process_image(cv::Mat & image, double msg_time);
     void image_callback(const sensor_msgs::ImageConstPtr &msg);
     void image_comp_callback(const sensor_msgs::CompressedImageConstPtr &msg);
@@ -306,12 +254,10 @@ public:
     char cv_keyboard_callback();
     void set_initial_state_cov(StatesGroup &stat);
     cv::Mat generate_control_panel_img();
-    // ANCHOR -  service_pub_rgb_maps
-    
     void imu_cbk(const sensor_msgs::Imu::ConstPtr &msg_in);
-
     bool sync_packages(MeasureGroup &meas);
     
+    // --- CONSTRUCTOR START ---
     R3LIVE()
     {
         pubLaserCloudFullRes = m_ros_node_handle.advertise<sensor_msgs::PointCloud2>("/cloud_registered", 100);
@@ -335,12 +281,12 @@ public:
         if(1)
         {
             scope_color(ANSI_COLOR_BLUE_BOLD);
-            cout << "======= Summary of subscribed topics =======" << endl;
-            cout << "LiDAR pointcloud topic: " << LiDAR_pointcloud_topic << endl;
-            cout << "IMU topic: " << IMU_topic << endl;
-            cout << "Image topic: " << IMAGE_topic << endl;
-            cout << "Image compressed topic: " << IMAGE_topic << endl;
-             cout << "=======        -End-                =======" << endl;
+            std::cout << "======= Summary of subscribed topics =======" << std::endl;
+            std::cout << "LiDAR pointcloud topic: " << LiDAR_pointcloud_topic << std::endl;
+            std::cout << "IMU topic: " << IMU_topic << std::endl;
+            std::cout << "Image topic: " << IMAGE_topic << std::endl;
+            std::cout << "Image compressed topic: " << IMAGE_topic << std::endl;
+             std::cout << "=======        -End-                =======" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
@@ -351,7 +297,7 @@ public:
 
         m_ros_node_handle.getParam("/initial_pose", m_initial_pose);
         m_pub_rgb_render_pointcloud_ptr_vec.resize(1e3);
-        // ANCHOR - ROS parameters
+        
         if ( 1 )
         {
             scope_color( ANSI_COLOR_RED );
@@ -382,7 +328,7 @@ public:
             get_ros_parameter( m_ros_node_handle, "r3live_lio/fov_degree", fov_deg, 360.00 );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/voxel_downsample_size_surf", m_voxel_downsample_size_surf, 0.3 );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/voxel_downsample_size_axis_z", m_voxel_downsample_size_axis_z,
-                               m_voxel_downsample_size_surf );
+                              m_voxel_downsample_size_surf );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/filter_size_map", filter_size_map_min, 0.4 );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/cube_side_length", cube_len, 10000000.0 );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/maximum_pt_kdtree_dis", m_maximum_pt_kdtree_dis, 0.5 );
@@ -391,6 +337,22 @@ public:
             get_ros_parameter( m_ros_node_handle, "r3live_lio/long_rang_pt_dis", m_long_rang_pt_dis, 500.0 );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/publish_feature_map", m_if_publish_feature_map, false );
             get_ros_parameter( m_ros_node_handle, "r3live_lio/lio_update_point_step", m_lio_update_point_step, 1 );
+
+            // --- LOADING EXTRINSICS (FIXED WITH STD::) ---
+            std::vector<double> ext_R_v, ext_t_v;
+            // Default to Identity
+            get_ros_parameter( m_ros_node_handle, "r3live_lio/lidar_ext_R", ext_R_v, std::vector<double>{1,0,0, 0,1,0, 0,0,1} );
+            get_ros_parameter( m_ros_node_handle, "r3live_lio/lidar_ext_t", ext_t_v, std::vector<double>{0,0,0} );
+                
+            m_lidar_ext_R << ext_R_v[0], ext_R_v[1], ext_R_v[2],
+                             ext_R_v[3], ext_R_v[4], ext_R_v[5],
+                             ext_R_v[6], ext_R_v[7], ext_R_v[8];
+                             
+            m_lidar_ext_t << ext_t_v[0], ext_t_v[1], ext_t_v[2];
+            
+            // USE STD::COUT HERE
+            std::cout << "Loaded LiDAR Extrinsics R:\n" << m_lidar_ext_R << std::endl;
+            // --------------------------------------------
         }
         if ( 1 )
         {
@@ -399,10 +361,10 @@ public:
         }
         if(!Common_tools::if_file_exist(m_map_output_dir))
         {
-            cout << ANSI_COLOR_BLUE_BOLD << "Create r3live output dir: " << m_map_output_dir << ANSI_COLOR_RESET << endl;
+            std::cout << ANSI_COLOR_BLUE_BOLD << "Create r3live output dir: " << m_map_output_dir << ANSI_COLOR_RESET << std::endl;
             Common_tools::create_dir(m_map_output_dir);
         }
-        m_thread_pool_ptr = std::make_shared<Common_tools::ThreadPool>(6, true, false); // At least 5 threads are needs, here we allocate 6 threads.
+        m_thread_pool_ptr = std::make_shared<Common_tools::ThreadPool>(6, true, false); 
         g_cost_time_logger.init_log( std::string(m_map_output_dir).append("/cost_time_logger.log"));
         m_map_rgb_pts.set_minmum_dis(m_minumum_rgb_pts_size);
         m_map_rgb_pts.m_recent_visited_voxel_activated_time = m_recent_visited_voxel_activated_time;
@@ -420,8 +382,9 @@ public:
         m_lio_state_fp = fopen( std::string(m_map_output_dir).append("/lic_lio.log").c_str(), "w+");
         m_lio_costtime_fp = fopen(std::string(m_map_output_dir).append("/lic_lio_costtime.log").c_str(), "w+");
         m_thread_pool_ptr->commit_task(&R3LIVE::service_LIO_update, this);
-             
     }
+    // --- CONSTRUCTOR END ---
+
     ~R3LIVE(){};
 
     //project lidar frame to world

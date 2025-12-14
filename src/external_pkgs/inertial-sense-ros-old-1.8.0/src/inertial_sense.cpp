@@ -51,8 +51,8 @@ void InertialSenseROS::configure_data_streams()
     SET_CALLBACK(DID_DUAL_IMU, dual_imu_t, IMU_callback,1);
 //    SET_CALLBACK(DID_INL2_VARIANCE, nav_dt_ms, inl2_variance_t, INS_variance_callback);
   }
-  nh_private_.param<bool>("publishTf", publishTf, false);
-  nh_private_.param<int>("LTCF", LTCF, ENU);
+  nh_private_.param<bool>("publishTf", publishTf, true);
+  nh_private_.param<int>("LTCF", LTCF, NED);
   // Set up the IMU ROS stream
   nh_private_.param<bool>("stream_IMU", IMU_.enabled, true);
 
@@ -152,7 +152,7 @@ void InertialSenseROS::connect()
 {
   nh_private_.param<std::string>("port", port_, "/dev/ttyACM0");
   nh_private_.param<int>("baudrate", baudrate_, 921600);
-  nh_private_.param<std::string>("frame_id", frame_id_, "base_link");
+  nh_private_.param<std::string>("frame_id", frame_id_, "world");
 
   /// Connect to the uINS
   ROS_INFO("Connecting to serial port \"%s\", at %d baud", port_.c_str(), baudrate_);
@@ -293,17 +293,20 @@ void InertialSenseROS::set_flash_config(std::string param_name, uint32_t offset,
 void InertialSenseROS::INS1_callback(const ins_1_t * const msg)
 {
   odom_msg.header.frame_id = frame_id_;
+  // ROS_INFO("LTCF: %s", (LTCF == NED) ? "NED" : "ENU");
   if (LTCF == NED)
   {
     odom_msg.pose.pose.position.x = msg->ned[0];
     odom_msg.pose.pose.position.y = msg->ned[1];
     odom_msg.pose.pose.position.z = msg->ned[2];
+    // ROS_INFO("LTCF: NED");
   }
   else if (LTCF == ENU)
   {
     odom_msg.pose.pose.position.x = msg->ned[1];
     odom_msg.pose.pose.position.y = msg->ned[0];
     odom_msg.pose.pose.position.z = -msg->ned[2];
+    // ROS_INFO("LTCF: ENU");
   }
 
 }
@@ -393,33 +396,67 @@ void InertialSenseROS::INS2_callback(const ins_2_t * const msg)
     INS_.pub.publish(odom_msg);
 }
 
+// OLD IMU callback
+// void InertialSenseROS::IMU_callback(const dual_imu_t* const msg)
+// {
+//   imu1_msg.header.stamp = imu2_msg.header.stamp = ros_time_from_start_time(msg->time);
+//   imu1_msg.header.frame_id = imu2_msg.header.frame_id = frame_id_;
 
+//   imu1_msg.angular_velocity.x = msg->I[0].pqr[0];
+//   imu1_msg.angular_velocity.y = msg->I[0].pqr[1];
+//   imu1_msg.angular_velocity.z = msg->I[0].pqr[2];
+//   imu1_msg.linear_acceleration.x = msg->I[0].acc[0];
+//   imu1_msg.linear_acceleration.y = msg->I[0].acc[1];
+//   imu1_msg.linear_acceleration.z = msg->I[0].acc[2];
+
+//   //  imu2_msg.angular_velocity.x = msg->I[1].pqr[0];
+//   //  imu2_msg.angular_velocity.y = msg->I[1].pqr[1];
+//   //  imu2_msg.angular_velocity.z = msg->I[1].pqr[2];
+//   //  imu2_msg.linear_acceleration.x = msg->I[1].acc[0];
+//   //  imu2_msg.linear_acceleration.y = msg->I[1].acc[1];
+//   //  imu2_msg.linear_acceleration.z = msg->I[1].acc[2];
+
+//   if (IMU_.enabled)
+//   {
+//     IMU_.pub.publish(imu1_msg);
+//     //    IMU_.pub2.publish(imu2_msg);
+//   }
+// }
+
+// New IMU callback
 void InertialSenseROS::IMU_callback(const dual_imu_t* const msg)
 {
   imu1_msg.header.stamp = imu2_msg.header.stamp = ros_time_from_start_time(msg->time);
   imu1_msg.header.frame_id = imu2_msg.header.frame_id = frame_id_;
 
-  imu1_msg.angular_velocity.x = msg->I[0].pqr[0];
-  imu1_msg.angular_velocity.y = msg->I[0].pqr[1];
-  imu1_msg.angular_velocity.z = msg->I[0].pqr[2];
-  imu1_msg.linear_acceleration.x = msg->I[0].acc[0];
-  imu1_msg.linear_acceleration.y = msg->I[0].acc[1];
-  imu1_msg.linear_acceleration.z = msg->I[0].acc[2];
-
-  //  imu2_msg.angular_velocity.x = msg->I[1].pqr[0];
-  //  imu2_msg.angular_velocity.y = msg->I[1].pqr[1];
-  //  imu2_msg.angular_velocity.z = msg->I[1].pqr[2];
-  //  imu2_msg.linear_acceleration.x = msg->I[1].acc[0];
-  //  imu2_msg.linear_acceleration.y = msg->I[1].acc[1];
-  //  imu2_msg.linear_acceleration.z = msg->I[1].acc[2];
+  if (LTCF == NED)
+  {
+    // NED: Use data as-is
+    imu1_msg.angular_velocity.x = msg->I[0].pqr[0];
+    imu1_msg.angular_velocity.y = msg->I[0].pqr[1];
+    imu1_msg.angular_velocity.z = msg->I[0].pqr[2];
+    imu1_msg.linear_acceleration.x = msg->I[0].acc[0];
+    imu1_msg.linear_acceleration.y = msg->I[0].acc[1];
+    imu1_msg.linear_acceleration.z = msg->I[0].acc[2];
+    // ROS_INFO("LTCF: NED");
+  }
+  else if (LTCF == ENU)
+  {
+    // ENU: Swap X/Y and negate Z
+    imu1_msg.angular_velocity.x = msg->I[0].pqr[1];      // Swap
+    imu1_msg.angular_velocity.y = msg->I[0].pqr[0];      // Swap
+    imu1_msg.angular_velocity.z = -msg->I[0].pqr[2];     // Negate
+    imu1_msg.linear_acceleration.x = msg->I[0].acc[1];   // Swap
+    imu1_msg.linear_acceleration.y = msg->I[0].acc[0];   // Swap
+    imu1_msg.linear_acceleration.z = -msg->I[0].acc[2];  // Negate (this makes your -10.05 → +10.05)
+    // ROS_INFO("LTCF: ENU");
+  }
 
   if (IMU_.enabled)
   {
     IMU_.pub.publish(imu1_msg);
-    //    IMU_.pub2.publish(imu2_msg);
   }
 }
-
 
 void InertialSenseROS::GPS_pos_callback(const gps_pos_t * const msg)
 {

@@ -1,6 +1,8 @@
 <launch>
     <arg name="enable_r3live" default="false" />
     <arg name="use_sim_time" default="false" />
+    <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+    <arg name="use_ground_truth_for_tf" default="true"/>
 
     <param name="use_sim_time" value="$(arg use_sim_time)" />
 
@@ -36,12 +38,18 @@
     </group>
 
     <!-- IMU and LiDAR nodes -->
-    <node pkg="inertial_sense" type="inertial_sense_node" name="inertial_sense_node"/>
-    <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_right" output="screen">
+    <!-- <node pkg="inertial_sense" type="inertial_sense_node" name="inertial_sense_node"/> -->
+    <include file="$(find inertial_sense)/launch/test.launch" />
+    <!-- <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_right" output="screen">
         <param name="config_path" value="$(find rslidar_sdk)/config/rslidar_right.yaml"/>
-    </node>
-    <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_left" output="screen">
+    </node> -->
+    <!-- <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_left" output="screen">
         <param name="config_path" value="$(find rslidar_sdk)/config/rslidar_left.yaml"/>
+    </node> -->
+
+    <!-- Front Lidar Config -->
+    <node pkg="rslidar_sdk" type="rslidar_sdk_node" name="rslidar_front" output="screen">
+        <param name="config_path" value="$(find rslidar_sdk)/config/rslidar_front.yaml"/>
     </node>
 
     <!-- Transforms - FIXED: Cameras now face forward/backward -->
@@ -58,22 +66,37 @@
     <!-- New TF Tree -->
     <!-- Connect aft_mapped to ins (IMU frame) -->
     <!-- Identity transform since R3LIVE's aft_mapped represents the IMU pose -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="aft_mapped_to_ins" 
-          args="0 0 0 0 0 0 aft_mapped ins" />
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="aft_mapped_to_ins" 
+          args="0 0 0 0 0 0 aft_mapped ins" /> -->
     
     <!-- Connect ins to base_link (robot body center) -->
     <!-- Adjust x y z roll pitch yaw if your IMU is offset from robot center -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="ins_to_base_link" 
-          args="0 0 0 0 0 0 ins base_link" />
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="ins_to_base_link" 
+          args="0 0 0 0 0 0 ins base_link" /> -->
+
+    <!-- <node pkg="tf" type="static_transform_publisher" name="lidar_tf_bridge" 
+      args="0 0 0 -1.5708 0 -1.5708 base_link lidar_front_link 10" /> -->
+    
+    <node pkg="tf" type="static_transform_publisher" name="lidar_tf_bridge" 
+      args="0 0 0 1.5708 0 1.5708 base_link lidar_front_link 10" />
+
+    <!-- Ground truth to TF -->
+    <node name="ground_truth_to_tf" pkg="drone_middleware" type="message_to_tf" output="screen">
+      <param name="odometry_topic" value="ins"/>
+      <!-- No leading slash (TF best practice) -->
+      <param name="frame_id" value="aft_mapped"/>
+      <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)"/>
+      <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)"/>
+    </node>
     
 
     <!-- Merge two lidars -->
-    <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
+    <!-- <node pkg="drone_middleware" type="merge_two_lidars" name="merge_two_lidars" output="screen">
         <param name="topic1" value="/rslidar_left/points"/>
         <param name="topic2" value="/rslidar_right/points"/>
         <param name="output" value="/rslidar_merged/points" />
         <param name="target_frame" value="base_link" />
-    </node>
+    </node> -->
 
     <node pkg="drone_middleware" type="sync_with_imu_interp" name="sync_with_imu_interp" output="screen"/>
 

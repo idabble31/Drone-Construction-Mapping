@@ -16,9 +16,9 @@ class SyncMonitor:
         rospy.init_node('sync_monitor')
         
         # Get topic names from parameters
-        self.lidar_topic = rospy.get_param('~lidar_topic', '/rslidar_points')
-        self.imu_topic = rospy.get_param('~imu_topic', '/rslidar_imu')
-        self.camera_topic = rospy.get_param('~camera_topic', '/camera/image_raw')
+        self.lidar_topic = rospy.get_param('~lidar_topic', '/rslidar_front/points')
+        self.imu_topic = rospy.get_param('~imu_topic', '/imu')
+        self.camera_topic = rospy.get_param('~camera_topic', '/front_camera/image_dewarped')
         
         # Statistics tracking
         self.lidar_imu_diffs = deque(maxlen=100)

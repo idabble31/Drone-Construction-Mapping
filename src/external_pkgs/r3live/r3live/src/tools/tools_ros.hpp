@@ -61,7 +61,7 @@ inline T get_ros_parameter( ros::NodeHandle &nh, const std::string parameter_nam
 {
     nh.param< T >( parameter_name.c_str(), parameter, default_val );
     // ENABLE_SCREEN_PRINTF;
-    cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
+    // cout << "[Ros_parameter]: " << parameter_name << " ==> " << parameter << std::endl;
     return parameter;
 }
 

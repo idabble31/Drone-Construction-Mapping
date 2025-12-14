@@ -1,12 +1,35 @@
 #include <ros/ros.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <sensor_msgs/PointCloud2.h>
+
+#include <cstdint>
+
 #include "../tools/tools_logger.hpp"
-#include <sensor_msgs/point_cloud2_iterator.h> // ensure included near top
 
 #ifdef USE_LIVOX
 #include <livox_ros_driver/CustomMsg.h>
 #endif
+
+
+// ---- Add this block after the last include / before using namespace std ----
+struct EIGEN_ALIGN16 PointXYZIRT {
+    PCL_ADD_POINT4D;
+    float intensity;
+    std::uint16_t ring;
+    double timestamp;                       // matches the incoming field name "time"
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
+
+// clang-format off
+POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZIRT,
+    (float, x, x)
+    (float, y, y)
+    (float, z, z)
+    (float, intensity, intensity)
+    (std::uint16_t, ring, ring)
+    (double, timestamp, timestamp)
+)
+// clang-format on
 
 using namespace std;
 
@@ -22,7 +45,7 @@ enum LID_TYPE
     HORIZON,
     VELO16,
     OUST64,
-    RS_AIRY,
+    SIM_MERGED,
     ROBOSENSE
 };
 
@@ -84,9 +107,6 @@ double smallp_intersect, smallp_ratio;
 int    point_filter_num;
 int    g_if_using_raw_point = 1;
 int    g_LiDAR_sampling_point_step = 3;
-
-std::string rs_airy_cloud_topic;
-
 void   mid_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 
 #ifdef USE_LIVOX
@@ -95,8 +115,8 @@ void   horizon_handler( const livox_ros_driver::CustomMsg::ConstPtr &msg );
 
 void   velo16_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 void   oust64_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
-void airy_handler(const sensor_msgs::PointCloud2::ConstPtr &msg);
-void robosense_handler(const sensor_msgs::PointCloud2::ConstPtr &msg);
+void sim_merged_handler( const sensor_msgs::PointCloud2::ConstPtr &msg);
+void robosense_handler( const sensor_msgs::PointCloud2::ConstPtr &msg );
 void   give_feature( pcl::PointCloud< PointType > &pl, vector< orgtype > &types, pcl::PointCloud< PointType > &pl_corn,
                      pcl::PointCloud< PointType > &pl_surf );
 void   pub_func( pcl::PointCloud< PointType > &pl, ros::Publisher pub, const ros::Time &ct );
@@ -130,7 +150,6 @@ int main( int argc, char **argv )
     n.param< int >( "Lidar_front_end/point_filter_num", point_filter_num, 1 );
     n.param< int >( "Lidar_front_end/point_step", g_LiDAR_sampling_point_step, 3 );
     n.param< int >( "Lidar_front_end/using_raw_point", g_if_using_raw_point, 1 );
-    n.param<std::string>("Lidar_front_end/rs_airy/cloud_topic", rs_airy_cloud_topic, "/rslidar_merged/points");
 
     jump_up_limit = cos( jump_up_limit / 180 * M_PI );
     jump_down_limit = cos( jump_down_limit / 180 * M_PI );
@@ -151,7 +170,7 @@ int main( int argc, char **argv )
     #ifdef USE_LIVOX
         sub_points = n.subscribe( "/livox/lidar", 1000, horizon_handler, ros::TransportHints().tcpNoDelay() );
     #else
-        ROS_ERROR("HORIZON lidar selected but livox support is disabled (rebuild with -DUSE_LIVOX=ON).");
+        ROS_ERROR("HORIZON lidar selected but Livox support is disabled (rebuild with -DUSE_LIVOX=ON).");
         exit(1);
     #endif
         break;
@@ -166,14 +185,16 @@ int main( int argc, char **argv )
         sub_points = n.subscribe( "/os_cloud_node/points", 1000, oust64_handler, ros::TransportHints().tcpNoDelay() );
         break;
     
-    case RS_AIRY:
-        printf("ROBOSENSE_AIRY\n");
-        sub_points = n.subscribe(rs_airy_cloud_topic, 1000, airy_handler, ros::TransportHints().tcpNoDelay());
+    case SIM_MERGED:
+        printf("SIM_MERGED\n");
+        sub_points = n.subscribe("/lidar/merged_points", 1000,
+                                sim_merged_handler, ros::TransportHints().tcpNoDelay());
         break;
     
     case ROBOSENSE:
         printf("ROBOSENSE\n");
-        sub_points = n.subscribe("/rslidar_merged/points", 1000, robosense_handler, ros::TransportHints().tcpNoDelay());
+        sub_points = n.subscribe("/rslidar_front/points", 1000,
+                                robosense_handler, ros::TransportHints().tcpNoDelay());
         break;
 
     default:
@@ -329,87 +350,144 @@ void velo16_handler1( const sensor_msgs::PointCloud2::ConstPtr &msg )
     // TODO
 }
 
+void sim_merged_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
+{
+    // pcl::PointCloud<PointType>   pl_processed;
+    // pcl::PointCloud<PointXYZIRT> pl_in;
+
+    // pcl::fromROSMsg(*msg, pl_in);
+
+    // pl_processed.clear();
+    // pl_processed.reserve(pl_in.points.size());
+
+    // for (size_t i = 0; i < pl_in.points.size(); ++i)
+    // {
+    //     const auto& p = pl_in.points[i];
+
+    //     const double range = std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+    //     if (range < blind) continue;
+
+    //     PointType out;
+    //     out.x = p.x;
+    //     out.y = p.y;
+    //     out.z = p.z;
+    //     out.intensity = p.intensity;
+
+    //     // no normals in input; zero them like the other handlers
+    //     out.normal_x = 0;
+    //     out.normal_y = 0;
+    //     out.normal_z = 0;
+
+    //     // keep your convention: store per-point time in curvature (ms)
+    //     // If your "time" is already seconds, multiply by 1000.0.
+    //     // If it's nanoseconds as double, use p.time / 1e6.
+    //     out.curvature = p.time * 1000.0;
+
+    //     pl_processed.points.push_back(out);
+    // }
+
+    // pub_func(pl_processed, pub_full, msg->header.stamp);
+    // pub_func(pl_processed, pub_surf, msg->header.stamp);
+    // pub_func(pl_processed, pub_corn, msg->header.stamp);
+}
+
 void robosense_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
 {
-    // First convert to basic XYZI format (which your RSLidar provides)
-    pcl::PointCloud<pcl::PointXYZI> pl_orig;
-    pcl::fromROSMsg(*msg, pl_orig);
-    
-    // Then convert to PointXYZINormal (the format this code expects)
-    pcl::PointCloud<PointType> pl;
-    pl.reserve(pl_orig.size());
-    
-    // Convert each point and add the missing fields
-    for (size_t i = 0; i < pl_orig.size(); i++)
+    // 1. Pre-allocate STRICTLY. 
+    // using resize() instead of reserve()+push_back() prevents Eigen alignment crashes.
+    pcl::PointCloud<PointType> pl_processed;
+    pl_processed.resize(msg->width * msg->height);
+
+    // 2. Dynamic Field Offset Discovery
+    int x_idx = -1, y_idx = -1, z_idx = -1, i_idx = -1, t_idx = -1;
+    for (const auto& field : msg->fields)
     {
-        // Calculate range for filtering
-        double range = std::sqrt(pl_orig.points[i].x * pl_orig.points[i].x + 
-                                 pl_orig.points[i].y * pl_orig.points[i].y +
-                                 pl_orig.points[i].z * pl_orig.points[i].z);
-        
-        // Skip points too close (blind zone)
-        if (range < blind)
-        {
-            continue;
-        }
-        
-        // Create point with all required fields
-        PointType pt;
-        pt.x = pl_orig.points[i].x;
-        pt.y = pl_orig.points[i].y;
-        pt.z = pl_orig.points[i].z;
-        pt.intensity = pl_orig.points[i].intensity;
-        
-        // Initialize normal fields (not used in feature extraction for unorganized clouds)
-        pt.normal_x = 0;
-        pt.normal_y = 0;
-        pt.normal_z = 0;
-        
-        // Set curvature to 0 (or use scan position if you want temporal info)
-        // For single-beam Airy, we don't have accurate per-point timestamps
-        pt.curvature = 0;
-        
-        pl.push_back(pt);
+        if (field.name == "x") x_idx = field.offset;
+        else if (field.name == "y") y_idx = field.offset;
+        else if (field.name == "z") z_idx = field.offset;
+        else if (field.name == "intensity") i_idx = field.offset;
+        else if (field.name == "timestamp") t_idx = field.offset; // Check for "timestamp"
     }
-    
-    // Now process with feature extraction (similar to mid_handler)
-    pcl::PointCloud<PointType> pl_corn, pl_surf;
-    vector<orgtype> types;
-    
-    uint plsize = pl.size();
-    if (plsize == 0)
+
+    // Fallback: Check for "time" if "timestamp" is missing
+    if (t_idx == -1) {
+        for (const auto& field : msg->fields) {
+            if (field.name == "time") t_idx = field.offset;
+        }
+    }
+
+    if (x_idx == -1 || y_idx == -1 || z_idx == -1 || t_idx == -1)
     {
-        ROS_WARN("Airy handler: empty point cloud after filtering");
+        ROS_WARN_THROTTLE(5.0, "[Robosense] Missing required fields. Skipping.");
         return;
     }
-    
-    pl_corn.reserve(plsize);
-    pl_surf.reserve(plsize);
-    types.resize(plsize);
-    
-    // Calculate range and distances between consecutive points
-    for (uint i = 0; i < plsize - 1; i++)
-    {
-        types[i].range = std::sqrt(pl[i].x * pl[i].x + pl[i].y * pl[i].y + pl[i].z * pl[i].z);
-        
-        double vx = pl[i].x - pl[i + 1].x;
-        double vy = pl[i].y - pl[i + 1].y;
-        double vz = pl[i].z - pl[i + 1].z;
-        types[i].dista = vx * vx + vy * vy + vz * vz;
+
+    // 3. Safety Check: Data Buffer Size
+    if (msg->data.size() < msg->width * msg->height * msg->point_step) {
+        ROS_ERROR_THROTTLE(5.0, "[Robosense] Malformed point cloud packet (buffer too small).");
+        return;
     }
-    
-    // Last point
-    types[plsize - 1].range = std::sqrt(pl[plsize - 1].x * pl[plsize - 1].x + 
-                                        pl[plsize - 1].y * pl[plsize - 1].y + 
-                                        pl[plsize - 1].z * pl[plsize - 1].z);
-    
-    // Extract features
-    give_feature(pl, types, pl_corn, pl_surf);
-    
-    // Publish results
-    pub_func(pl, pub_full, msg->header.stamp);
-    pub_func(pl_surf, pub_surf, msg->header.stamp);
-    pub_func(pl_corn, pub_corn, msg->header.stamp);
+
+    const uint8_t *ptr = msg->data.data();
+    const double header_time = msg->header.stamp.toSec();
+    size_t valid_point_count = 0; // Counter for valid points
+
+    for (size_t i = 0; i < msg->width * msg->height; ++i)
+    {
+        // Calculate pointer to start of this point
+        const uint8_t *pt_data = ptr + i * msg->point_step;
+
+        float x, y, z, intensity = 0;
+        double timestamp = 0;
+
+        // SAFE MEMCPY: Reads bytes regardless of alignment
+        memcpy(&x, pt_data + x_idx, sizeof(float));
+        memcpy(&y, pt_data + y_idx, sizeof(float));
+        memcpy(&z, pt_data + z_idx, sizeof(float));
+        
+        // Check for NaNs (Critical! NaNs can crash downstream nodes)
+        if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z)) continue;
+
+        if (i_idx != -1) memcpy(&intensity, pt_data + i_idx, sizeof(float));
+        memcpy(&timestamp, pt_data + t_idx, sizeof(double));
+
+        // Blind spot filter
+        double range_sq = x*x + y*y + z*z;
+        if (range_sq < blind * blind) continue;
+
+        // --- DIRECT ASSIGNMENT (No push_back) ---
+        // We write directly into the pre-allocated vector slot
+        PointType& p = pl_processed.points[valid_point_count];
+
+        p.x = x;
+        p.y = y;
+        p.z = z;
+        p.intensity = intensity;
+        
+        // Zero out normals (required for R3LIVE)
+        p.normal_x = 0; p.normal_y = 0; p.normal_z = 0;
+
+        // Time Calculation
+        double rel_time = timestamp - header_time;
+
+        // Sanity Check for weird driver timestamps (prevents huge values)
+        if (std::abs(rel_time) > 1.0) rel_time = 0.0;
+
+        p.curvature = rel_time * 1000.0; // Seconds -> Milliseconds
+
+        valid_point_count++;
+    }
+
+    // Shrink the cloud to the actual number of valid points
+    // This is safe because we are shrinking, not expanding
+    pl_processed.resize(valid_point_count);
+
+    if (valid_point_count == 0) return;
+
+    // Publish
+    pub_func(pl_processed, pub_full, msg->header.stamp);
+    pub_func(pl_processed, pub_surf, msg->header.stamp);
+    pub_func(pl_processed, pub_corn, msg->header.stamp);
 }
 
 namespace ouster_ros {
@@ -495,111 +573,6 @@ void oust64_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
     pub_func( pl_processed, pub_surf, msg->header.stamp );
     pub_func( pl_processed, pub_corn, msg->header.stamp );
 }
-
-void airy_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
-{
-    // params you can tweak via rosparam
-    ros::NodeHandle nh;
-    int points_per_scan = 0;
-    double scan_duration = 0.1; // default seconds (adjust if Airy docs say)
-    nh.param("Lidar_front_end/airy_points_per_scan", points_per_scan, 0);
-    nh.param("Lidar_front_end/airy_scan_duration", scan_duration, 0.1);
-
-    // Detect available fields
-    bool has_ring = false, has_time = false, has_intensity = false;
-    std::string ring_field, time_field;
-    for (const auto &f : msg->fields) {
-        if (!has_ring && (f.name == "ring" || f.name == "scan_ring" || f.name == "ring_index")) { has_ring = true; ring_field = f.name; }
-        if (!has_time && (f.name == "time" || f.name == "t" || f.name == "timestamp" || f.name == "offset_time")) { has_time = true; time_field = f.name; }
-        if (!has_intensity && f.name == "intensity") has_intensity = true;
-    }
-
-    // points_per_scan heuristic
-    int total_points = (msg->width > 0 && msg->height > 0) ? (msg->width * msg->height) : 0;
-    if (points_per_scan <= 0) {
-        if (msg->height == 1 && msg->width > 0) points_per_scan = msg->width;
-        else if (total_points > 0) points_per_scan = total_points;
-        else points_per_scan = 1;
-    }
-
-    // Iterators for required fields (x,y,z)
-    sensor_msgs::PointCloud2ConstIterator<float> it_x(*msg, "x");
-    sensor_msgs::PointCloud2ConstIterator<float> it_y(*msg, "y");
-    sensor_msgs::PointCloud2ConstIterator<float> it_z(*msg, "z");
-
-    // intensity (may not exist)
-    sensor_msgs::PointCloud2ConstIterator<float> it_intensity(*msg, has_intensity ? "intensity" : "x");
-
-    // optional ring iterators (init only if present)
-    bool ring_u16 = false, ring_u8 = false;
-    sensor_msgs::PointCloud2ConstIterator<uint16_t> it_ring_u16(*msg, "x");
-    sensor_msgs::PointCloud2ConstIterator<uint8_t> it_ring_u8(*msg, "x");
-    if (has_ring) {
-        for (const auto &f : msg->fields) {
-            if (f.name == ring_field) {
-                if (f.datatype == sensor_msgs::PointField::UINT16) { it_ring_u16 = sensor_msgs::PointCloud2ConstIterator<uint16_t>(*msg, ring_field); ring_u16 = true; }
-                else if (f.datatype == sensor_msgs::PointField::UINT8) { it_ring_u8 = sensor_msgs::PointCloud2ConstIterator<uint8_t>(*msg, ring_field); ring_u8 = true; }
-                break;
-            }
-        }
-    }
-
-    // optional time iterators
-    bool time_f32 = false, time_u32 = false;
-    sensor_msgs::PointCloud2ConstIterator<float> it_time_f32(*msg, "x");
-    sensor_msgs::PointCloud2ConstIterator<uint32_t> it_time_u32(*msg, "x");
-    if (has_time) {
-        for (const auto &f : msg->fields) {
-            if (f.name == time_field) {
-                if (f.datatype == sensor_msgs::PointField::FLOAT32) { it_time_f32 = sensor_msgs::PointCloud2ConstIterator<float>(*msg, time_field); time_f32 = true; }
-                else if (f.datatype == sensor_msgs::PointField::UINT32) { it_time_u32 = sensor_msgs::PointCloud2ConstIterator<uint32_t>(*msg, time_field); time_u32 = true; }
-                break;
-            }
-        }
-    }
-
-    // Prepare output cloud
-    pcl::PointCloud<PointType> pl_processed;
-    size_t npoints = (msg->width * msg->height) ? (msg->width * msg->height) : (size_t)points_per_scan;
-    pl_processed.reserve(npoints);
-
-    for (size_t i = 0; i < npoints; ++i, ++it_x, ++it_y, ++it_z, ++it_intensity) {
-        PointType pt;
-        pt.x = *it_x; pt.y = *it_y; pt.z = *it_z;
-        pt.intensity = has_intensity ? *it_intensity : 0.0f;
-        pt.normal_x = pt.normal_y = pt.normal_z = 0.0f;
-
-        // ring
-        int ring = 0;
-        if (has_ring) {
-            if (ring_u16) { ring = static_cast<int>(*it_ring_u16); ++it_ring_u16; }
-            else if (ring_u8) { ring = static_cast<int>(*it_ring_u8); ++it_ring_u8; }
-        } // else leave ring=0 for Airy single-beam
-
-        // per-point time (seconds)
-        double point_time_s = 0.0;
-        if (has_time) {
-            if (time_f32) { point_time_s = static_cast<double>(*it_time_f32); ++it_time_f32; }
-            else if (time_u32) { point_time_s = static_cast<double>(*it_time_u32) / 1e9; ++it_time_u32; }
-        } else {
-            int idx = (int)(i % points_per_scan);
-            point_time_s = ((double)idx / (double)points_per_scan) * scan_duration;
-        }
-
-        // store time (ms) in curvature (consistent with other handlers)
-        pt.curvature = (point_time_s > 1e6) ? (float)(point_time_s / 1e6) : (float)(point_time_s * 1000.0);
-
-        double range = std::sqrt(pt.x*pt.x + pt.y*pt.y + pt.z*pt.z);
-        if (range < blind) continue;
-        pl_processed.push_back(pt);
-    }
-
-    // publish
-    pub_func(pl_processed, pub_full, msg->header.stamp);
-    pub_func(pl_processed, pub_surf, msg->header.stamp);
-    pub_func(pl_processed, pub_corn, msg->header.stamp);
-}
-
 
 
 void give_feature( pcl::PointCloud< PointType > &pl, vector< orgtype > &types, pcl::PointCloud< PointType > &pl_corn,
