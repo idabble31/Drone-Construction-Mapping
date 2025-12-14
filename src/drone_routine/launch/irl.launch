@@ -12,7 +12,7 @@
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
 
     <!-- Front camera -->
-    <group ns="rear_camera">
+    <!-- <group ns="rear_camera">
         <node pkg="drone_middleware" type="dewarp_fisheye_node" name="dewarp_fisheye_node" >
             <param name="device" value="/dev/video4"/>
             <param name="frame_id" value="fisheye_camera_rear_link"/>
@@ -21,7 +21,7 @@
             <param name="matrix_path" value="/home/scanhub/dev/Drone-Construction-Mapping/src/drone_middleware/config/camera_matrix.npy"/>
             <param name="dist_path" value="/home/scanhub/dev/Drone-Construction-Mapping/src/drone_middleware/config/dist_coeffs.npy" />
         </node>
-    </group>
+    </group> -->
 
     <!-- Rear camera -->
     <group ns="front_camera">

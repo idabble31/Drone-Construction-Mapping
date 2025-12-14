@@ -19,7 +19,13 @@ lidar:
       end_angle: 360
       pcap_repeat: true
       pcap_rate: 1.0
-      pcap_path: /home/robosense/lidar.pcap
+      pcap_path: /home/robosense/lidar.pcap      
+      x: 0.122
+      y: 0
+      z: 0.10
+      roll: 1.5708
+      pitch: 0
+      yaw: 1.5708
     ros:
       ros_frame_id: lidar_front_link
       ros_recv_packet_topic: /rslidar_packets_front

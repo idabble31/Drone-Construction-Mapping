@@ -7,7 +7,7 @@ project(rslidar_sdk)
 #=======================================
 set(POINT_TYPE XYZIRT)
 
-option(ENABLE_TRANSFORM "Enable transform functions" OFF)
+option(ENABLE_TRANSFORM "Enable transform functions" ON)
 if(${ENABLE_TRANSFORM})
   add_definitions("-DENABLE_TRANSFORM")
   find_package(Eigen3 REQUIRED)

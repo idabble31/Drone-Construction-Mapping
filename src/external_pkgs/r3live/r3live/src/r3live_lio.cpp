@@ -1,17 +1,51 @@
-//r3live_lio_current_in_scanhub
-
-/* This code is the implementation of our paper "R3LIVE: A Robust, Real-time, RGB-colored, 
+/* 
+This code is the implementation of our paper "R3LIVE: A Robust, Real-time, RGB-colored, 
 LiDAR-Inertial-Visual tightly-coupled state Estimation and mapping package".
+
+Author: Jiarong Lin   < ziv.lin.ljr@gmail.com >
+
+If you use any code of this repo in your academic research, please cite at least
+one of our papers:
+[1] Lin, Jiarong, and Fu Zhang. "R3LIVE: A Robust, Real-time, RGB-colored, 
+    LiDAR-Inertial-Visual tightly-coupled state Estimation and mapping package." 
+[2] Xu, Wei, et al. "Fast-lio2: Fast direct lidar-inertial odometry."
+[3] Lin, Jiarong, et al. "R2LIVE: A Robust, Real-time, LiDAR-Inertial-Visual
+     tightly-coupled state Estimator and mapping." 
+[4] Xu, Wei, and Fu Zhang. "Fast-lio: A fast, robust lidar-inertial odometry 
+    package by tightly-coupled iterated kalman filter."
+[5] Cai, Yixi, Wei Xu, and Fu Zhang. "ikd-Tree: An Incremental KD Tree for 
+    Robotic Applications."
+[6] Lin, Jiarong, and Fu Zhang. "Loam-livox: A fast, robust, high-precision 
+    LiDAR odometry and mapping package for LiDARs of small FoV."
+
+For commercial use, please contact me < ziv.lin.ljr@gmail.com > and
+Dr. Fu Zhang < fuzhang@hku.hk >.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of the copyright holder nor the names of its
+    contributors may be used to endorse or promote products derived from this
+    software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
 */
-
 #include "r3live.hpp"
-#include <iostream>
-#include <cmath>
-#include <algorithm>
-
-// --- FIX: Add this namespace so 'cout' and 'endl' work ---
-using namespace std; 
-// --------------------------------------------------------
 
 void R3LIVE::imu_cbk( const sensor_msgs::Imu::ConstPtr &msg_in )
 {
@@ -38,6 +72,7 @@ void R3LIVE::imu_cbk( const sensor_msgs::Imu::ConstPtr &msg_in )
 
     imu_buffer_lio.push_back( msg );
     imu_buffer_vio.push_back( msg );
+    // std::cout<<"got imu: "<<timestamp<<" imu size "<<imu_buffer_lio.size()<<std::endl;
     mtx_buffer.unlock();
     sig_buffer.notify_all();
 }
@@ -55,9 +90,11 @@ void printf_field_name( sensor_msgs::PointCloud2::ConstPtr &msg )
 
 bool R3LIVE::get_pointcloud_data_from_ros_message( sensor_msgs::PointCloud2::ConstPtr &msg, pcl::PointCloud< pcl::PointXYZINormal > &pcl_pc )
 {
+
+    // printf("Frame [%d] %.3f ", g_LiDAR_frame_index,  msg->header.stamp.toSec() - g_camera_lidar_queue.m_first_imu_time);
     pcl::PointCloud< pcl::PointXYZI > res_pc;
     scope_color( ANSI_COLOR_YELLOW_BOLD );
-
+    // printf_field_name(msg);
     if ( msg->fields.size() < 3 )
     {
         cout << "Get pointcloud data from ros messages fail!!!" << endl;
@@ -101,7 +138,7 @@ bool R3LIVE::get_pointcloud_data_from_ros_message( sensor_msgs::PointCloud2::Con
             pcl_pc.points.resize( pt_count );
             return true;
         }
-        else 
+        else // TODO, can add by yourself
         {
             cout << "Get pointcloud data from ros messages fail!!! ";
             scope_color( ANSI_COLOR_RED_BOLD );
@@ -126,10 +163,12 @@ bool R3LIVE::sync_packages( MeasureGroup &meas )
         {
             return false;
         }
-        
+        // pcl::fromROSMsg(*(lidar_buffer.front()), *(meas.lidar));
         meas.lidar_beg_time = lidar_buffer.front()->header.stamp.toSec();
         lidar_end_time = meas.lidar_beg_time + meas.lidar->points.back().curvature / double( 1000 );
         meas.lidar_end_time = lidar_end_time;
+        // printf("Input LiDAR time = %.3f, %.3f\n", meas.lidar_beg_time, meas.lidar_end_time);
+        // printf_line_mem_MB;
         lidar_pushed = true;
     }
 
@@ -152,6 +191,8 @@ bool R3LIVE::sync_packages( MeasureGroup &meas )
 
     lidar_buffer.pop_front();
     lidar_pushed = false;
+    // if (meas.imu.empty()) return false;
+    // std::cout<<"[IMU Sycned]: "<<imu_time<<" "<<lidar_end_time<<std::endl;
     return true;
 }
 
@@ -415,59 +456,25 @@ void R3LIVE::lasermap_fov_segment()
         ikdtree.Add_Points( cube_points_add->points, true );
 #endif
     readd_time = omp_get_wtime() - readd_begin - delete_box_time - readd_box_time;
+    // s_plot6.push_back(omp_get_wtime() - t_begin);
 }
 
-// --- PATCH: THIS FUNCTION APPLIES THE ROTATION ---
 void R3LIVE::feat_points_cbk( const sensor_msgs::PointCloud2::ConstPtr &msg_in )
 {
-    // 1. Copy the message 
     sensor_msgs::PointCloud2::Ptr msg( new sensor_msgs::PointCloud2( *msg_in ) );
-    
-    // 2. Apply Timestamp Correction 
-    ros::Time correct_time = ros::Time( msg_in->header.stamp.toSec() - m_lidar_imu_time_delay );
-    msg->header.stamp = correct_time;
-
-    // --- ROTATION START ---
-    if (!m_lidar_ext_R.isIdentity(1e-4) || !m_lidar_ext_t.isZero(1e-4)) 
-    {
-        // A. Convert ROS Msg -> PCL Cloud
-        pcl::PointCloud<pcl::PointXYZINormal> temp_cloud;
-        pcl::fromROSMsg(*msg, temp_cloud);
-
-        // B. Apply Rotation to every point
-        for (auto &p : temp_cloud.points) {
-            // Check for valid points (skip NaNs) using standard library
-            if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z)) continue;
-
-            Eigen::Vector3d pt_in(p.x, p.y, p.z);
-            Eigen::Vector3d pt_out = m_lidar_ext_R * pt_in + m_lidar_ext_t;
-            
-            p.x = pt_out.x();
-            p.y = pt_out.y();
-            p.z = pt_out.z();
-        }
-
-        // C. Convert PCL Cloud -> Back to ROS Msg
-        pcl::toROSMsg(temp_cloud, *msg);
-        
-        // D. Restore Header (toROSMsg overwrites it)
-        msg->header.stamp = correct_time;
-        msg->header.frame_id = msg_in->header.frame_id;
-    }
-    // --- ROTATION END ---
-
+    msg->header.stamp = ros::Time( msg_in->header.stamp.toSec() - m_lidar_imu_time_delay );
     if ( g_camera_lidar_queue.lidar_in( msg_in->header.stamp.toSec() + 0.1 ) == 0 )
     {
         return;
     }
     mtx_buffer.lock();
-    
+    // std::cout<<"got feature"<<std::endl;
     if ( msg->header.stamp.toSec() < last_timestamp_lidar )
     {
         ROS_ERROR( "lidar loop back, clear buffer" );
         lidar_buffer.clear();
     }
-    
+    // ROS_INFO("get point cloud at time: %.6f", msg->header.stamp.toSec());
     lidar_buffer.push_back( msg );
     last_timestamp_lidar = msg->header.stamp.toSec();
     mtx_buffer.unlock();
@@ -482,11 +489,12 @@ void R3LIVE::wait_render_thread_finish()
         // m_render_thread = nullptr;
     }
 }
+
 int R3LIVE::service_LIO_update()
 {
     nav_msgs::Path path;
     path.header.stamp = ros::Time::now();
-    path.header.frame_id = "world";
+    path.header.frame_id = "/world";
     /*** variables definition ***/
     Eigen::Matrix< double, DIM_OF_STATES, DIM_OF_STATES > G, H_T_H, I_STATE;
     G.setZero();
@@ -519,7 +527,6 @@ int R3LIVE::service_LIO_update()
     bool      status = ros::ok();
     g_camera_lidar_queue.m_liar_frame_buf = &lidar_buffer;
     set_initial_state_cov( g_lio_state );
-    
     while ( ros::ok() )
     {
         if ( flg_exit )
@@ -535,6 +542,7 @@ int R3LIVE::service_LIO_update()
         std::unique_lock< std::mutex > lock( m_mutex_lio_process );
         if ( 1 )
         {
+            // printf_line;
             Common_tools::Timer tim;
             if ( sync_packages( Measures ) == 0 )
             {
@@ -564,6 +572,7 @@ int R3LIVE::service_LIO_update()
             g_camera_lidar_queue.g_noise_cov_gyro = p_imu->cov_gyr;
             StatesGroup state_propagate( g_lio_state );
 
+            // cout << "G_lio_state.last_update_time =  " << std::setprecision(10) << g_lio_state.last_update_time -g_lidar_star_tim  << endl;
             if ( feats_undistort->empty() || ( feats_undistort == NULL ) )
             {
                 frame_first_pt_time = Measures.lidar_beg_time;
@@ -580,17 +589,23 @@ int R3LIVE::service_LIO_update()
             {
                 flg_EKF_inited = true;
             }
-            
             /*** Compute the euler angle ***/
             Eigen::Vector3d euler_cur = RotMtoEuler( g_lio_state.rot_end );
-            
+#ifdef DEBUG_PRINT
+            std::cout << "current lidar time " << Measures.lidar_beg_time << " "
+                      << "first lidar time " << frame_first_pt_time << std::endl;
+            std::cout << "pre-integrated states: " << euler_cur.transpose() * 57.3 << " " << g_lio_state.pos_end.transpose() << " "
+                      << g_lio_state.vel_end.transpose() << " " << g_lio_state.bias_g.transpose() << " " << g_lio_state.bias_a.transpose()
+                      << std::endl;
+#endif
             lasermap_fov_segment();
             downSizeFilterSurf.setInputCloud( feats_undistort );
             downSizeFilterSurf.filter( *feats_down );
-            
+            // cout <<"Preprocess cost time: " << tim.toc("Preprocess") << endl;
             /*** initialize the map kdtree ***/
             if ( ( feats_down->points.size() > 1 ) && ( ikdtree.Root_Node == nullptr ) )
             {
+                // std::vector<PointType> points_init = feats_down->points;
                 ikdtree.set_downsample_param( filter_size_map_min );
                 ikdtree.Build( feats_down->points );
                 flg_map_initialized = true;
@@ -604,12 +619,13 @@ int R3LIVE::service_LIO_update()
                 continue;
             }
             int featsFromMapNum = ikdtree.size();
+
             int feats_down_size = feats_down->points.size();
             
             /*** ICP and iterated Kalman filter update ***/
             PointCloudXYZINormal::Ptr coeffSel_tmpt( new PointCloudXYZINormal( *feats_down ) );
             PointCloudXYZINormal::Ptr feats_down_updated( new PointCloudXYZINormal( *feats_down ) );
-            std::vector< double >      res_last( feats_down_size, 1000.0 );
+            std::vector< double >     res_last( feats_down_size, 1000.0 ); // initial
 
             if ( featsFromMapNum >= 5 )
             {
@@ -624,12 +640,13 @@ int R3LIVE::service_LIO_update()
 
                     sensor_msgs::PointCloud2 laserCloudMap;
                     pcl::toROSMsg( *featsFromMap, laserCloudMap );
-                    laserCloudMap.header.stamp = ros::Time::now();
+                    laserCloudMap.header.stamp = ros::Time::now(); // ros::Time().fromSec(last_timestamp_lidar);
+                    // laserCloudMap.header.stamp.fromSec(Measures.lidar_end_time); // ros::Time().fromSec(last_timestamp_lidar);
                     laserCloudMap.header.frame_id = "world";
                     pubLaserCloudMap.publish( laserCloudMap );
                 }
 
-                std::vector< bool >                point_selected_surf( feats_down_size, true );
+                std::vector< bool >               point_selected_surf( feats_down_size, true );
                 std::vector< std::vector< int > > pointSearchInd_surf( feats_down_size );
                 std::vector< PointVector >        Nearest_Points( feats_down_size );
 
@@ -640,7 +657,7 @@ int R3LIVE::service_LIO_update()
                 deltaT = 0.0;
                 t2 = omp_get_wtime();
                 double maximum_pt_range = 0.0;
-                
+                // cout <<"Preprocess 2 cost time: " << tim.toc("Preprocess") << endl;
                 for ( iterCount = 0; iterCount < NUM_MAX_ITERATIONS; iterCount++ )
                 {
                     tim.tic( "Iter" );
@@ -658,15 +675,20 @@ int R3LIVE::service_LIO_update()
                         maximum_pt_range = std::max( ori_pt_dis, maximum_pt_range );
                         PointType &pointSel_tmpt = feats_down_updated->points[ i ];
 
+                        /* transform to world frame */
                         pointBodyToWorld( &pointOri_tmpt, &pointSel_tmpt );
                         std::vector< float > pointSearchSqDis_surf;
+
                         auto &points_near = Nearest_Points[ i ];
 
                         if ( iterCount == 0 || rematch_en )
                         {
                             point_selected_surf[ i ] = true;
+                            /** Find the closest surfaces in the map **/
                             ikdtree.Nearest_Search( pointSel_tmpt, NUM_MATCH_POINTS, points_near, pointSearchSqDis_surf );
                             float max_distance = pointSearchSqDis_surf[ NUM_MATCH_POINTS - 1 ];
+                            //  max_distance to add residuals
+                            // ANCHOR - Long range pt stragetry
                             if ( max_distance > m_maximum_pt_kdtree_dis )
                             {
                                 point_selected_surf[ i ] = false;
@@ -677,7 +699,9 @@ int R3LIVE::service_LIO_update()
                         if ( point_selected_surf[ i ] == false )
                             continue;
 
+                        // match_time += omp_get_wtime() - match_start;
                         double pca_start = omp_get_wtime();
+                        /// PCA (using minimum square method)
                         cv::Mat matA0( NUM_MATCH_POINTS, 3, CV_32F, cv::Scalar::all( 0 ) );
                         cv::Mat matB0( NUM_MATCH_POINTS, 1, CV_32F, cv::Scalar::all( -1 ) );
                         cv::Mat matX0( NUM_MATCH_POINTS, 1, CV_32F, cv::Scalar::all( 0 ) );
@@ -689,7 +713,7 @@ int R3LIVE::service_LIO_update()
                             matA0.at< float >( j, 2 ) = points_near[ j ].z;
                         }
 
-                        cv::solve( matA0, matB0, matX0, cv::DECOMP_QR );
+                        cv::solve( matA0, matB0, matX0, cv::DECOMP_QR ); // TODO
 
                         float pa = matX0.at< float >( 0, 0 );
                         float pb = matX0.at< float >( 1, 0 );
@@ -705,10 +729,13 @@ int R3LIVE::service_LIO_update()
                         bool planeValid = true;
                         for ( int j = 0; j < NUM_MATCH_POINTS; j++ )
                         {
+                            // ANCHOR -  Planar check
                             if ( fabs( pa * points_near[ j ].x + pb * points_near[ j ].y + pc * points_near[ j ].z + pd ) >
-                                 m_planar_check_dis )
+                                 m_planar_check_dis ) // Raw 0.05
                             {
+                                // ANCHOR - Far distance pt processing
                                 if ( ori_pt_dis < maximum_pt_range * 0.90 || ( ori_pt_dis < m_long_rang_pt_dis ) )
+                                // if(1)
                                 {
                                     planeValid = false;
                                     point_selected_surf[ i ] = false;
@@ -720,9 +747,19 @@ int R3LIVE::service_LIO_update()
                         if ( planeValid )
                         {
                             float pd2 = pa * pointSel_tmpt.x + pb * pointSel_tmpt.y + pc * pointSel_tmpt.z + pd;
+                            float s = 1 - 0.9 * fabs( pd2 ) /
+                                              sqrt( sqrt( pointSel_tmpt.x * pointSel_tmpt.x + pointSel_tmpt.y * pointSel_tmpt.y +
+                                                          pointSel_tmpt.z * pointSel_tmpt.z ) );
+                            // ANCHOR -  Point to plane distance
                             double acc_distance = ( ori_pt_dis < m_long_rang_pt_dis ) ? m_maximum_res_dis : 1.0;
                             if ( pd2 < acc_distance )
                             {
+                                // if(std::abs(pd2) > 5 * res_mean_last)
+                                // {
+                                //     point_selected_surf[i] = false;
+                                //     res_last[i] = 0.0;
+                                //     continue;
+                                // }
                                 point_selected_surf[ i ] = true;
                                 coeffSel_tmpt->points[ i ].x = pa;
                                 coeffSel_tmpt->points[ i ].y = pb;
@@ -737,7 +774,6 @@ int R3LIVE::service_LIO_update()
                         }
                         pca_time += omp_get_wtime() - pca_start;
                     }
-                    
                     tim.tic( "Stack" );
                     double total_residual = 0.0;
                     laserCloudSelNum = 0;
@@ -757,7 +793,7 @@ int R3LIVE::service_LIO_update()
                     match_time += omp_get_wtime() - match_start;
                     solve_start = omp_get_wtime();
 
-                    /*** Computation of Measurement Jacobian matrix H and measurements vector ***/
+                    /*** Computation of Measuremnt Jacobian matrix H and measurents vector ***/
                     Eigen::MatrixXd Hsub( laserCloudSelNum, 6 );
                     Eigen::VectorXd meas_vec( laserCloudSelNum );
                     Hsub.setZero();
@@ -770,26 +806,32 @@ int R3LIVE::service_LIO_update()
                         Eigen::Matrix3d point_crossmat;
                         point_crossmat << SKEW_SYM_MATRIX( point_this );
 
+                        /*** get the normal vector of closest surface/corner ***/
                         const PointType &norm_p = coeffSel->points[ i ];
                         Eigen::Vector3d  norm_vec( norm_p.x, norm_p.y, norm_p.z );
 
+                        /*** calculate the Measuremnt Jacobian matrix H ***/
                         Eigen::Vector3d A( point_crossmat * g_lio_state.rot_end.transpose() * norm_vec );
                         Hsub.row( i ) << VEC_FROM_ARRAY( A ), norm_p.x, norm_p.y, norm_p.z;
+
+                        /*** Measuremnt: distance to the closest surface/corner ***/
                         meas_vec( i ) = -norm_p.intensity;
                     }
 
-                    Eigen::Vector3d                               rot_add, t_add, v_add, bg_add, ba_add, g_add;
+                    Eigen::Vector3d                           rot_add, t_add, v_add, bg_add, ba_add, g_add;
                     Eigen::Matrix< double, DIM_OF_STATES, 1 > solution;
-                    Eigen::MatrixXd                               K( DIM_OF_STATES, laserCloudSelNum );
+                    Eigen::MatrixXd                           K( DIM_OF_STATES, laserCloudSelNum );
 
                     /*** Iterative Kalman Filter Update ***/
                     if ( !flg_EKF_inited )
                     {
                         cout << ANSI_COLOR_RED_BOLD << "Run EKF init" << ANSI_COLOR_RESET << endl;
+                        /*** only run in initialization period ***/
                         set_initial_state_cov( g_lio_state );
                     }
                     else
                     {
+                        // cout << ANSI_COLOR_RED_BOLD << "Run EKF uph" << ANSI_COLOR_RESET << endl;
                         auto &&Hsub_T = Hsub.transpose();
                         H_T_H.block< 6, 6 >( 0, 0 ) = Hsub_T * Hsub;
                         Eigen::Matrix< double, DIM_OF_STATES, DIM_OF_STATES > &&K_1 =
@@ -798,10 +840,15 @@ int R3LIVE::service_LIO_update()
 
                         auto vec = state_propagate - g_lio_state;
                         solution = K * ( meas_vec - Hsub * vec.block< 6, 1 >( 0, 0 ) );
+                        // double speed_delta = solution.block( 0, 6, 3, 1 ).norm();
+                        // if(solution.block( 0, 6, 3, 1 ).norm() > 0.05 )
+                        // {
+                        //     solution.block( 0, 6, 3, 1 ) = solution.block( 0, 6, 3, 1 ) / speed_delta * 0.05;
+                        // }
 
                         g_lio_state = state_propagate + solution;
                         print_dash_board();
-                        
+                        // cout << ANSI_COLOR_RED_BOLD << "Run EKF uph, vec = " << vec.head<9>().transpose() << ANSI_COLOR_RESET << endl;
                         rot_add = solution.block< 3, 1 >( 0, 0 );
                         t_add = solution.block< 3, 1 >( 3, 0 );
                         flg_EKF_converged = false;
@@ -814,6 +861,7 @@ int R3LIVE::service_LIO_update()
                         deltaT = t_add.norm() * 100;
                     }
 
+                    // printf_line;
                     g_lio_state.last_update_time = Measures.lidar_end_time;
                     euler_cur = RotMtoEuler( g_lio_state.rot_end );
                     dump_lio_state_to_log( m_lio_state_fp );
@@ -827,64 +875,28 @@ int R3LIVE::service_LIO_update()
                     }
 
                     /*** Convergence Judgements and Covariance Update ***/
-                    if ( rematch_num >= 2 || ( iterCount == NUM_MAX_ITERATIONS - 1 ) )
+                    // if (rematch_num >= 10 || (iterCount == NUM_MAX_ITERATIONS - 1))
+                    if ( rematch_num >= 2 || ( iterCount == NUM_MAX_ITERATIONS - 1 ) ) // Fast lio ori version.
                     {
                         if ( flg_EKF_inited )
                         {
+                            /*** Covariance Update ***/
                             G.block< DIM_OF_STATES, 6 >( 0, 0 ) = K * Hsub;
                             g_lio_state.cov = ( I_STATE - G ) * g_lio_state.cov;
                             total_distance += ( g_lio_state.pos_end - position_last ).norm();
                             position_last = g_lio_state.pos_end;
+
+                            // std::cout << "position: " << g_lio_state.pos_end.transpose() << " total distance: " << total_distance << std::endl;
                         }
                         solve_time += omp_get_wtime() - solve_start;
                         break;
                     }
                     solve_time += omp_get_wtime() - solve_start;
-                } // End of iteration loop
-
-                // ==========================================
-                // DRIFT TRACKING CODE - After all iterations
-                // ==========================================
-                static Eigen::Vector3d initial_position;
-                static bool position_initialized = false;
-                static int drift_frame_count = 0;
-                static double drift_start_time = 0;
-
-                if (!position_initialized && flg_EKF_inited) {
-                    initial_position = g_lio_state.pos_end;
-                    position_initialized = true;
-                    drift_start_time = Measures.lidar_end_time;
-                    std::cout << "\n=== DRIFT TRACKING STARTED ===" << std::endl;
-                    std::cout << "Initial position: " << initial_position.transpose() << std::endl;
-                }
-
-                if (position_initialized) {
-                    drift_frame_count++;
-                    
-                    // Print every 50 frames
-                    if (drift_frame_count % 50 == 0) {
-                        Eigen::Vector3d total_drift = g_lio_state.pos_end - initial_position;
-                        double elapsed_time = Measures.lidar_end_time - drift_start_time;
-                        double drift_per_second = total_drift.norm() / elapsed_time;
-                        
-                        std::cout << "\n=== DRIFT ANALYSIS (Frame " << drift_frame_count << ") ===" << std::endl;
-                        std::cout << "Time elapsed: " << elapsed_time << " seconds" << std::endl;
-                        std::cout << "Current position: " << g_lio_state.pos_end.transpose() << std::endl;
-                        std::cout << "Total drift (XYZ): " << total_drift.transpose() << " meters" << std::endl;
-                        std::cout << "Total drift magnitude: " << total_drift.norm() << " meters" << std::endl;
-                        std::cout << "Drift rate: " << drift_per_second << " m/s" << std::endl;
-                        std::cout << "Drift per axis: X=" << fabs(total_drift(0)) 
-                                    << " Y=" << fabs(total_drift(1)) 
-                                    << " Z=" << fabs(total_drift(2)) << " meters" << std::endl;
-                        std::cout << "Velocity: " << g_lio_state.vel_end.transpose() << std::endl;
-                        std::cout << "Gyro bias: " << g_lio_state.bias_g.transpose() << std::endl;
-                        std::cout << "Accel bias: " << g_lio_state.bias_a.transpose() << std::endl;
-                        std::cout << "Map points: " << ikdtree.size() << std::endl;
-                        std::cout << "Matched points: " << laserCloudSelNum << "/" << feats_down_size << std::endl;
-                        std::cout << "Match ratio: " << (float)laserCloudSelNum/feats_down_size << std::endl;
-                        std::cout << "Avg residual: " << res_mean_last << std::endl;
-                        std::cout << "=================================\n" << std::endl;
-                    }
+                    // cout << "Match cost time: " << match_time * 1000.0
+                    //      << ", search cost time: " << kdtree_search_time*1000.0
+                    //      << ", PCA cost time: " << pca_time*1000.0
+                    //      << ", solver_cost: " << solve_time * 1000.0 << endl;
+                    // cout <<"Iter cost time: " << tim.toc("Iter") << endl;
                 }
 
                 t3 = omp_get_wtime();
@@ -919,70 +931,15 @@ int R3LIVE::service_LIO_update()
 
                 for ( int i = 0; i < feats_down_size; i++ )
                 {
+                    /* transform to world frame */
                     pointBodyToWorld( &( feats_down->points[ i ] ), &( feats_down_updated->points[ i ] ) );
                 }
                 t4 = omp_get_wtime();
-                
+               
                 ikdtree.Add_Points( feats_down_updated->points, true );
                 
                 kdtree_incremental_time = omp_get_wtime() - t4 + readd_time + readd_box_time + delete_box_time;
                 t5 = omp_get_wtime();
-            }
-
-            // ==========================================
-            // ZUPT (ZERO VELOCITY UPDATE) CODE
-            // Place RIGHT BEFORE publishing
-            // ==========================================
-            static Eigen::Vector3d zupt_anchor_position;
-            static bool zupt_active = false;
-            static int zupt_stationary_count = 0;
-            static int zupt_moving_count = 0;
-
-            // Thresholds - adjust based on your sensor
-            const double VELOCITY_THRESHOLD = 0.02;      // m/s
-            const double POSITION_CHANGE_THRESHOLD = 0.02; // meters
-            const int FRAMES_TO_CONFIRM_STATIONARY = 20;
-            const int FRAMES_TO_CONFIRM_MOVING = 5;
-
-            bool currently_stationary = (g_lio_state.vel_end.norm() < VELOCITY_THRESHOLD);
-
-            static Eigen::Vector3d prev_position = g_lio_state.pos_end;
-            double position_change = (g_lio_state.pos_end - prev_position).norm();
-            prev_position = g_lio_state.pos_end;
-
-            bool position_stable = (position_change < POSITION_CHANGE_THRESHOLD);
-
-            if (currently_stationary && position_stable) {
-                zupt_moving_count = 0;
-                zupt_stationary_count++;
-                
-                if (zupt_stationary_count >= FRAMES_TO_CONFIRM_STATIONARY) {
-                    if (!zupt_active) {
-                        zupt_anchor_position = g_lio_state.pos_end;
-                        zupt_active = true;
-                        std::cout << "\n>>> ZUPT ACTIVATED - Position Locked <<<" << std::endl;
-                        std::cout << "Anchor position: " << zupt_anchor_position.transpose() << std::endl;
-                    }
-                    
-                    // Lock position to anchor
-                    g_lio_state.pos_end = zupt_anchor_position;
-                    
-                    // Strongly damp velocity
-                    g_lio_state.vel_end *= 0.5;
-                }
-            } else {
-                zupt_stationary_count = 0;
-                zupt_moving_count++;
-                
-                if (zupt_moving_count >= FRAMES_TO_CONFIRM_MOVING && zupt_active) {
-                    zupt_active = false;
-                    std::cout << "\n>>> ZUPT DEACTIVATED - System Moving <<<" << std::endl;
-                }
-            }
-
-            if (zupt_active && g_LiDAR_frame_index % 10 == 0) {
-                std::cout << "[ZUPT] Position locked at: " << zupt_anchor_position.transpose() 
-                          << " (drift prevented)" << std::endl;
             }
 
             /******* Publish current frame points in world coordinates:  *******/
@@ -1001,27 +958,38 @@ int R3LIVE::service_LIO_update()
                 }
                 sensor_msgs::PointCloud2 laserCloudFullRes3;
                 pcl::toROSMsg( *laserCloudFullResColor, laserCloudFullRes3 );
+                // laserCloudFullRes3.header.stamp = ros::Time::now(); //.fromSec(last_timestamp_lidar);
                 laserCloudFullRes3.header.stamp.fromSec( Measures.lidar_end_time );
-                laserCloudFullRes3.header.frame_id = "world";
+                laserCloudFullRes3.header.frame_id = "world"; // world; camera_init
                 pubLaserCloudFullRes.publish( laserCloudFullRes3 );
             }
 
-            if ( g_camera_lidar_queue.m_if_have_camera_data || (g_LiDAR_frame_index < 100) )
+            if ( g_camera_lidar_queue.m_if_have_camera_data || (g_LiDAR_frame_index < 100) ) // append point cloud to global map.
             {
                 static std::vector< double > stastic_cost_time;
                 Common_tools::Timer          tim;
+                // tim.tic();
+                // ANCHOR - RGB maps update
                 wait_render_thread_finish();
                 if ( m_if_record_mvs )
                 {
                     std::vector< std::shared_ptr< RGB_pts > > pts_last_hitted;
                     pts_last_hitted.reserve( 1e6 );
                     m_number_of_new_visited_voxel = m_map_rgb_pts.append_points_to_global_map(
+                        *laserCloudFullResColor, Measures.lidar_end_time - g_camera_lidar_queue.m_first_imu_time, &pts_last_hitted,
+                        m_append_global_map_point_step );
+                    m_map_rgb_pts.m_mutex_pts_last_visited->lock();
+                    m_map_rgb_pts.m_pts_last_hitted = pts_last_hitted;
+                    m_map_rgb_pts.m_mutex_pts_last_visited->unlock();
+                }
+                else
+                {
+                    m_number_of_new_visited_voxel = m_map_rgb_pts.append_points_to_global_map(
                         *laserCloudFullResColor, Measures.lidar_end_time - g_camera_lidar_queue.m_first_imu_time, nullptr,
                         m_append_global_map_point_step );
                 }
                 stastic_cost_time.push_back( tim.toc( " ", 0 ) );
             }
-            
             if(0) // Uncomment this code scope to enable the publish of effective points.
             {
                 /******* Publish effective points *******/
@@ -1034,7 +1002,8 @@ int R3LIVE::service_LIO_update()
                 }
                 sensor_msgs::PointCloud2 laserCloudFullRes3;
                 pcl::toROSMsg( *laserCloudFullResColor, laserCloudFullRes3 );
-                laserCloudFullRes3.header.stamp.fromSec( Measures.lidar_end_time );
+                // laserCloudFullRes3.header.stamp = ros::Time::now(); //.fromSec(last_timestamp_lidar);
+                laserCloudFullRes3.header.stamp.fromSec( Measures.lidar_end_time ); //.fromSec(last_timestamp_lidar);
                 laserCloudFullRes3.header.frame_id = "world";
                 pubLaserCloudEffect.publish( laserCloudFullRes3 );
             }
@@ -1042,7 +1011,7 @@ int R3LIVE::service_LIO_update()
             /******* Publish Maps:  *******/
             sensor_msgs::PointCloud2 laserCloudMap;
             pcl::toROSMsg( *featsFromMap, laserCloudMap );
-            laserCloudMap.header.stamp.fromSec( Measures.lidar_end_time );
+            laserCloudMap.header.stamp.fromSec( Measures.lidar_end_time ); // ros::Time().fromSec(last_timestamp_lidar);
             laserCloudMap.header.frame_id = "world";
             pubLaserCloudMap.publish( laserCloudMap );
 
@@ -1050,7 +1019,7 @@ int R3LIVE::service_LIO_update()
             geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw( euler_cur( 0 ), euler_cur( 1 ), euler_cur( 2 ) );
             odomAftMapped.header.frame_id = "world";
             odomAftMapped.child_frame_id = "/aft_mapped";
-            odomAftMapped.header.stamp = ros::Time::now();
+            odomAftMapped.header.stamp = ros::Time::now(); // ros::Time().fromSec(last_timestamp_lidar);
             odomAftMapped.pose.pose.orientation.x = geoQuat.x;
             odomAftMapped.pose.pose.orientation.y = geoQuat.y;
             odomAftMapped.pose.pose.orientation.z = geoQuat.z;
@@ -1094,6 +1063,7 @@ int R3LIVE::service_LIO_update()
             /*** save debug variables ***/
             frame_num++;
             aver_time_consu = aver_time_consu * ( frame_num - 1 ) / frame_num + ( t5 - t0 ) / frame_num;
+            // aver_time_consu = aver_time_consu * 0.8 + (t5 - t0) * 0.2;
             T1[ time_log_counter ] = Measures.lidar_beg_time;
             s_plot[ time_log_counter ] = aver_time_consu;
             s_plot2[ time_log_counter ] = kdtree_incremental_time;
