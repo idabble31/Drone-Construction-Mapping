@@ -7,7 +7,7 @@
                            stream_INS: true,
                            stream_IMU: true,
                            LTCF: 1,
-                           publishTf: true,
+                           publishTf: false,
                            frame_id: world,
                            stream_GPS: false,
                            stream_GPS_info: false,

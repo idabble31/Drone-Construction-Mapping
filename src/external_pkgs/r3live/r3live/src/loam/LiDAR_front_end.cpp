@@ -391,100 +391,250 @@ void sim_merged_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
     // pub_func(pl_processed, pub_corn, msg->header.stamp);
 }
 
+// simulated version
+// void robosense_handler( const sensor_msgs::PointCloud2::ConstPtr &msg )
+// {
+//     // TODO
+//     pcl::PointCloud<PointType>   pl_processed;
+//     pcl::PointCloud<PointXYZIRT> pl_in;
+    
+//     pcl::fromROSMsg(*msg, pl_in);
+    
+//     pl_processed.clear();
+//     pl_processed.reserve(pl_in.points.size());
+    
+//     for (size_t i = 0; i < pl_in.points.size(); ++i)
+//     {
+//         const auto& p = pl_in.points[i];
+    
+//         const double range = std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+//         if (range < blind) continue;
+    
+//         PointType out;
+//         out.x = p.x;
+//         out.y = p.y;
+//         out.z = p.z;
+//         out.intensity = p.intensity;
+    
+//         // no normals in input; zero them like the other handlers
+//         out.normal_x = 0;
+//         out.normal_y = 0;
+//         out.normal_z = 0;
+    
+//         // keep your convention: store per-point time in curvature (ms)
+//         // If your "time" is already seconds, multiply by 1000.0.
+//         // If it's nanoseconds as double, use p.time / 1e6.
+//         out.curvature = p.timestamp * 1000.0;
+    
+//         pl_processed.points.push_back(out);
+//     }
+    
+//     pub_func(pl_processed, pub_full, msg->header.stamp);
+//     pub_func(pl_processed, pub_surf, msg->header.stamp);
+//     pub_func(pl_processed, pub_corn, msg->header.stamp);
+// }
+
+
+// scanhub version
+// void robosense_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
+// {
+//     // 1. Pre-allocate STRICTLY. 
+//     // using resize() instead of reserve()+push_back() prevents Eigen alignment crashes.
+//     pcl::PointCloud<PointType> pl_processed;
+//     pl_processed.resize(msg->width * msg->height);
+
+//     // 2. Dynamic Field Offset Discovery
+//     int x_idx = -1, y_idx = -1, z_idx = -1, i_idx = -1, t_idx = -1;
+//     for (const auto& field : msg->fields)
+//     {
+//         if (field.name == "x") x_idx = field.offset;
+//         else if (field.name == "y") y_idx = field.offset;
+//         else if (field.name == "z") z_idx = field.offset;
+//         else if (field.name == "intensity") i_idx = field.offset;
+//         else if (field.name == "timestamp") t_idx = field.offset; // Check for "timestamp"
+//     }
+
+//     // Fallback: Check for "time" if "timestamp" is missing
+//     if (t_idx == -1) {
+//         for (const auto& field : msg->fields) {
+//             if (field.name == "time") t_idx = field.offset;
+//         }
+//     }
+
+//     if (x_idx == -1 || y_idx == -1 || z_idx == -1 || t_idx == -1)
+//     {
+//         ROS_WARN_THROTTLE(5.0, "[Robosense] Missing required fields. Skipping.");
+//         return;
+//     }
+
+//     // 3. Safety Check: Data Buffer Size
+//     if (msg->data.size() < msg->width * msg->height * msg->point_step) {
+//         ROS_ERROR_THROTTLE(5.0, "[Robosense] Malformed point cloud packet (buffer too small).");
+//         return;
+//     }
+
+//     const uint8_t *ptr = msg->data.data();
+//     const double header_time = msg->header.stamp.toSec();
+//     size_t valid_point_count = 0; // Counter for valid points
+
+//     for (size_t i = 0; i < msg->width * msg->height; ++i)
+//     {
+//         // Calculate pointer to start of this point
+//         const uint8_t *pt_data = ptr + i * msg->point_step;
+
+//         float x, y, z, intensity = 0;
+//         double timestamp = 0;
+
+//         // SAFE MEMCPY: Reads bytes regardless of alignment
+//         memcpy(&x, pt_data + x_idx, sizeof(float));
+//         memcpy(&y, pt_data + y_idx, sizeof(float));
+//         memcpy(&z, pt_data + z_idx, sizeof(float));
+        
+//         // Check for NaNs (Critical! NaNs can crash downstream nodes)
+//         if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z)) continue;
+
+//         if (i_idx != -1) memcpy(&intensity, pt_data + i_idx, sizeof(float));
+//         memcpy(&timestamp, pt_data + t_idx, sizeof(double));
+
+//         // Blind spot filter
+//         double range_sq = x*x + y*y + z*z;
+//         if (range_sq < blind * blind) continue;
+
+//         // --- DIRECT ASSIGNMENT (No push_back) ---
+//         // We write directly into the pre-allocated vector slot
+//         PointType& p = pl_processed.points[valid_point_count];
+
+//         p.x = x;
+//         p.y = y;
+//         p.z = z;
+//         p.intensity = intensity;
+        
+//         // Zero out normals (required for R3LIVE)
+//         p.normal_x = 0; p.normal_y = 0; p.normal_z = 0;
+
+//         // Time Calculation
+//         double rel_time = timestamp - header_time;
+
+//         // Sanity Check for weird driver timestamps (prevents huge values)
+//         if (std::abs(rel_time) > 1.0) rel_time = 0.0;
+
+//         p.curvature = rel_time * 1000.0; // Seconds -> Milliseconds
+
+//         valid_point_count++;
+//     }
+
+//     // Shrink the cloud to the actual number of valid points
+//     // This is safe because we are shrinking, not expanding
+//     pl_processed.resize(valid_point_count);
+
+//     if (valid_point_count == 0) return;
+
+//     // Publish
+//     pub_func(pl_processed, pub_full, msg->header.stamp);
+//     pub_func(pl_processed, pub_surf, msg->header.stamp);
+//     pub_func(pl_processed, pub_corn, msg->header.stamp);
+// }
+
+// best for both (let's hope so)
 void robosense_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
 {
-    // 1. Pre-allocate STRICTLY. 
-    // using resize() instead of reserve()+push_back() prevents Eigen alignment crashes.
     pcl::PointCloud<PointType> pl_processed;
     pl_processed.resize(msg->width * msg->height);
 
-    // 2. Dynamic Field Offset Discovery
+    // 1. Find Field Offsets AND Types
     int x_idx = -1, y_idx = -1, z_idx = -1, i_idx = -1, t_idx = -1;
+    int t_datatype = -1; // New: Store the data type of time
+
     for (const auto& field : msg->fields)
     {
         if (field.name == "x") x_idx = field.offset;
         else if (field.name == "y") y_idx = field.offset;
         else if (field.name == "z") z_idx = field.offset;
         else if (field.name == "intensity") i_idx = field.offset;
-        else if (field.name == "timestamp") t_idx = field.offset; // Check for "timestamp"
-    }
-
-    // Fallback: Check for "time" if "timestamp" is missing
-    if (t_idx == -1) {
-        for (const auto& field : msg->fields) {
-            if (field.name == "time") t_idx = field.offset;
+        else if (field.name == "timestamp" || field.name == "time") {
+            t_idx = field.offset;
+            t_datatype = field.datatype; // 7=Float32, 8=Float64
         }
     }
 
-    if (x_idx == -1 || y_idx == -1 || z_idx == -1 || t_idx == -1)
-    {
-        ROS_WARN_THROTTLE(5.0, "[Robosense] Missing required fields. Skipping.");
-        return;
-    }
-
-    // 3. Safety Check: Data Buffer Size
-    if (msg->data.size() < msg->width * msg->height * msg->point_step) {
-        ROS_ERROR_THROTTLE(5.0, "[Robosense] Malformed point cloud packet (buffer too small).");
+    if (x_idx == -1 || y_idx == -1 || z_idx == -1 || t_idx == -1) {
+        ROS_WARN_THROTTLE(5.0, "[Robosense] Missing fields. Skipping.");
         return;
     }
 
     const uint8_t *ptr = msg->data.data();
     const double header_time = msg->header.stamp.toSec();
-    size_t valid_point_count = 0; // Counter for valid points
+    size_t valid_point_count = 0;
+    
+    double min_time_seen = 999.0;
+    double max_time_seen = -999.0;
 
     for (size_t i = 0; i < msg->width * msg->height; ++i)
     {
-        // Calculate pointer to start of this point
         const uint8_t *pt_data = ptr + i * msg->point_step;
-
-        float x, y, z, intensity = 0;
-        double timestamp = 0;
-
-        // SAFE MEMCPY: Reads bytes regardless of alignment
+        
+        float x, y, z; 
         memcpy(&x, pt_data + x_idx, sizeof(float));
         memcpy(&y, pt_data + y_idx, sizeof(float));
         memcpy(&z, pt_data + z_idx, sizeof(float));
-        
-        // Check for NaNs (Critical! NaNs can crash downstream nodes)
+
         if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z)) continue;
+        if (x*x + y*y + z*z < blind * blind) continue;
 
-        if (i_idx != -1) memcpy(&intensity, pt_data + i_idx, sizeof(float));
-        memcpy(&timestamp, pt_data + t_idx, sizeof(double));
+        // --- TYPE-SAFE TIME READING ---
+        double pt_time = 0.0;
 
-        // Blind spot filter
-        double range_sq = x*x + y*y + z*z;
-        if (range_sq < blind * blind) continue;
+        if (t_datatype == 7) { // FLOAT32 (Standard for Simulation)
+            float temp_time;
+            memcpy(&temp_time, pt_data + t_idx, sizeof(float));
+            pt_time = (double)temp_time;
+        } else if (t_datatype == 8) { // FLOAT64 (Standard for Real Drivers)
+            memcpy(&pt_time, pt_data + t_idx, sizeof(double));
+        } else {
+            // Unknown type (e.g. uint32), fallback to float read
+            float temp_time;
+            memcpy(&temp_time, pt_data + t_idx, sizeof(float));
+            pt_time = (double)temp_time;
+        }
 
-        // --- DIRECT ASSIGNMENT (No push_back) ---
-        // We write directly into the pre-allocated vector slot
-        PointType& p = pl_processed.points[valid_point_count];
-
-        p.x = x;
-        p.y = y;
-        p.z = z;
-        p.intensity = intensity;
+        // --- LOGIC: Absolute vs Relative ---
+        double rel_time = 0.0;
         
-        // Zero out normals (required for R3LIVE)
+        if (pt_time > header_time) {
+            // Case A: Absolute Time
+            rel_time = pt_time - header_time;
+        } else if (pt_time > 0.0 && pt_time < 1.0) {
+            // Case B: Already Relative
+            rel_time = pt_time;
+        } 
+        
+        // Sanity Clamp
+        if (rel_time < 0.0) rel_time = 0.0;
+        if (rel_time > 0.15) rel_time = 0.15; 
+
+        // Update Stats
+        if(valid_point_count == 0 || rel_time < min_time_seen) min_time_seen = rel_time;
+        if(rel_time > max_time_seen) max_time_seen = rel_time;
+
+        PointType& p = pl_processed.points[valid_point_count];
+        p.x = x; p.y = y; p.z = z;
+        if (i_idx != -1) memcpy(&p.intensity, pt_data + i_idx, sizeof(float));
+        
         p.normal_x = 0; p.normal_y = 0; p.normal_z = 0;
-
-        // Time Calculation
-        double rel_time = timestamp - header_time;
-
-        // Sanity Check for weird driver timestamps (prevents huge values)
-        if (std::abs(rel_time) > 1.0) rel_time = 0.0;
-
         p.curvature = rel_time * 1000.0; // Seconds -> Milliseconds
 
         valid_point_count++;
     }
 
-    // Shrink the cloud to the actual number of valid points
-    // This is safe because we are shrinking, not expanding
     pl_processed.resize(valid_point_count);
 
-    if (valid_point_count == 0) return;
+    // DEBUG: This line tells us the truth. 
+    // Ideally it should say something like "0.0000 -> 0.1000"
+    ROS_INFO_THROTTLE(1.0, "[Handler] Type: %d | Time Range: %.4f -> %.4f", 
+                      t_datatype, min_time_seen, max_time_seen);
 
-    // Publish
+    if (valid_point_count == 0) return;
+    
     pub_func(pl_processed, pub_full, msg->header.stamp);
     pub_func(pl_processed, pub_surf, msg->header.stamp);
     pub_func(pl_processed, pub_corn, msg->header.stamp);

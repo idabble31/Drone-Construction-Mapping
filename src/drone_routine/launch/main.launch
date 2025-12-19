@@ -44,15 +44,17 @@
 
     <node pkg="drone_middleware" type="sync_with_imu_interp" name="sync_with_imu_interp" output="screen"/>
 
-    <node name="ground_truth_to_tf" pkg="drone_middleware" type="message_to_tf" output="screen">
+    <!-- <node name="ground_truth_to_tf" pkg="drone_middleware" type="message_to_tf" output="screen">
         <param name="odometry_topic" value="ins"/>
         <param name="frame_id" value="aft_mapped"/>
         <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)"/>
         <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)"/>
-    </node>
+    </node> -->
 
-    <node pkg="tf" type="static_transform_publisher" name="lidar_tf_bridge" 
-      args="0 0 0 0 0 0 base_link lidar_front_link 10" />
+    <!-- <node pkg="tf" type="static_transform_publisher" name="lidar_tf_bridge" 
+      args="0 0 0 0 0 0 aft_mapped ins 10" /> -->
+      <node pkg="tf" type="static_transform_publisher" name="aft_mapped_to_base_link_bridge" 
+      args="0 0 0 0 0 0 aft_mapped base_link 10" />
 
     <group if="$(arg enable_r3live)">
         <param name="/LiDAR_pointcloud_topic" type="string" value="/laser_cloud_flat" />
