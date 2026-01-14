@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+install/
+src/GS-LIVO
+
+# Log files
+*.log
+ptp_log.txt
+log/
+
+# Python artifacts (since you have a .whl file)
+*.pyc
+__pycache__/
+*.so
+*.egg-info/
+dist/
+*.whl
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Third-party dependencies (if they can be reinstalled)
+# thirdparty/  # Uncomment if these are downloaded dependencies
+
+# Temporary files
+*.tmp
+*.bak
