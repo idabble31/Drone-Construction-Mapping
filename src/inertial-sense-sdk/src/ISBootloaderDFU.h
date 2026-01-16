@@ -22,8 +22,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define __IS_BOOTLOADER_DFU_H
 
 #include "ISBootloaderBase.h"
-// #include "libusb.h"
-#include <libusb-1.0/libusb.h>
+#include "libusb.h"
 
 #include <mutex>
 

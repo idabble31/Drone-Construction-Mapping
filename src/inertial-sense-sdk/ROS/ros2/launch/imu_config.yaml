@@ -1,0 +1,268 @@
+########################
+#
+#  Some semantics/things to note:
+#  - To simplify/reduce topics names, every "level" can have a "topic" which gets appended to the previous level.
+#    If a level doesn't have a "topic", or levels inbetween that don't have topics, nothing gets appended.
+#      -- I'm not sure if "topic" is the best word choice, but...
+#
+#  - The "top" level is really about configuring the EVB/INS, subsequent levels are "object-specific" configuration.
+#    In most cases, these "objects" are essentially sensor, or peripheral-specific, ie, gps1, or evb_radio.
+#    Everything that is related to that "object" should be underneath that level, creating additional levels if needed.
+#    Sensor objects (ins, gps1, mag, etc) will have either a "message" or a "messages" sublevel.
+#    Message means there is only 1 message published for that object, and does not define a "type".
+#    Messages is used when more than one message type can be published, and the label for the subsequent level is
+#    the message type. Messages can have sublevels, with each type being nested under its parent type.
+#
+#  - There are some things that I didn't know where to put, but I think its getting close
+#
+#  - We will assume defaults for all parameters, and the 'example.yaml' outlines those defaults. Anything that is
+#    using the default value should be commented out. As such, the actual example.yaml will have most every line
+#    commented out... I think the only exception is the top-level port... and even it *could* have a default.
+#
+#  - each "Message" or "Messages" nodes have a "topic" element. Should this topic value default to the coded value,
+#    or can it default to the parent node's name?  (ie, "raw/topic" will default to "raw".)
+#
+#  - I've called out specific things with FIXME's.  These should highlight in your IDE.
+#
+########################
+
+inertial_sense_ros2:
+  ros__parameters:
+    port: "/dev/ttyACM0"
+    baudrate: 921600
+    enable_log: false
+    publishTf: true
+    frame_id: ""
+    mag_declination: 0.0
+    ref_lla: [0.0, 0.0, 0.0]
+
+    firmware_status:
+      message:
+        topic: "firmware_status"
+        enable: true
+
+    transform_frame:
+      message:
+        topic: ""
+        enable: true
+
+    ins:
+      rotation: [0, 0, 0]
+      offset: [0, 0, 0]
+      navigation_dt_ms: 16
+      dynamic_model: 8
+      enable_covariance: false
+      messages:
+        odom_ins_enu:
+          topic: "odom_ins_enu"
+          enable: true
+        odom_ins_ned:
+          topic: "odom_ins_ned"
+          enable: true
+        odom_ins_ecef:
+          topic: "odom_ins_ecef"
+          enable: true
+        did_ins1:
+          topic: "ins_eul_uvw_ned"
+          enable: true
+        did_ins2:
+          topic: "ins_quat_uvw_lla"
+          enable: true
+        did_ins4:
+          topic: "ins_quat_ve_ecef"
+          enable: true
+        inl2_states:
+          topic: "inl2_states"
+          enable: true
+
+    sensors:
+      messages:
+        imu:
+          topic: "imu"
+          enable: false
+          period: 1
+        imu_raw:
+          topic: "imu_raw"
+          enable: true
+          period: 5
+        pimu:
+          topic: "pimu"
+          enable: true
+          period: 1
+        magnetometer:
+          topic: "mag"
+          enable: true
+          period: 1
+        barometer:
+          topic: "baro"
+          enable: true
+          period: 1
+        strobe_in:
+          topic: "strobe_in"
+          enable: true
+
+    gps1:
+      type: 'M8'
+      antenna_offset: [0, 0, 0]
+      gpsTimeUserDelay: 0.0
+      messages:
+        pos_vel:
+          topic: "gps1/pos_vel"
+          enable: true
+          period: 1
+        navsatfix:
+          topic: "/NavSatFix"
+          enable: false
+        info:
+          topic: "gps1/info"
+          enable: true
+          period: 5
+        raw:
+          topic: "gps1/raw"
+          enable: false
+          period: 5
+        rtk_pos_rel:
+          topic: "gps1/pos_vel"
+          enable: true
+          period: 1
+        rel:
+          enable: true
+          topic: "rel"
+        base:
+          topic: "base"
+          rel:
+            topic: "rel"
+          info:
+            topic: "info"
+        compass:
+          topic: "compass"
+          rel:
+            topic: "rel"
+          info:
+            topic: "info"
+
+    gps2:
+      enabled: true
+      type: 'M8'
+      antenna_offset: [0, 0, 0]
+      gpsTimeUserDelay: 0.0
+      messages:
+        pos_vel:
+          topic: "gps2/pos_vel"
+          enable: true
+          period: 1
+        navsatfix:
+          topic: "/NavSatFix"
+          enable: true
+        info:
+          topic: "gps2/info"
+          enable: true
+          period: 5
+        raw:
+          topic: "gps2/raw"
+          enable: false
+          period: 5
+        rtk_pos_rel:
+          topic: "gps2/rtk_rel_pos"
+          enable: false
+          period: 1
+        rel:
+          enable: false
+          topic: "rel"
+        base:
+          topic: "base"
+          rel:
+            topic: "rel"
+          info:
+            topic: "info"
+        compass:
+          topic: "compass"
+          rel:
+            topic: "rel"
+          info:
+            topic: "info"
+
+    evb:
+      cb_preset: 3
+      cb_options: 0
+      radio:
+        enable: false
+        power: 3
+        preamble_id: 3
+        network_id: 41
+
+    rtk_rover:
+      correction_destination:
+        gps1: positioning
+        gps2: compassing
+        gps3: none
+      positioning_enable: false
+      compassing_enable: false
+      correction_input:
+        select: ntrip_example
+        ntrip_example:
+          type: ntrip
+          format: RTCM3
+          ip_address: '66.219.246.93'
+          ip_port: 7777
+          mount_point: ''
+          username: ''
+          password: ''
+          connection_attempts:
+            limit: 1
+            backoff: 2
+          watchdog:
+            enable: true
+            interval: 1
+            timeout: 5
+        ntrip_example2:
+          type: ntrip
+          format: RTCM3
+          ip_address: '66.219.246.93'
+          ip_port: 7777
+        serial_example:
+          type: serial
+          format: RTCM3
+          port: /dev/ttyACM1
+          baud_rate: 115200
+        ros_provider:
+          type: "ros_topic"
+          format: RTCM3
+          topic: "/rtcm3_corrections"
+        xbee_radio:
+          type: "evb"
+          format: RTCM3
+          port: "xbee"
+
+    rtk_base:
+      enable: false
+      correction_source:
+        imx_serial_0: gps1
+        imx_serial_1: off
+        imx_serial_2: gps2
+        imx_usb: off
+      correction_outputs:
+        format: RTCM3
+        select: ros_provider
+        ntrip_1:
+          type: ntrip
+          ip_address: '127.0.0.1'
+          ip_port: 7777
+          mount: ''
+          authentication: "none"
+          username: ''
+          password: ''
+          credentials: '/etc/ntrip/users.txt'
+        serial_1:
+          type: serial
+          port: "/dev/ttyACM0"
+          baud_rate: 115200
+        ros_provider:
+          type: ros_topic
+          topic: "/rtcm3_corrections"
+        xbee_radio:
+          type: evb
+          port: "xbee"
+
+    diagnostics:
+      enable: true

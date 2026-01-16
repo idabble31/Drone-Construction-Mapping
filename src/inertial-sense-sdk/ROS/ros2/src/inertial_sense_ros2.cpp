@@ -47,7 +47,7 @@ void odometryIdentity(nav_msgs::msg::Odometry& msg_odom) {
     }
 }
 
-InertialSenseROS::InertialSenseROS(YAML::Node paramNode, bool configFlashParameters): nh_(rclcpp::Node::make_shared("nh_"))
+InertialSenseROS::InertialSenseROS(YAML::Node paramNode, bool configFlashParameters): nh_(rclcpp::Node::make_shared("nh_")), RTK_rover_(nullptr), RTK_base_(nullptr)
 {
     // Should always be enabled by default
     rs_.did_ins1.enabled = true;
@@ -69,7 +69,7 @@ void InertialSenseROS::initialize(bool configFlashParameters)
     initializeIS(true);
     if (sdk_connected_)
     {
-        initializeROS();
+    // initializeROS(); // Redundant: called inside initializeIS()
 
         if (log_enabled_) 
         {
@@ -465,6 +465,11 @@ void InertialSenseROS::load_params(YAML::Node &node)
      //std::cout << node << "\n\n=====================  EXIT  =====================\n\n";
 
     // exit(1);
+    // Force enable IMU publisher if any of the odometry topics are enabled
+    if (rs_.odom_ins_ned.enabled || rs_.odom_ins_enu.enabled || rs_.odom_ins_ecef.enabled)
+    {
+        rs_.imu.enabled = true;
+    }
 }
 
 
