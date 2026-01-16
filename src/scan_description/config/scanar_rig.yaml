@@ -1,0 +1,27 @@
+# Helmet Sensor Offsets (Exterinsics)
+# All translations are in meters (x y z)
+# All rotations are in radians (roll pitch yaw)
+
+lidar:
+  x: 0.0
+  y: 0.0
+  z: 0.15     # Height above camera
+  roll: 0.0
+  pitch: 0.785 # 45 degrees in radians (45 * pi / 180)
+  yaw: 0.0
+
+camera:
+  x: 0.08     # Forward from center
+  y: 0.0
+  z: 0.05     # Height from helmet surface
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+
+imu:
+  x: -0.05    # Behind camera
+  y: 0.0
+  z: 0.04
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
