@@ -32,7 +32,7 @@ inertial_sense_ros2:
     baudrate: 921600
     enable_log: false
     publishTf: true
-    frame_id: ""
+    frame_id: "imu_link"
     mag_declination: 0.0
     ref_lla: [0.0, 0.0, 0.0]
 

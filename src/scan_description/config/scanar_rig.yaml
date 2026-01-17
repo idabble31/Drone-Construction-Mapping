@@ -5,9 +5,9 @@
 lidar:
   x: 0.0
   y: 0.0
-  z: 0.15     # Height above camera
-  roll: 0.0
-  pitch: 0.785 # 45 degrees in radians (45 * pi / 180)
+  z: 0.0     # Height above camera
+  roll: 0.0 # 15 degrees in radians (15 * pi / 180)
+  pitch: 0.0 
   yaw: 0.0
 
 camera:

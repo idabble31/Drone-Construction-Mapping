@@ -1,35 +1,28 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="helmet_rig">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scanar_rig">
 
   <xacro:property name="config" value="${xacro.load_yaml('$(find scan_description)/config/scanar_rig.yaml')}"/>
 
   <link name="base_link">
     <visual>
-      <geometry><sphere radius="0.12"/></geometry> <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://scan_description/mesh/scanAR_v4.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="helmet_color">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
     </visual>
   </link>
 
-  <link name="camera_link">
-    <visual>
-      <geometry><box size="0.03 0.06 0.03"/></geometry>
-      <material name="red"><color rgba="1 0 0 1"/></material>
-    </visual>
-  </link>
-
-  <joint name="base_to_camera" type="fixed">
+  <link name="camera_link"/> <joint name="base_to_camera" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
     <origin xyz="${config['camera']['x']} ${config['camera']['y']} ${config['camera']['z']}" 
             rpy="${config['camera']['roll']} ${config['camera']['pitch']} ${config['camera']['yaw']}"/>
   </joint>
 
-  <link name="rslidar">
-    <visual>
-      <geometry><cylinder radius="0.04" length="0.06"/></geometry>
-      <material name="gray"><color rgba="0.5 0.5 0.5 1"/></material>
-    </visual>
-  </link>
-
+  <link name="rslidar"/> 
   <joint name="base_to_lidar" type="fixed">
     <parent link="base_link"/>
     <child link="rslidar"/>
@@ -37,13 +30,7 @@
             rpy="${config['lidar']['roll']} ${config['lidar']['pitch']} ${config['lidar']['yaw']}"/>
   </joint>
 
-  <link name="imu_link">
-    <visual>
-      <geometry><box size="0.02 0.02 0.005"/></geometry>
-      <material name="blue"><color rgba="0 0 1 1"/></material>
-    </visual>
-  </link>
-
+  <link name="imu_link"/>
   <joint name="base_to_imu" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link"/>
