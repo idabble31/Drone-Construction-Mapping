@@ -77,5 +77,5 @@ def generate_launch_description():
         rslidar_node,
         imu_node,
         camera_node,
-        rviz_node
+        # rviz_node
     ])
