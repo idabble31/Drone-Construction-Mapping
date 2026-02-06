@@ -1,0 +1,33 @@
+# Camera intrinsics (Extracted from your provided matrix)
+fx: 290.05028
+fy: 291.02629
+cx: 295.70625
+cy: 229.42363
+k1: -0.238000
+k2: 0.036225
+p1: 0.001893
+p2: 0.005024
+
+# Calibration target parameters (Calculated from blueprint)
+marker_size: 0.10
+delta_width_qr_center: 0.225
+delta_height_qr_center: 0.225
+delta_width_circles: 0.20
+delta_height_circles: 0.25
+circle_radius: 0.06
+
+# Distance filter (Suggested for your setup)
+x_min: 1.5
+x_max: 5.0
+y_min: -2.0
+y_max: 2.0
+z_min: -1.0
+z_max: 2.0
+
+# Input
+lidar_topic: "/rslidar_points"
+bag_path: "/root/data/calib_target.bag"
+image_path: "/root/data/snap_target.jpg"
+
+# Output
+output_path: "$(find fast_calib)/output"
