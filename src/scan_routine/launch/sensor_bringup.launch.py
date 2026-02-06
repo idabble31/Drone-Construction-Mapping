@@ -74,6 +74,18 @@ def generate_launch_description():
         }]
     )
 
+    # 5. image_proc rectifier
+    rectifier_node = Node(
+        package='image_proc',
+        executable='image_proc',
+        name='image_proc',
+        output='screen',
+        remappings=[
+            ('image', '/image_raw'),
+            ('camera_info', '/camera_info')
+        ]
+    )
+
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -89,5 +101,6 @@ def generate_launch_description():
         rslidar_node,
         imu_node,
         camera_node,
+        rectifier_node,
         rviz_node
     ])
