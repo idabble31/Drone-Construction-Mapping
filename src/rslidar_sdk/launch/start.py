@@ -6,7 +6,7 @@ def generate_launch_description():
 
     rviz_config=get_package_share_directory('rslidar_sdk')+'/rviz/rviz2.rviz'
 
-    config_file = '/home/scanar/scan_ar/src/rslidar_sdk/config/config.yaml'
+    config_file = '/home/scanar/scan_ar/src/rslidar_sdk/config/drone_config.yaml'
     
     return LaunchDescription([
         Node(namespace='rslidar_sdk', package='rslidar_sdk', executable='rslidar_sdk_node', output='screen', parameters=[{'config_path': config_file}]),

@@ -2,9 +2,19 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    # --- Launch Arguments ---
+    rviz_arg = DeclareLaunchArgument(
+        'rviz',
+        default_value='false',
+        description='Whether to launch RViz'
+    )
+
     # --- File Paths ---
     # Descriptions
     pkg_description = get_package_share_directory('scan_description')
@@ -15,7 +25,7 @@ def generate_launch_description():
     robot_description_raw = xacro.process_file(xacro_file).toxml()
 
     # Hardware Configs (Absolute paths are okay, but package paths are better)
-    rslidar_config = '/home/scanar/scan_ar/src/rslidar_sdk/config/config.yaml'
+    rslidar_config = '/home/scanar/scan_ar/src/rslidar_sdk/config/drone_config.yaml'
     imu_config = '/home/scanar/scan_ar/src/inertial-sense-sdk/ROS/ros2/launch/imu_config.yaml'
 
     rviz_config = '/home/scanar/scan_ar/src/scan_routine/rviz/default.rviz'
@@ -69,13 +79,15 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         arguments=['-d', rviz_config],
-        output='screen'
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
     return LaunchDescription([
+        rviz_arg,
         robot_state_publisher,
         rslidar_node,
         imu_node,
         camera_node,
-        # rviz_node
+        rviz_node
     ])

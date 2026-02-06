@@ -4,7 +4,7 @@
       img_topic: "/image_raw"
       lid_topic: "/rslidar_points"
       imu_topic: "/imu"
-      img_en: 1
+      img_en: 1           # DISABLED - VIO needs proper extrinsic calibration first
       lidar_en: 1
       ros_driver_bug_fix: false
 
@@ -15,7 +15,7 @@
                     0.0, 0.0, 1.0]
       Rcl: [0.00610193,-0.999863,-0.0154172,
             -0.00615449,0.0153796,-0.999863,
-            0.999962,0.00619598,-0.0060598] 
+            0.999962,0.00619598,-0.0060598]
       Pcl: [0.0194384, 0.104689,-0.0251952]
 
     time_offset: 
@@ -67,7 +67,7 @@
 
     uav:
       imu_rate_odom: false
-      gravity_align_en: false
+      gravity_align_en: true    # Enabled to reduce Z-drift
 
     publish:
       dense_map_en: true

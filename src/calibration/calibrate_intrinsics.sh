@@ -1,54 +1,46 @@
 #!/bin/bash
 
 # --- ROS 2 Environment Setup ---
-# Ensure the script knows where ROS 2 is installed.
 source /opt/ros/humble/setup.bash
+# Source your workspace so it finds the camera package (if needed)
+# source ~/scan_ar/install/setup.bash 
 
 echo "----------------------------------------------------------"
-echo "Starting ROS 2 Camera Calibration"
-echo "Target: 7x5 Inner Corners | Square: 25mm (0.025m)"
+echo "Starting Camera Node (Background)"
 echo "----------------------------------------------------------"
 
-# --- Calibration Command ---
-# We use 'ros2 run' to launch the python node from the camera_calibration package.
+# 1. Start ONLY the camera node in the background (&)
+ros2 run v4l2_camera v4l2_camera_node --ros-args \
+    -p video_device:="/dev/video0" \
+    -p image_size:="[640,480]" \
+    -p camera_frame_id:="camera_link" &
+
+# Capture the Process ID (PID) of the camera so we can kill it later
+CAM_PID=$!
+
+# Give the camera 2 seconds to warm up
+sleep 2
+
+echo "----------------------------------------------------------"
+echo "Starting Calibration Tool"
+echo "----------------------------------------------------------"
+
+# 2. Run the Calibration Tool
 ros2 run camera_calibration cameracalibrator \
-  --size 7x5 \
-  --square 0.025 \
+  --size 7x7 \
+  --square 0.04 \
   --no-service-check \
   --ros-args \
   -r image:=/image_raw \
   -r camera_info:=/camera_info
 
-# ==========================================================
-# ARGUMENT EXPLANATIONS:
-# ==========================================================
-# --size 7x5
-#   This defines the INNER CORNERS of your checkerboard, not the squares.
-#   For a board with 8 columns and 6 rows of squares, use 7x5.
-#
-# --square 0.025
-#   The physical size of one black square side in METERS. 
-#   (Example: 25mm = 0.025m). This sets the scale for the SLAM system.
-#
-# --no-service-check
-#   Tells the tool NOT to wait for the 'set_camera_info' service.
-#   Many simple camera drivers don't support this service, and without 
-#   this flag, the GUI might hang or crash on startup.
-#
-# -r image:=/image_raw
-#   REMAP: Connects the tool's internal 'image' input to your 
-#   actual camera topic (/image_raw).
-#
-# -r camera_info:=/camera_info
-#   REMAP: Connects the tool's metadata output to your camera's 
-#   info topic (/camera_info).
-# ==========================================================
+# 3. Cleanup: Kill the camera node when calibration closes
+echo "Calibration finished. Shutting down camera..."
+kill $CAM_PID
 
-# --- Post-Calibration Cleanup ---
-# The tool saves data to /tmp/calibrationdata.tar.gz by default.
-# If you are in Docker, we should move it to your workspace before exit.
+# 4. Move Results
 if [ -f /tmp/calibrationdata.tar.gz ]; then
     mkdir -p ./calibration_results
     mv /tmp/calibrationdata.tar.gz ./calibration_results/
-    echo "Done! Calibration results moved to: ./calibration_results/"
+    echo "Results saved to ./calibration_results/"
 fi
