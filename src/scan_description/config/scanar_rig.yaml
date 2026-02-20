@@ -6,17 +6,17 @@ lidar:
   x: 0.0
   y: 0.0
   z: 0.12811462     # Height above camera, actual estimate: 0.12811462
-  roll: 0.872665 # 15 degrees in radians (15 * pi / 180)
-  pitch: 0.0 
+  roll: 0.0 # 15 degrees in radians (15 * pi / 180)
+  pitch: 0.872665 
   yaw: 0.0
 
 camera:
-  x: 0.0     # Forward from center
-  y: -0.08
+  x: -0.08     # Forward from center
+  y: 0.0
   z: 0.1     # Height from helmet surface
   roll: -1.5708
   pitch: 0.0
-  yaw: 3.14159
+  yaw: -1.5708
 
 imu:
   x: -0.05    # Behind camera

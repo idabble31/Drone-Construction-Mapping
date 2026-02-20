@@ -8,25 +8,67 @@ k2: 0.036225
 p1: 0.001893
 p2: 0.005024
 
-# Calibration target parameters (Calculated from blueprint)
-marker_size: 0.10
-delta_width_qr_center: 0.225
-delta_height_qr_center: 0.225
-delta_width_circles: 0.20
-delta_height_circles: 0.25
-circle_radius: 0.06
+# Calibration target parameters (Half-size)
+# marker_size: 0.19      
+# delta_width_qr_center: 0.55
+# delta_height_qr_center: 0.35
+# delta_width_circles: 0.25     # was 0.25
+# delta_height_circles: 0.2    # was 0.20
+# circle_radius: 0.06
 
-# Distance filter (Suggested for your setup)
-x_min: 1.5
-x_max: 5.0
-y_min: -2.0
-y_max: 2.0
-z_min: -1.0
-z_max: 2.0
+# Calibration target parameters (Full-size)
+marker_size: 0.20
+delta_width_qr_center: 0.55
+delta_height_qr_center: 0.35
+delta_width_circles: 0.5
+delta_height_circles: 0.4
+circle_radius: 0.12
+
+
+# Distance filter (v1, further distance)
+# x_min: 0.1 # was 0.1
+# x_max: 2.0 # was 2.0
+# y_min: -0.427 - 0.0100
+# y_max: 0.0848 + 0.0100
+# z_min: 1.316
+# z_max: 1.8
+
+# Distance filter (v2, closer distance, tighter)
+# x_min: 0.4988
+# x_max: 0.8518
+# y_min: -0.1980
+# y_max: 0.2897912263870239
+# z_min: 0.900
+# z_max: 1.288 
+
+
+# Distance filter (v3, closer, wider)
+# x_min: 0.450
+# x_max: 0.914
+# y_min: -0.289
+# y_max: 0.382
+# z_min: 0.900
+# z_max: 1.288
+
+# Distance filter (v4, full size target)
+# x_min: 0.06
+# x_max: 1.18
+# y_min: -1.19
+# y_max: 0.44
+# z_min: -0.80
+# z_max: 1.85
+
+# Distance filter (v5, from dense pcd)
+x_min: 0.0
+x_max: 1.0
+y_min: -1.0
+y_max: 1.5
+z_min: -2.2
+z_max: -1.0
 
 # Input
 lidar_topic: "/rslidar_points"
-bag_path: "/root/data/calib_target.bag"
+bag_path: "/root/data/dense_calibration.bag"
 image_path: "/root/data/snap_target.jpg"
 
 # Output

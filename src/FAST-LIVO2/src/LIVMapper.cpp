@@ -604,9 +604,22 @@ void LIVMapper::savePCD()
     }
     else
     {      
+      // pcd_writer.writeBinary(raw_points_dir, *pcl_wait_save_intensity);
+      // std::cout << GREEN << "Raw point cloud data saved to: " << raw_points_dir 
+      //           << " with point count: " << pcl_wait_save_intensity->points.size() << RESET << std::endl;
       pcd_writer.writeBinary(raw_points_dir, *pcl_wait_save_intensity);
       std::cout << GREEN << "Raw point cloud data saved to: " << raw_points_dir 
                 << " with point count: " << pcl_wait_save_intensity->points.size() << RESET << std::endl;
+
+      pcl::PointCloud<pcl::PointXYZINormal>::Ptr downsampled_cloud(new pcl::PointCloud<pcl::PointXYZINormal>);
+      pcl::VoxelGrid<pcl::PointXYZINormal> voxel_filter;
+      voxel_filter.setInputCloud(pcl_wait_save_intensity);
+      voxel_filter.setLeafSize(filter_size_pcd, filter_size_pcd, filter_size_pcd);
+      voxel_filter.filter(*downsampled_cloud);
+
+      pcd_writer.writeBinary(downsampled_points_dir, *downsampled_cloud);
+      std::cout << GREEN << "Downsampled point cloud data saved to: " << downsampled_points_dir 
+                << " with point count after filtering: " << downsampled_cloud->points.size() << RESET << std::endl;
     }
   }
 }

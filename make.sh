@@ -20,6 +20,7 @@ colcon build \
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
         -DUSE_LIVOX=OFF \
         -DENABLE_IMU_DATA_PARSE=ON \
+        -DENABLE_TRANSFORM=ON \
         -DCMAKE_BUILD_TYPE=Release
 
 # 4. Source the local workspace so the current terminal recognizes the new build

@@ -4,6 +4,10 @@
 	<arg name="rviz" default="true" />
 
 	<rosparam file="$(find fast_calib)/config/test_qr_params.yaml" command="load" subst_value="true"/>
+  	
+	<param name="/lidar_detect/neighbor_gap_threshold" type="double" value="0.10" />
+ 	<param name="/lidar_detect/min_points_per_ring" type="int" value="10" />
+	<param name="/lidar_detect/radius_tolerance" type="double" value="0.03" />
 
 	<node pkg="fast_calib" type="fast_calib" name="fast_calib" output="screen">
 	</node>
@@ -11,7 +15,6 @@
 	<group if="$(arg rviz)">
 		<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fast_calib)/rviz_cfg/fast_livo2.rviz" />
 	</group>
-
 launch-prefix="gdb -ex run --args"
 launch-prefix="valgrind --leak-check=full"
 

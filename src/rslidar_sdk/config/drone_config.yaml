@@ -35,6 +35,12 @@ lidar:
       pcap_repeat: true            #  true: The pcap bag will repeat play   
       pcap_rate: 1.0               #  Rate to read the pcap file
       pcap_path: /home/robosense/lidar.pcap #The path of pcap file
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 1.5708
 
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message

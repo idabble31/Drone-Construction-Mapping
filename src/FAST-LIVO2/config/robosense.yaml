@@ -4,19 +4,28 @@
       img_topic: "/image_raw"
       lid_topic: "/rslidar_points"
       imu_topic: "/imu"
-      img_en: 1           # DISABLED - VIO needs proper extrinsic calibration first
+      img_en: 1           # VIO -> 0: DISABLED ; 1: ENABLED
       lidar_en: 1
       ros_driver_bug_fix: false
 
     extrin_calib:
-      extrinsic_T: [0.04165, 0.02326, -0.0284]
-      extrinsic_R: [1.0, 0.0, 0.0,
-                    0.0, 1.0, 0.0,
-                    0.0, 0.0, 1.0]
-      Rcl: [0.00610193,-0.999863,-0.0154172,
-            -0.00615449,0.0153796,-0.999863,
-            0.999962,0.00619598,-0.0060598]
-      Pcl: [0.0194384, 0.104689,-0.0251952]
+      extrinsic_T: [0.035, 0.000, -0.095]
+      extrinsic_R: [0.643, 0.000, -0.766,
+                    0.000, 1.000, 0.000,
+                    0.766, 0.000, 0.643]
+      Rcl: [0.000, 0.766, 0.643,
+            -1.000, 0.000, 0.000,
+            0.000, -0.643, 0.766]
+      Pcl: [-0.030, 0.000,-0.079]
+    # extrin_calib:
+    #   extrinsic_T: [0.04165, 0.02326, -0.0284]
+    #   extrinsic_R: [1.0, 0.0, 0.0,
+    #                 0.0, 1.0, 0.0,
+    #                 0.0, 0.0, 1.0]
+    #   Rcl: [0.00610193,-0.999863,-0.0154172,
+    #         -0.00615449,0.0153796,-0.999863,
+    #         0.999962,0.00619598,-0.0060598]
+    #   Pcl: [0.0194384, 0.104689,-0.0251952]
 
     time_offset: 
       imu_time_offset: 0.0
@@ -81,7 +90,7 @@
       pose_output_en: false
 
     pcd_save:
-      pcd_save_en: false
+      pcd_save_en: true
       colmap_output_en: false
-      filter_size_pcd: 0.15
+      filter_size_pcd: 0.05
       interval: -1
