@@ -182,7 +182,7 @@ def select_and_save_points(pcd_folder, target_pcd_name):
     maxs = selected_points.max(axis=0)
 
     # TIGHT BUFFER: 0.05m (5cm) instead of 20cm
-    buffer = 0.05
+    buffer = 0.15
     x_min, x_max = mins[0] - buffer, maxs[0] + buffer
     y_min, y_max = mins[1] - buffer, maxs[1] + buffer
     z_min, z_max = mins[2] - buffer, maxs[2] + buffer

@@ -9,20 +9,20 @@ p1: 0.001893
 p2: 0.005024
 
 # Calibration target parameters (Half-size)
-# marker_size: 0.19      
-# delta_width_qr_center: 0.55
-# delta_height_qr_center: 0.35
-# delta_width_circles: 0.25     # was 0.25
-# delta_height_circles: 0.2    # was 0.20
-# circle_radius: 0.06
-
-# Calibration target parameters (Full-size)
-marker_size: 0.20
+marker_size: 0.1      
 delta_width_qr_center: 0.55
 delta_height_qr_center: 0.35
-delta_width_circles: 0.5
-delta_height_circles: 0.4
-circle_radius: 0.12
+delta_width_circles: 0.25       # was 0.25 for rect, 0.50 for distorted
+delta_height_circles: 0.20      # was 0.20 for rect, 0.40 for distorted
+circle_radius: 0.06             # was 0.06 for rect, 0.09 for distorted
+
+# Calibration target parameters (Full-size)
+# marker_size: 0.20
+# delta_width_qr_center: 0.55
+# delta_height_qr_center: 0.35
+# delta_width_circles: 0.5
+# delta_height_circles: 0.4
+# circle_radius: 0.12
 
 
 # Distance filter (v1, further distance)
@@ -51,25 +51,99 @@ circle_radius: 0.12
 # z_max: 1.288
 
 # Distance filter (v4, full size target)
-# x_min: 0.06
-# x_max: 1.18
-# y_min: -1.19
-# y_max: 0.44
-# z_min: -0.80
-# z_max: 1.85
+# x_min: 0.15
+# x_max: 1.10
+# y_min: -1.07
+# y_max: 0.33
+# z_min: 1.18
+# z_max: 1.97
 
 # Distance filter (v5, from dense pcd)
-x_min: 0.0
-x_max: 1.0
-y_min: -1.0
-y_max: 1.5
-z_min: -2.2
-z_max: -1.0
+# x_min: 0.0
+# x_max: 1.0
+# y_in: -1.0
+# y_max: 1.5
+# z_min: -2.2
+# z_max: -1.0
+
+# Distance filter (v6, full-size cropped)
+# x_min: 0.12
+# x_max: 1.30
+# y_min: -1.52
+#y_max: -0.05
+# z_min: -0.17
+# z_max: 0.65
+
+# Distance filter (v7, half-size cropped with board)
+# x_min: 0.02
+# x_max: 0.80
+# y_min: -1.31
+# y_max: -0.23
+# z_min: 0.03
+# z_max: 0.34
+
+# Distance filter (v8, half-size raw with board)
+# x_min: 1.087
+# x_max: 1.48
+# y_min: -0.322
+# y_max: 0.738
+# z_min: 0.333
+# z_max: 1.084
+
+# Distance filter (v9, rectified half-size with board)
+# X: 0.22 to 0.79 | Y: -0.48 to 0.50 | Z: 1.75 to 2.16
+# x_min: 0.22
+# x_max: 0.79
+# y_min: -0.48
+# y_max: 0.50
+# z_min: 1.75
+# z_max: 2.16
+
+# Distance filter (v10, adjusted half-size with board)
+# x_min: -0.21
+# x_max: 0.46
+# y_min: -0.63
+# y_max: 0.44
+# z_min: 1.77
+# z_max: 2.15
+
+# x_min: 1.094
+# x_max: 1.469
+# y_min: -0.257
+# y_max: 0.705
+# z_min: 0.305
+# z_max: 1.033
+
+# x_min: 1.094
+# x_max: 1.444
+# y_min: -0.150
+# y_max: 0.630
+# z_min: 0.468
+# z_max: 0.994
+
+# x_min: 0.096
+x_min: 1.096
+x_max: 1.460
+y_min: -0.210
+y_max: 0.610
+# y_max: 0.510
+z_min: 0.345
+z_max: 1.025
+
+# lidar_detect params
+lidar_detect:
+  min_gap_threshold: 0.04
+  max_gap_threshold: 0.25
+  min_points_per_ring: 3
+  distance_threshold: 0.035
+  radius_limit: 0.11
+  min_inliers: 3
 
 # Input
 lidar_topic: "/rslidar_points"
-bag_path: "/root/data/dense_calibration.bag"
-image_path: "/root/data/snap_target.jpg"
+# bag_path: "/root/data/calib_target.bag"
+bag_path: /root/data/calib_new.bag
+image_path: /root/data/calib_new.jpg
 
 # Output
 output_path: "$(find fast_calib)/output"

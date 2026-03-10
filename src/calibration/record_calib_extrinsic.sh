@@ -6,8 +6,8 @@ readonly BAG_DIR="${HOME}/calibration_bags"
 readonly RECORD_DURATION=10
 
 # Static Filenames for Docker Mounting
-readonly STATIC_BAG="${BAG_DIR}/calib_target.bag"
-readonly STATIC_IMG="${BAG_DIR}/snap_target.jpg"
+readonly STATIC_BAG="${BAG_DIR}/calib_lidar.bag"
+readonly STATIC_IMG="${BAG_DIR}/calib_image.jpg"
 
 # Temporary Recording Names
 readonly MCAP_BAG_NAME="${BAG_DIR}/calib_mcap"
@@ -25,11 +25,18 @@ print_section() {
 }
 
 # 0. Backup previous attempt (just in case)
-if [[ -f "$STATIC_BAG" ]]; then
-    mv "$STATIC_BAG" "${STATIC_BAG}.last"
-    mv "$STATIC_IMG" "${STATIC_IMG}.last"
-    echo "Archived previous files to .last"
-fi
+# if [[ -f "$STATIC_BAG" ]]; then
+#     mv "$STATIC_BAG" "${STATIC_BAG}.last"
+#     mv "$STATIC_IMG" "${STATIC_IMG}.last"
+#     echo "Archived previous files to .last"
+# fi
+
+# print_section "Running sensor bringup"
+# if ! ros2 launch scan_routine sensor_bringup.launch.py; then
+#     echo "Error: Sensor bringup failed" >&2
+#     exit 1
+# fi
+# sleep 5
 
 # 1. Grab calibration image
 print_section "Grabbing image for calibration..."
@@ -45,7 +52,7 @@ rm -rf "${BAG_DIR}/${MCAP_BAG_NAME}"
 
 ros2 bag record -s mcap \
     -o "${BAG_DIR}/${MCAP_BAG_NAME}" \
-    /image_raw /camera_info /rslidar_points /tf_static &
+    /rslidar_points &
 
 RECORD_PID=$!
 sleep "$RECORD_DURATION"
@@ -54,6 +61,12 @@ sleep 2
 
 # 3. Convert to ROS1 format using the STATIC name
 print_section "Converting to ROS 1 format..."
+# Remove previous bag so rosbags-convert doesn't refuse to overwrite
+if [[ -e "$STATIC_BAG" ]]; then
+    rm -rf "$STATIC_BAG"
+    echo "Removed previous bag: $STATIC_BAG"
+fi
+
 if ! rosbags-convert --src "${BAG_DIR}/${MCAP_BAG_NAME}" --dst "$STATIC_BAG"; then
     echo "Error: Conversion failed" >&2
     exit 1

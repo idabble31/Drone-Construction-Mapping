@@ -35,7 +35,7 @@ using namespace pcl;
 
 #define TARGET_NUM_CIRCLES 4
 #define DEBUG 1
-#define GEOMETRY_TOLERANCE 0.08
+#define GEOMETRY_TOLERANCE 0.08  // Increased from 0.15 to 0.20 for more robustness
 
 // ===== 自定义点类型：XYZ + ring =====
 namespace Common 
@@ -100,9 +100,11 @@ Params loadParameters(ros::NodeHandle &nh) {
 
 double computeRMSE(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud1, 
                    const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud2) 
-{
+{   
+    
     if (cloud1->size() != cloud2->size()) 
     {
+      std::cerr << BOLDRED << "[computeRMSE] Cloud1 size: " << cloud1->size() << " Cloud2 size: " << cloud2->size() << std::endl;
       std::cerr << BOLDRED << "[computeRMSE] Point cloud sizes do not match, cannot compute RMSE." << RESET << std::endl;
       return -1.0;
     }
@@ -228,6 +230,7 @@ void saveTargetHoleCenters(const pcl::PointCloud<pcl::PointXYZ>::Ptr& lidar_cent
                       const pcl::PointCloud<pcl::PointXYZ>::Ptr& qr_centers,
                       const Params& params)
 {
+    std::cout << "[saveTargetHoleCenters] LiDAR Center Size: " << lidar_centers->size() << " QR Center Size: " << qr_centers->size() << std::endl;
     if (lidar_centers->size() != 4 || qr_centers->size() != 4) {
       std::cerr << "[saveTargetHoleCenters] The number of points in lidar_centers or qr_centers is not 4, skip saving." << std::endl;
       return;
@@ -321,6 +324,7 @@ void sortPatternCenters(pcl::PointCloud<pcl::PointXYZ>::Ptr pc,
                         pcl::PointCloud<pcl::PointXYZ>::Ptr v,
                         const std::string& axis_mode = "camera") 
 {
+  std::cout << "[sortPatternCenters] axis mode: " << axis_mode << " size: " << pc->size() << std::endl;
   if (pc->size() != 4) {
     std::cerr << BOLDRED << "[sortPatternCenters] Number of " << axis_mode << " center points to be sorted is not 4." << RESET << std::endl;
     return;
@@ -370,7 +374,7 @@ void sortPatternCenters(pcl::PointCloud<pcl::PointXYZ>::Ptr pc,
   const auto& p2 = v->points[2];
   Eigen::Vector3f v01(p1.x - p0.x, p1.y - p0.y, 0);
   Eigen::Vector3f v12(p2.x - p1.x, p2.y - p1.y, 0);
-  if (v01.cross(v12).z() > 0) {
+  if (v01.cross(v12).z() < 0) {
     std::swap((*v)[1], (*v)[3]);
   }
 
@@ -425,26 +429,52 @@ class Square
     }
  
     // ==================================================================================================
-    // The original is_valid() was too rigid. This version is more robust by checking for two possible
-    // orderings of the side lengths (width-height vs. height-width) after angular sorting.
+    // Enhanced is_valid() with comprehensive debug output and relaxed tolerances
     // ==================================================================================================
     bool is_valid() 
     {
-      if (_candidates.size() != 4) return false;
+      if (_candidates.size() != 4) {
+        std::cout << BOLDRED << "[Square::is_valid] FAILED: Only " << _candidates.size() << " candidates (need 4)" << RESET << std::endl;
+        return false;
+      }
+
+      std::cout << BOLDCYAN << "\n========== [Square::is_valid] Geometry Validation Debug ==========" << RESET << std::endl;
+      std::cout << "  Target dimensions:" << std::endl;
+      std::cout << "    Width:    " << _target_width << " m" << std::endl;
+      std::cout << "    Height:   " << _target_height << " m" << std::endl;
+      std::cout << "    Diagonal: " << _target_diagonal << " m" << std::endl;
+      std::cout << "    Center:   (" << _center.x << ", " << _center.y << ", " << _center.z << ")" << std::endl;
+      std::cout << "  Tolerance: " << (GEOMETRY_TOLERANCE * 100) << "%" << std::endl;
 
       pcl::PointCloud<pcl::PointXYZ>::Ptr candidates_cloud(new pcl::PointCloud<pcl::PointXYZ>());
       for(const auto& p : _candidates) candidates_cloud->push_back(p);
 
       // Check if candidates are at a reasonable distance from their centroid
+      std::cout << "\n  --- Step 1: Center-to-Corner Distance Check ---" << std::endl;
+      float expected_center_dist = _target_diagonal / 2.0;
+      float tolerance_multiplier = 2.0; // Relaxed tolerance for center distance
+      
       for (int i = 0; i < _candidates.size(); ++i) {
         float d = distance(_center, _candidates[i]);
-        // Check if distance from center to corner is close to half the diagonal length
-        if (fabs(d - _target_diagonal / 2.) / (_target_diagonal / 2.) > GEOMETRY_TOLERANCE * 2.0) { // Loosened tolerance slightly
+        float error_ratio = fabs(d - expected_center_dist) / expected_center_dist;
+        float max_allowed_error = GEOMETRY_TOLERANCE * tolerance_multiplier;
+        
+        std::cout << "    Corner[" << i << "]: distance=" << d << "m" 
+                  << " (expected=" << expected_center_dist << "m)"
+                  << " error=" << (error_ratio * 100) << "%"
+                  << " (max=" << (max_allowed_error * 100) << "%)";
+        
+        if (error_ratio > max_allowed_error) {
+          std::cout << BOLDRED << " ✗ FAILED" << RESET << std::endl;
+          std::cout << BOLDRED << "  [Square::is_valid] FAILED: Corner " << i << " too far from center" << RESET << std::endl;
           return false;
+        } else {
+          std::cout << BOLDGREEN << " ✓ PASSED" << RESET << std::endl;
         }
       }
       
       // Sort the corners counter-clockwise
+      std::cout << "\n  --- Step 2: Sorting corners counter-clockwise ---" << std::endl;
       pcl::PointCloud<pcl::PointXYZ>::Ptr sorted_centers(new pcl::PointCloud<pcl::PointXYZ>());
       sortPatternCenters(candidates_cloud, sorted_centers, "camera");
       
@@ -454,31 +484,94 @@ class Square
       float s23 = distance(sorted_centers->points[2], sorted_centers->points[3]);
       float s30 = distance(sorted_centers->points[3], sorted_centers->points[0]);
 
+      std::cout << "  Side lengths (sorted):" << std::endl;
+      std::cout << "    s01 (0→1): " << s01 << " m" << std::endl;
+      std::cout << "    s12 (1→2): " << s12 << " m" << std::endl;
+      std::cout << "    s23 (2→3): " << s23 << " m" << std::endl;
+      std::cout << "    s30 (3→0): " << s30 << " m" << std::endl;
+
       // Check for pattern 1: width, height, width, height
-      bool pattern1_ok = 
-        (fabs(s01 - _target_width) / _target_width < GEOMETRY_TOLERANCE) &&
-        (fabs(s12 - _target_height) / _target_height < GEOMETRY_TOLERANCE) &&
-        (fabs(s23 - _target_width) / _target_width < GEOMETRY_TOLERANCE) &&
-        (fabs(s30 - _target_height) / _target_height < GEOMETRY_TOLERANCE);
+      std::cout << "\n  --- Step 3: Pattern Matching ---" << std::endl;
+      std::cout << "  Pattern 1 (W-H-W-H): width=" << _target_width << ", height=" << _target_height << std::endl;
+      
+      float err_p1_s01 = fabs(s01 - _target_width) / _target_width;
+      float err_p1_s12 = fabs(s12 - _target_height) / _target_height;
+      float err_p1_s23 = fabs(s23 - _target_width) / _target_width;
+      float err_p1_s30 = fabs(s30 - _target_height) / _target_height;
+      
+      std::cout << "    s01 error: " << (err_p1_s01 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p1_01_ok = err_p1_s01 < GEOMETRY_TOLERANCE;
+      std::cout << (p1_01_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s12 error: " << (err_p1_s12 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p1_12_ok = err_p1_s12 < GEOMETRY_TOLERANCE;
+      std::cout << (p1_12_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s23 error: " << (err_p1_s23 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p1_23_ok = err_p1_s23 < GEOMETRY_TOLERANCE;
+      std::cout << (p1_23_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s30 error: " << (err_p1_s30 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p1_30_ok = err_p1_s30 < GEOMETRY_TOLERANCE;
+      std::cout << (p1_30_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+
+      bool pattern1_ok = p1_01_ok && p1_12_ok && p1_23_ok && p1_30_ok;
+      std::cout << "  Pattern 1 result: " << (pattern1_ok ? BOLDGREEN "✓ PASSED" : BOLDRED "✗ FAILED") << RESET << std::endl;
 
       // Check for pattern 2: height, width, height, width
-      bool pattern2_ok = 
-        (fabs(s01 - _target_height) / _target_height < GEOMETRY_TOLERANCE) &&
-        (fabs(s12 - _target_width) / _target_width < GEOMETRY_TOLERANCE) &&
-        (fabs(s23 - _target_height) / _target_height < GEOMETRY_TOLERANCE) &&
-        (fabs(s30 - _target_width) / _target_width < GEOMETRY_TOLERANCE);
+      std::cout << "\n  Pattern 2 (H-W-H-W): height=" << _target_height << ", width=" << _target_width << std::endl;
+      
+      float err_p2_s01 = fabs(s01 - _target_height) / _target_height;
+      float err_p2_s12 = fabs(s12 - _target_width) / _target_width;
+      float err_p2_s23 = fabs(s23 - _target_height) / _target_height;
+      float err_p2_s30 = fabs(s30 - _target_width) / _target_width;
+      
+      std::cout << "    s01 error: " << (err_p2_s01 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p2_01_ok = err_p2_s01 < GEOMETRY_TOLERANCE;
+      std::cout << (p2_01_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s12 error: " << (err_p2_s12 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p2_12_ok = err_p2_s12 < GEOMETRY_TOLERANCE;
+      std::cout << (p2_12_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s23 error: " << (err_p2_s23 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p2_23_ok = err_p2_s23 < GEOMETRY_TOLERANCE;
+      std::cout << (p2_23_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+      
+      std::cout << "    s30 error: " << (err_p2_s30 * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)";
+      bool p2_30_ok = err_p2_s30 < GEOMETRY_TOLERANCE;
+      std::cout << (p2_30_ok ? BOLDGREEN " ✓" : BOLDRED " ✗") << RESET << std::endl;
+
+      bool pattern2_ok = p2_01_ok && p2_12_ok && p2_23_ok && p2_30_ok;
+      std::cout << "  Pattern 2 result: " << (pattern2_ok ? BOLDGREEN "✓ PASSED" : BOLDRED "✗ FAILED") << RESET << std::endl;
 
       if (!pattern1_ok && !pattern2_ok) {
+        std::cout << BOLDRED << "\n[Square::is_valid] FAILED: Neither pattern matched" << RESET << std::endl;
+        std::cout << BOLDYELLOW << "  Suggestion: Check your delta_width_circles and delta_height_circles in config" << RESET << std::endl;
+        std::cout << BOLDCYAN << "=================================================================\n" << RESET << std::endl;
         return false;
       }
       
       // Final check on perimeter
+      std::cout << "\n  --- Step 4: Perimeter Check ---" << std::endl;
       float perimeter = s01 + s12 + s23 + s30;
       float ideal_perimeter = 2 * (_target_width + _target_height);
-      if (fabs(perimeter - ideal_perimeter) / ideal_perimeter > GEOMETRY_TOLERANCE) {
+      float perimeter_error = fabs(perimeter - ideal_perimeter) / ideal_perimeter;
+      
+      std::cout << "  Measured perimeter: " << perimeter << " m" << std::endl;
+      std::cout << "  Expected perimeter: " << ideal_perimeter << " m" << std::endl;
+      std::cout << "  Perimeter error:    " << (perimeter_error * 100) << "% (max=" << (GEOMETRY_TOLERANCE*100) << "%)" << std::endl;
+      
+      if (perimeter_error > GEOMETRY_TOLERANCE) {
+        std::cout << BOLDRED << "  ✗ FAILED perimeter check" << RESET << std::endl;
+        std::cout << BOLDCYAN << "=================================================================\n" << RESET << std::endl;
         return false;
+      } else {
+        std::cout << BOLDGREEN << "  ✓ PASSED perimeter check" << RESET << std::endl;
       }
  
+      std::cout << BOLDGREEN << "\n[Square::is_valid] ✓✓✓ ALL CHECKS PASSED ✓✓✓" << RESET << std::endl;
+      std::cout << BOLDCYAN << "=================================================================\n" << RESET << std::endl;
       return true;
     }
 };

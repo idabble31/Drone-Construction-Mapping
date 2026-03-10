@@ -15,6 +15,7 @@ class ImageGrabber(Node):
         
         # Topic name parameter (default: /image_raw)
         self.declare_parameter('image_topic', '/image_raw')
+        # self.declare_parameter('image_topic', '/image_rect')
         topic = self.get_parameter('image_topic').get_parameter_value().string_value
         
         self.subscription = self.create_subscription(Image, topic, self.listener_callback, 10)

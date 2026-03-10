@@ -3,6 +3,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import os
 from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node 
 
 def generate_launch_description():
     sensor_launch = IncludeLaunchDescription(
@@ -18,7 +19,15 @@ def generate_launch_description():
         launch_arguments={'use_rviz': 'True'}.items()
     )
 
+    # tf_bridge = Node(
+    #     package='tf_ros',
+    #     executable='static_transform_publisher',
+    #     name='static_tf_aft_mapped_to_imu',
+    #     arguments=['0','0','0','0','0','0','aft_mapped','imu_link']
+    # )
+
     return LaunchDescription([
         sensor_launch,
         slam_launch
+        # tf_bridge
     ])

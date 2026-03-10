@@ -12,10 +12,15 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-opencv-apps \
     ros-noetic-vision-opencv \
     git \
+    nano \
     python3-pip \
     python3-catkin-tools \
     libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip & install Open3D
+RUN pip3 install --upgrade pip && \
+    pip3 install open3d
 
 # Create workspace
 WORKDIR /catkin_ws/src
