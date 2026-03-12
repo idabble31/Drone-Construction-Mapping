@@ -12,9 +12,9 @@ p2: 0.005024
 marker_size: 0.1      
 delta_width_qr_center: 0.55
 delta_height_qr_center: 0.35
-delta_width_circles: 0.25       # was 0.25 for rect, 0.50 for distorted
-delta_height_circles: 0.20      # was 0.20 for rect, 0.40 for distorted
-circle_radius: 0.06             # was 0.06 for rect, 0.09 for distorted
+delta_width_circles: 0.25       # was 0.25 for actual, 0.50 for distorted
+delta_height_circles: 0.20      # was 0.20 for actual, 0.40 for distorted
+circle_radius: 0.09             # was 0.06
 
 # Calibration target parameters (Full-size)
 # marker_size: 0.20
@@ -132,8 +132,8 @@ z_max: 1.025
 
 # lidar_detect params
 lidar_detect:
-  min_gap_threshold: 0.04
-  max_gap_threshold: 0.25
+  min_gap_threshold: 0.05
+  max_gap_threshold: 0.20
   min_points_per_ring: 3
   distance_threshold: 0.035
   radius_limit: 0.11
