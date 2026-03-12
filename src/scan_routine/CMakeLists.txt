@@ -32,7 +32,7 @@ install(PROGRAMS
 
 install(DIRECTORY
   launch
-  config
+  # config
   rviz
   DESTINATION share/${PROJECT_NAME}
 )
